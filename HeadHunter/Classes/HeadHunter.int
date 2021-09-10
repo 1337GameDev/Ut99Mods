@@ -1,0 +1,2 @@
+Object=(Name=HeadHunter.HeadHunterGameInfo,Class=Class,MetaClass=Botpack.TournamentGameInfo)
+Preferences=(Caption="HeadHunter",Parent="Game Types",Class=HeadHunter.HeadHunterGameInfo,Immediate=True)
