@@ -17,7 +17,7 @@ Run this:
 
 This will force the doskey script to run on every instance of cmd.
 
-Verify using:
+Verify in CMD using:
 
     reg query "HKCU\Software\Microsoft\Command Processor" /v Autorun
 
@@ -27,7 +27,7 @@ Add the relevant packages to your **UnrealTournament.ini** in the Ut99/System fo
 
 Look for the `[Editor.EditorEngine]` section, and the EditPackages entries. 
 
-Add the following to the end of them:
+Add the following to the end of them (order matters):
 
     EditPackages=HeadHunter
     EditPackages=Gibber
@@ -40,4 +40,4 @@ To merely use the pre-compiled packages, look in the System folder, and copy the
 
 Then load up the game, and look at the relevant test map, as well as the included mutators. 
 
-To use them in your own custom maps, they need to be in **EditPackages** or loaded manually in the editor.
+To use them in your own custom maps, they need to be in **EditPackages** or loaded manually in the editor (or embedded into the map using MyLevel).
