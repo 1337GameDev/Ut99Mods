@@ -57,6 +57,19 @@ static function int GetItemCountInInventory(Pawn pawn, bool IncludeCopies) {
    return Count;
 }
 
+static function int DeleteInventoriesOnGround(Actor context, name invClass) {
+    local int countDeleted;
+    local Inventory inv;
+
+    ForEach context.AllActors(class'Inventory', inv) {
+        if(inv.IsA(invClass) && !inv.bHeldItem && (inv.Owner == None) && !inv.bCarriedItem && !inv.bOnlyOwnerSee){
+            inv.Destroy();
+            countDeleted++;
+        }
+    }
+    return countDeleted;
+}
+
 defaultproperties
 {
 }

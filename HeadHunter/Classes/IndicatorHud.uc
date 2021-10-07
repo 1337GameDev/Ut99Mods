@@ -73,7 +73,12 @@ enum HUDIndicator_Texture_BuiltIn {
     /*67*/ HudIndicator_Nav_Open,
     /*68*/ HudIndicator_SelectionBox,
     /*69*/ HudIndicator_SelectionBox2,
-    /*70*/ HudIndicator_Square_Open
+    /*70*/ HudIndicator_Square_Open,
+
+    //extra icons added later
+    /*71*/ HudIndicator_SkullAndBones,
+    /*72*/ HudIndicator_Bones,
+    /*73*/ HudIndicator_Skull
 };
 
 //Indicators
@@ -214,6 +219,11 @@ enum HUDIndicator_Texture_BuiltIn {
 #exec texture IMPORT NAME=HudIndicator_Logo_RedTeam FILE=Textures\Icons\HudIndicator_Logo_RedTeam.bmp FLAGS=2 MIPS=OFF
 #exec texture IMPORT NAME=HudIndicator_Logo_YellowTeam FILE=Textures\Icons\HudIndicator_Logo_YellowTeam.bmp FLAGS=2 MIPS=OFF
 
+#exec texture IMPORT NAME=HudIndicator_SkullAndBones FILE=Textures\Icons\HudIndicator_SkullAndBones.bmp FLAGS=2 MIPS=OFF
+#exec texture IMPORT NAME=HudIndicator_Bones FILE=Textures\Icons\HudIndicator_Bones.bmp FLAGS=2 MIPS=OFF
+#exec texture IMPORT NAME=HudIndicator_Skull FILE=Textures\Icons\HudIndicator_Skull.bmp FLAGS=2 MIPS=OFF
+
+
 var LinkedList PlayerIndicatorTargets;
 var IndicatorHudGlobalTargets GlobalIndicatorTargets;
 
@@ -301,7 +311,7 @@ simulated function PostRender(Canvas C) {
         //return here if invalid properties set
         if(IndicatorTexture == None) {
             //invalid
-            return;
+            IndicatorTexture = self.default.IndicatorTexture;
         }
 
         //set any values that should only update ONCE per render of indicators
@@ -330,6 +340,7 @@ simulated function PostRender(Canvas C) {
            GlobalIndicatorTargets = class'IndicatorHudGlobalTargets'.static.GetRef(self);
         }
 
+        //Log("IndicatorHud - PostRender - draw global indicators with length ["$self.GlobalIndicatorTargets.GlobalIndicatorTargets.Count$"]");
         DrawIndicatorLocations(C, PlayerOwner, self.GlobalIndicatorTargets.GlobalIndicatorTargets);
     } else if(PlayerOwner == None){
           Destroy();
@@ -432,7 +443,9 @@ function ResetAllTargets() {
 }
 
 //=============================================================================
-// function DrawIndicatorLocations.
+// DrawIndicatorLocations.
+//
+// The main function for drawing a list of targets' indictaors.
 //=============================================================================
 simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, LinkedList Targets) {
       local bool ShowIndicator;
@@ -487,8 +500,6 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
 
       local Vector OffsetFromIndicatorPos;//offset used for placing other UI elements based on the indicator position
 
-      local Inventory invTest;
-
       if((Player != None) && (Targets != None) && (Targets.Count > 0)){
           element = Targets.Head;
 
@@ -498,23 +509,10 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
 
           PlayerHUDScale = PlayerHUD.Scale;
 
-          screenMiddleX = C.SizeX / 2.0;
-          screenMiddleY = C.SizeY / 2.0;
-          screenSmallestDimension = Min(C.SizeX, C.SizeY);
-          screenLargestDimension =  Max(C.SizeX, C.SizeY);
-
-          //test loop
-          //Log("Checking dropped actors");
-          ForEach AllActors(class'Inventory', invTest) {
-              //Log("Inventory item-"$invTest.Name$"- state:"$invTest.GetStateName());
-              if(invTest.IsA('Enforcer')){
-                 //Log("Checking enforcer:"$invTest.Name);
-              }
-
-              if(class'InventoryHelper'.static.IsInventoryDropped(invTest)){
-                   //Log("Inventory item is considered dropped:"$invTest.Name);
-              }
-          }
+          screenMiddleX = C.ClipX / 2.0;
+          screenMiddleY = C.ClipY / 2.0;
+          screenSmallestDimension = Min(C.ClipX, C.ClipY);
+          screenLargestDimension =  Max(C.ClipX, C.ClipY);
 
           While(element!=None && element.Value != None) {
               ShowIndicator = true;
@@ -886,29 +884,29 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
               if(targetIsBehind) {
                 if(ShowIndicator) {
                     if(UseTriangleQuadrantsForOffScreen){//if this is true, the triangle quadrant booleans have been set prior
-                        drawAtScreenX = Clamp(targetScreenXPos, IndicatorXLimitMargin, C.SizeX-IndicatorXLimitMargin);
-                        drawAtScreenY = Clamp(targetScreenYPos, IndicatorYLimitMargin, C.SizeY-IndicatorYLimitMargin);
+                        drawAtScreenX = Clamp(targetScreenXPos, IndicatorXLimitMargin, C.ClipX-IndicatorXLimitMargin);
+                        drawAtScreenY = Clamp(targetScreenYPos, IndicatorYLimitMargin, C.ClipY-IndicatorYLimitMargin);
 
                         if(isInTopTri || offTop){
                             drawAtScreenY = IndicatorYLimitMargin;
                         } else if(isInBottomTri || offBottom){
-                            drawAtScreenY = C.SizeY - IndicatorYLimitMargin;
+                            drawAtScreenY = C.ClipY - IndicatorYLimitMargin;
                         } else if(isInLeftTri || offLeft){
                             drawAtScreenX = IndicatorXLimitMargin;
                         } else if(isInRightTri || offRight){
-                            drawAtScreenX = C.SizeX - IndicatorXLimitMargin;
+                            drawAtScreenX = C.ClipX - IndicatorXLimitMargin;
                         } else if(!isInAnyTri){
                             //No action needed right now
                         }
                     } else {
-                        drawAtScreenY = Clamp(targetScreenYPos, IndicatorYLimitMargin, C.SizeY-IndicatorYLimitMargin);
+                        drawAtScreenY = Clamp(targetScreenYPos, IndicatorYLimitMargin, C.ClipY-IndicatorYLimitMargin);
 
                         if(targetScreenXPos < screenMiddleX){
                             //left side
                             drawAtScreenX = IndicatorXLimitMargin;
                         } else {
                             //right side
-                            drawAtScreenX = C.SizeX - IndicatorXLimitMargin;
+                            drawAtScreenX = C.ClipX - IndicatorXLimitMargin;
                         }
                     }
                 }
@@ -919,11 +917,11 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
               } else {//target is not behind
                   //set the position of the indicator like normal
                   if(UseTextOnlyIndicators) {
-                      drawAtScreenX = Clamp(targetScreenXPos, 0, C.SizeX-IndicatorXLimitMargin);
-                      drawAtScreenY = Clamp(targetScreenYPos, 0, C.SizeY-IndicatorYLimitMargin);
+                      drawAtScreenX = Clamp(targetScreenXPos, 0, C.ClipX-IndicatorXLimitMargin);
+                      drawAtScreenY = Clamp(targetScreenYPos, 0, C.ClipY-IndicatorYLimitMargin);
                   } else {
-                      drawAtScreenX = Clamp(targetScreenXPos, IndicatorXLimitMargin, C.SizeX-IndicatorXLimitMargin);
-                      drawAtScreenY = Clamp(targetScreenYPos, IndicatorYLimitMargin, C.SizeY-IndicatorYLimitMargin);
+                      drawAtScreenX = Clamp(targetScreenXPos, IndicatorXLimitMargin, C.ClipX-IndicatorXLimitMargin);
+                      drawAtScreenY = Clamp(targetScreenYPos, IndicatorYLimitMargin, C.ClipY-IndicatorYLimitMargin);
                   }
 
                   OffsetFromIndicatorPos.X = drawAtScreenX;//zero offset from the indicator
@@ -1375,6 +1373,19 @@ static function IndicatorTextureVariations GetTexturesForBuiltInOption(byte want
         case HUDIndicator_Texture_BuiltIn.HudIndicator_Square_Open:
             texVariation.InViewTex = Texture'HudIndicator_Square_Open';
             texVariation.OffBottomViewTex = Texture'HudIndicator_Square_Open';
+        break;
+
+        case HUDIndicator_Texture_BuiltIn.HudIndicator_SkullAndBones:
+            texVariation.InViewTex = Texture'HudIndicator_SkullAndBones';
+            texVariation.OffBottomViewTex = Texture'HudIndicator_SkullAndBones';
+        break;
+        case HUDIndicator_Texture_BuiltIn.HudIndicator_Bones:
+            texVariation.InViewTex = Texture'HudIndicator_Bones';
+            texVariation.OffBottomViewTex = Texture'HudIndicator_Bones';
+        break;
+        case HUDIndicator_Texture_BuiltIn.HudIndicator_Skull:
+            texVariation.InViewTex = Texture'HudIndicator_Skull';
+            texVariation.OffBottomViewTex = Texture'HudIndicator_Skull';
         break;
 
         default:

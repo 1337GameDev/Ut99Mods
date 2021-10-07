@@ -84,6 +84,10 @@ var Sound SoundThrow;
 var Sound SoundPlaced;
 var Sound SoundChangeTimer;
 
+function PreBeginPlay() {
+    Disable('Tick');
+}
+
 function Fire(float Value) {
     local float SoundVolume;
     SoundVolume = 4;
@@ -286,30 +290,38 @@ simulated function TweenDown() {
 simulated function Tick(float DeltaTime) {
 	CurrentTimeInterval += DeltaTime;
 
-	if(CurrentTimeInterval >= UpdateIntervalSecs) {
-		CurrentTimeInterval = 0;
-		//perform timed action
-		//update visibility based on ammo
-		if((AmmoType != None) && (AmmoType.AmmoAmount > 0)){
-		    ShowWeapon();
-		    //update location of the selected item mesh
-		    UpdateGhostLocation(false);
-		} else {
-		    HideWeapon();
-		    if(PlaceC4Ghost != None){
-		        PlaceC4Ghost.HideGhost();
-		    }
+	if(Owner.IsA('Bot')){
+	    Destroy();
+	} else {
+		if(CurrentTimeInterval >= UpdateIntervalSecs) {
+			CurrentTimeInterval = 0;
+			//perform timed action
+			//update visibility based on ammo
+			if((AmmoType != None) && (AmmoType.AmmoAmount > 0)){
+				ShowWeapon();
+				//update location of the selected item mesh
+				UpdateGhostLocation(false);
+			} else {
+				HideWeapon();
+				if(PlaceC4Ghost != None){
+					PlaceC4Ghost.HideGhost();
+				}
+			}
 		}
 	}
 }
 
 function BringUp() {
-	Super.BringUp();
-    Enable('Tick');
+    if(Owner.IsA('Bot')){
+	    Destroy();
+	} else {
+	    Super.BringUp();
+        Enable('Tick');
 
-    CurrentTimeInterval = 0;
-    TimerSeconds = Max(MinTimerSeconds, TimerSeconds);
-    UpdateTimer(TimerSeconds);
+        CurrentTimeInterval = 0;
+        TimerSeconds = Max(MinTimerSeconds, TimerSeconds);
+        UpdateTimer(TimerSeconds);
+    }
 }
 
 function Destroyed(){
@@ -327,12 +339,20 @@ function BecomePickup(){
 	DestroyGhost();
 }
 function HideWeapon(){
-    Self.bHidden = true;
-    Self.DrawType = DT_None;
+    if(Owner.IsA('Bot')){
+	    Destroy();
+	} else {
+        Self.bHidden = true;
+        Self.DrawType = DT_None;
+    }
 }
 function ShowWeapon(){
-    Self.bHidden = false;
-    Self.DrawType = DT_Mesh;
+    if(Owner.IsA('Bot')){
+	    Destroy();
+	} else {
+        Self.bHidden = false;
+        Self.DrawType = DT_Mesh;
+    }
 }
 function bool HandlePickupQuery(Inventory Item) {
 	local bool WillBePickedUp;
@@ -357,17 +377,29 @@ function bool HandlePickupQuery(Inventory Item) {
 	return WillBePickedUp;
 }
 
+//
+// Give this inventory item to a pawn.
+//
+function GiveTo(Pawn Other) {
+    if(!Other.IsA('Bot')){
+	    Super.GiveTo(Other);
+	    Disable('Tick');
+	} else {
+	    Destroy();
+    }
+}
 
 function float RateSelf(out int bUseAltMode) {
 	return -2;//give max negative rating so bots don't pick this up
 }
 event float BotDesireability(Pawn Bot){
-    return 0;//bots don't want this weapon
+    return -1;//bots don't want this weapon
 }
 
 defaultproperties {
     WeaponDescription="Classification: Timed Bomb\n\nPrimary Fire: Place / Throw C4 \n\nSecondary Fire: Increment the timer.",
     AIRating=0.0,
+    MaxDesireability=-1
     PickupMessage="You got the C4.",
     ItemName="C4",
     UpdateIntervalSecs=0.1,

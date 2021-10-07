@@ -8,6 +8,17 @@ class HUDHelper extends Object;
 
 #exec texture IMPORT NAME=CenterRing FILE=Textures\HUDHelper\CenterRing.bmp FLAGS=2 MIPS=OFF
 
+// ----- Tips & Explanations ----- //
+/*
+Canvas.DrawTile (Texture (UT) Tex, float XL, float YL, float U, float V, float UL, float VL)
+This draws a rectangle within the texture onto the screen. The upper left of the texture will be at the current pen position.
+
+* Tex - the texture to draw.
+* XL, YL - width and height on the screen, in number of pixels.
+* U, V - coordinates, within the texture, of the upper left of the rectangular window.
+* UL, VL - width and height, in pixels, of the window within the texture.
+*/
+
  /*
  Get screen X Y coordinates for specified Location:
  */
@@ -49,10 +60,10 @@ static function float getActorSizeOnHudFromCollider(Canvas C, Actor target, bool
         //factor in rotation of collider?
         class'HUDHelper'.static.getXY(C, target.ColLocation+amountToOffset, topX, topY);
         class'HUDHelper'.static.getXY(C, target.ColLocation-amountToOffset, bottomX, bottomY);
-        topX = Clamp(topX, 0, C.SizeX);
-        topY = Clamp(topY, 0, C.SizeY);
-        bottomX = Clamp(bottomX, 0, C.SizeX);
-        bottomY = Clamp(bottomY, 0, C.SizeY);
+        topX = Clamp(topX, 0, C.ClipX);
+        topY = Clamp(topY, 0, C.ClipY);
+        bottomX = Clamp(bottomX, 0, C.ClipX);
+        bottomY = Clamp(bottomY, 0, C.ClipY);
 
         if(showColliderDebugIndicators) {
             C.SetPos(topX, topY);
@@ -87,10 +98,10 @@ static function float getActorSizeOnHudFromColliderWithPoints(Canvas C, Actor ta
         //factor in rotation of collider?
         class'HUDHelper'.static.getXY(C, target.ColLocation+amountToOffset, topX, topY);
         class'HUDHelper'.static.getXY(C, target.ColLocation-amountToOffset, bottomX, bottomY);
-        topX = Clamp(topX, 0, C.SizeX);
-        topY = Clamp(topY, 0, C.SizeY);
-        bottomX = Clamp(bottomX, 0, C.SizeX);
-        bottomY = Clamp(bottomY, 0, C.SizeY);
+        topX = Clamp(topX, 0, C.ClipX);
+        topY = Clamp(topY, 0, C.ClipY);
+        bottomX = Clamp(bottomX, 0, C.ClipX);
+        bottomY = Clamp(bottomY, 0, C.ClipY);
 
         if(showColliderDebugIndicators) {
             C.SetPos(topX, topY);
@@ -113,9 +124,9 @@ static function float getActorSizeOnHudFromColliderWithPoints(Canvas C, Actor ta
 
 static function bool IsOffScreen(Canvas C, int screenPosX, int screenPosY, out int offLeft, out int offRight, out int offTop, out int offBottom, optional int margin){
     offLeft = int(screenPosX < margin);
-    offRight = int(screenPosX > C.SizeX-margin);
+    offRight = int(screenPosX > C.ClipX-margin);
     offTop = int(screenPosY < margin);
-    offBottom = int(screenPosY > C.SizeY-margin);
+    offBottom = int(screenPosY > C.ClipY-margin);
 
     return offLeft==1 || offRight==1 || offTop==1 || offBottom==1;
 }
@@ -124,9 +135,9 @@ static function bool IsOffScreenNoReturnValues(Canvas C, int screenPosX, int scr
     local int offLeft, offRight, offTop, offBottom;
 
     offLeft = int(screenPosX < margin);
-    offRight = int(screenPosX > C.SizeX-margin);
+    offRight = int(screenPosX > C.ClipX-margin);
     offTop = int(screenPosY < margin);
-    offBottom = int(screenPosY > C.SizeY-margin);
+    offBottom = int(screenPosY > C.ClipY-margin);
 
     return offLeft==1 || offRight==1 || offTop==1 || offBottom==1;
 }
@@ -236,6 +247,7 @@ static simulated function DrawTextureAtXY(Canvas canvas, Texture tex, int screen
       if(centerIcon) {
           xOffset = tex.USize*texScale*0.5;
           yOffset = tex.VSize*texScale*0.5;
+
           if(!excludePlayerHUDScaleFromOffset){
               xOffset *= playerHudScale;
               yOffset *= playerHudScale;
@@ -257,6 +269,7 @@ static simulated function DrawTextureAtXY_OutputEdgeCordinates(Canvas canvas, Te
       if(centerIcon) {
           xOffset = tex.USize*texScale*0.5;
           yOffset = tex.VSize*texScale*0.5;
+
           if(!excludePlayerHUDScaleFromOffset){
               xOffset *= playerHudScale;
               yOffset *= playerHudScale;
@@ -301,6 +314,7 @@ static simulated function DrawTextureCenteredAboveAtXY(Canvas canvas, Texture te
 
       xOffset = tex.USize*texScale*0.5;
       yOffset = tex.VSize*texScale;
+
       if(!excludePlayerHUDScaleFromOffset){
           xOffset *= playerHudScale;
           yOffset *= playerHudScale;
@@ -315,8 +329,8 @@ static simulated function DrawTextureCenteredAboveAtXY(Canvas canvas, Texture te
 
 static simulated function DrawCircleMidScreenWithWidth(Actor context, Canvas canvas, float wantedWidth, float playerHudScale) {
       local int screenX, screenY;
-      screenX = canvas.SizeX * 0.5;
-      screenY = canvas.SizeY * 0.5;
+      screenX = canvas.ClipX * 0.5;
+      screenY = canvas.ClipY * 0.5;
 
       class'HUDHelper'.static.DrawCircleAtPosWithWidth(context, canvas, screenX, screenY, wantedWidth, playerHudScale);
 }
@@ -367,13 +381,13 @@ ________________
 */
 static simulated function bool GetScreenTrianglesPointIsIn(Canvas canvas, int pointX, int pointY, out int inTop_int, out int inBottom_int, out int inLeft_int, out int inRight_int) {
      local int middleX, middleY;
-     middleX = canvas.SizeX / 2;
-     middleY = canvas.SizeY / 2;
+     middleX = canvas.ClipX / 2;
+     middleY = canvas.ClipY / 2;
 
-     inTop_int = int(class'GeometryHelper'.static.isInsideTriangle(0,0, middleX,middleY, canvas.SizeX,0, pointX,pointY));
-     inBottom_int = int(class'GeometryHelper'.static.isInsideTriangle(0,canvas.SizeY, middleX,middleY, canvas.SizeX,canvas.SizeY, pointX,pointY));
-     inLeft_int = int(class'GeometryHelper'.static.isInsideTriangle(0,0, middleX,middleY, 0,canvas.SizeY, pointX,pointY));
-     inRight_int = int(class'GeometryHelper'.static.isInsideTriangle(canvas.SizeX,0, middleX,middleY, canvas.SizeX,canvas.SizeY, pointX,pointY));
+     inTop_int = int(class'GeometryHelper'.static.isInsideTriangle(0,0, middleX,middleY, canvas.ClipX,0, pointX,pointY));
+     inBottom_int = int(class'GeometryHelper'.static.isInsideTriangle(0,canvas.ClipY, middleX,middleY, canvas.ClipX,canvas.ClipY, pointX,pointY));
+     inLeft_int = int(class'GeometryHelper'.static.isInsideTriangle(0,0, middleX,middleY, 0,canvas.ClipY, pointX,pointY));
+     inRight_int = int(class'GeometryHelper'.static.isInsideTriangle(canvas.ClipX,0, middleX,middleY, canvas.ClipX,canvas.ClipY, pointX,pointY));
 
      return (inTop_int + inBottom_int + inLeft_int + inRight_int) > 0;
 }
@@ -464,6 +478,77 @@ static simulated function Mutator PlayerHasHUDMutator(PlayerPawn p, name mutClas
     }
 
     return m;
+}
+
+static simulated function RenderLEDTimerToHUD(Canvas c, float xPos, float yPos, Color col, byte drawStyle, float hudScale, int timerSeconds){
+    local Color PrevColor;
+    local byte PrevStyle;
+    local int Minutes, Seconds, d;
+
+    PrevColor = C.DrawColor;
+    PrevStyle = C.Style;
+
+    C.DrawColor = col;
+
+	C.CurX = xPos;
+	C.CurY = yPos;
+
+	C.Style = drawStyle;
+
+	if (timerSeconds > 0) {
+		Minutes = timerSeconds / 60;
+		Seconds = timerSeconds % 60;
+	}
+	else
+	{
+		Minutes = 0;
+		Seconds = 0;
+	}
+
+	if ( Minutes > 0 )
+	{
+		if ( Minutes >= 10 )//draw tens minute digit
+		{
+			d = Minutes / 10;//digit # position
+			//draw digit sliced from texture, with X pos based on d*25 (25 = width of digit in texture)
+			C.DrawTile(Texture'BotPack.HudElements1', hudScale*25, 64*hudScale, d*25, 0, 25.0, 64.0);
+			C.CurX += 7*hudScale;
+			Minutes = Minutes - 10*d;
+		}
+		else
+		{
+		    //draw 0 digit sliced from texture (25 = width of digit in texture)
+			C.DrawTile(Texture'BotPack.HudElements1', hudScale*25, 64*hudScale, 0, 0, 25.0, 64.0);
+			C.CurX += 7*hudScale;
+		}
+
+        //draw minutes digit
+        //draw digit sliced from texture, with X pos based on Minutes*25 (25 = width of digit in texture)
+		C.DrawTile(Texture'BotPack.HudElements1', hudScale*25, 64*hudScale, Minutes*25, 0, 25.0, 64.0);
+		C.CurX += 7*hudScale;
+	} else {
+	    //draw 0 digit sliced from texture (25 = width of digit in texture)
+		C.DrawTile(Texture'BotPack.HudElements1', hudScale*25, 64*hudScale, 0, 0, 25.0, 64.0);
+		C.CurX += 7*hudScale;
+	}
+	C.CurX -= 4*hudScale;
+	//draw the :
+	C.DrawTile(Texture'BotPack.HudElements1', hudScale*25, 64*hudScale, 32, 64, 25.0, 64.0);
+	C.CurX += 3*hudScale;
+
+    //tens digit
+	d = Seconds / 10;
+	//draw digit sliced from texture, with X pos based on Seconds*25 (25 = width of digit in texture)
+	C.DrawTile(Texture'BotPack.HudElements1', hudScale*25, 64*hudScale, 25*d, 0, 25.0, 64.0);
+	C.CurX += 7*hudScale;
+
+    //seconds digit
+	Seconds = Seconds - 10 * d;
+	C.DrawTile(Texture'BotPack.HudElements1', hudScale*25, 64*hudScale, 25*Seconds, 0, 25.0, 64.0);
+	C.CurX += 7*hudScale;
+
+    C.DrawColor = PrevColor;
+    C.Style = PrevStyle;
 }
 
 defaultproperties

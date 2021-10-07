@@ -4,6 +4,11 @@ var private IndicatorHudGlobalTargets Ref;
 
 var LinkedList GlobalIndicatorTargets;
 
+replication {
+	reliable if(Role == ROLE_Authority)
+		Ref, GlobalIndicatorTargets;
+}
+
 final static function IndicatorHudGlobalTargets GetRef(Actor referenceToUseForSpawn) {
     local IndicatorHudGlobalTargets singleton;
     if(default.Ref == None) {

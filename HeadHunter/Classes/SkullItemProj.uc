@@ -13,9 +13,7 @@ var float AngleForSteepSurface;
 
 var int NumSteepBounces;
 
-//test vars
-var bool performTestSpawn;
-var bool firstBounce;
+var HeadHunterGameInfo HHGameInfo;
 
 simulated function PostBeginPlay() {
 	Super.PostBeginPlay();
@@ -31,6 +29,10 @@ simulated function PostBeginPlay() {
 	}
 
 	CreateFlame();
+}
+
+simulated function PreBeginPlay() {
+    HHGameInfo = HeadHunterGameInfo(Level.Game);
 }
 
 function CreateFlame() {
@@ -76,32 +78,46 @@ simulated function Landed(Vector HitNormal) {
 	HitWall(HitNormal, None);
 }
 
-simulated function ProcessTouch(Actor Other, Vector HitLocation) {
+simulated function ProcessTouch(Actor Touched, Vector HitLocation) {
 	local Inventory skullInv;
     local SkullItem skull;
+    local Pawn touchedPawn;
+    touchedPawn = Pawn(Touched);
 
-    if(Pawn(Other) != None) {
-        skullInv = Pawn(Other).FindInventoryType(class'Headhunter.SkullItem');
+    if(touchedPawn != None) {
+        if((touchedPawn.Health <= 0) || (touchedPawn.IsInState('Dying'))){
+            return;
+        }
+
+        //Log("SkullItemProj - ProcessTouch - Touched: "$Touched.Name);
+        skullInv = Pawn(Touched).FindInventoryType(class'Headhunter.SkullItem');
 
         if(skullInv != None){
             skull = SkullItem(skullInv);
-
+            //Log("SkullItemProj - ProcessTouch - Pawn already has skull");
             //we already have a skull, so attempt to give us another
             if(skull.CanPickupMore()){
+                //Log("SkullItemProj - ProcessTouch - Pawn \""$Touched.Name$"\" CAN pickup more skulls, as they had:"$skull.NumCopies);
                 skull.NumCopies++;
 
                 if(Level.NetMode != NM_DedicatedServer) {
-	    	        PlaySound(PickupSound, SLOT_Misc, 1.5);
+	    	        PlaySound(PickupSound,, 32.0);
 	            }
 
                 Destroy();
+            } else {
+                //Log("SkullItemProj - ProcessTouch - Pawn \""$Touched.Name$"\" can NOT pickup more skulls");
+                touchedPawn.ReceiveLocalizedMessage(class'HeadHunterMaxSkullsMessage', 0);
+                return;
             }
         } else {
+            //Log("SkullItemProj - ProcessTouch - Pawn \""$Touched.Name$"\" did not have any skulls, so pick this up");
+
             skull = Spawn(class'Headhunter.SkullItem',,,Location, Rotation);
-            skull.GiveTo(Pawn(Other));
+            skull.GiveTo(Pawn(Touched));
 
             if(Level.NetMode != NM_DedicatedServer) {
-	    	    PlaySound(PickupSound, SLOT_Misc, 1.5);
+	    	    PlaySound(PickupSound,, 32.0);
 	        }
 
 	        Destroy();
@@ -114,18 +130,9 @@ simulated function HitWall(Vector HitNormal, Actor Wall) {
 	local Vector PrevVelocity;
 	local float degreesBetweenVectors;
 
-	//test vars
-	local int spawnedSkullAmount;
-
 	if(Level.NetMode != NM_DedicatedServer) {
-		PlaySound(ImpactSound, SLOT_Misc, 1.5);
+		PlaySound(ImpactSound,, 32.0);
 	}
-
-	if(firstBounce && performTestSpawn) {
-        spawnedSkullAmount = class'SkullItem'.static.SpawnNumberFromPoint(Self, Self.Location, 4, Vect(0,0,1) * 150);
-	}
-
-    firstBounce = false;
 
     PrevVelocity = Velocity;
 	Velocity = 0.75 * (( Velocity dot HitNormal ) * HitNormal * (-2.0) + Velocity);   // Reflect off Wall w/damping
@@ -136,8 +143,14 @@ simulated function HitWall(Vector HitNormal, Actor Wall) {
 
         if((degreesBetweenVectors <= AngleForSteepSurface) || (NumSteepBounces >= MaxBouncesOnSteepSurface)){
 		    //create a SkullItem in place of this
-		    Destroy();
 		    skull = Spawn(class'Headhunter.SkullItem',,,Location,Rotation);
+		    if(skull != None){
+		        if((HHGameInfo != None) && (HHGameInfo.HHRepInfo != None) && HHGameInfo.HHRepInfo.ShowDroppedSkullIndicators) {
+                    HHGameInfo.AddSkullItemIndicator(skull);
+                }
+
+		        Destroy();
+		    }
 		} else {
 		    Velocity = PrevVelocity;
 		    speed = VSize(Velocity);
@@ -156,14 +169,14 @@ function Destroyed() {
 		FlameActor.Destroy();
 	}
 
+	if(HHGameInfo != None) {
+        HHGameInfo.RemoveSkullItemProjIndicator(self);
+    }
+
 	Super.Destroyed();
 }
 
 defaultproperties {
-     //test vars
-     firstBounce=true,
-     performTestSpawn=false,
-
      speed=700.000000,
      MaxSpeed=700.000000,
      Damage=0.000000,

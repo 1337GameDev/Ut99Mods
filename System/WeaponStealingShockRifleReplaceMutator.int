@@ -1,2 +1,2 @@
 [Public]
-Object=(Name=HeadHunter.WeaponStealingShockRifleReplaceMutator,Class=Class,MetaClass=Engine.Mutator,Description="THEIF Shock Rifle Map Replacement,Replace the Shock Rifle pickups with the THEIF Shock Rifle.")
+Object=(Name=HeadHunter.WeaponStealingShockRifleReplaceMutator,Class=Class,MetaClass=Engine.Mutator,Description="THEIF Shock Rifle,Replace the ASMD Shock Rifle pickup with the THEIF Shock Rifle.")

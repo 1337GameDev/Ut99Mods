@@ -14,11 +14,6 @@ function AltFire(float Value) {
 	local actor HitActor;
 	local vector HitLocation, HitNormal, Start;
 
-    //test properties
-    local Vector X,Y,Z;
-    local Rotator AimVector;
-    local SkullItemProj SpawnedSkull;
-
 	if(Owner == None) {
 		return;
 	}
@@ -52,17 +47,7 @@ function AltFire(float Value) {
 		Pawn(Owner).PlayRecoil(FiringSpeed);
 		bPointing = True;
 
-		/*
 		ProjectileFire(AltProjectileClass, AltProjectileSpeed, bAltWarnTarget);
-		*/
-
-		GetAxes(Pawn(Owner).ViewRotation, X, Y, Z);
-		Start = Owner.Location + CalcDrawOffset() + FireOffset.X * X + FireOffset.Y * Y + FireOffset.Z * Z;
-		AimVector = Pawn(Owner).AdjustAim(1200, Start, AimError, True, false);
-
-        SpawnedSkull = Spawn(class'Headhunter.SkullItemProj',,, Self.Location, AimVector);
-        SpawnedSkull.Velocity = X * (Instigator.Velocity Dot X)*0.4 + Vector(Rotation) * 400;
-        SpawnedSkull.performTestSpawn = true;
 
         ClientAltFire(value);
 	}

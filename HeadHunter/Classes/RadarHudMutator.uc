@@ -6,35 +6,36 @@ class RadarHudMutator extends HUDMutator config;
 #exec texture IMPORT NAME=RadarIcon_DiffLevel FILE=Textures\Radar\RadarIcon_DiffLevel.bmp FLAGS=2 MIPS=OFF
 
 var bool InitiatedPreviously;
-
 var float LastTimeChecked;
 var float TimeIntervalToCheck;
-var float RadarDistanceMeters;
-var float RadarAlpha;
-var Color RadarCenterDotColor;
-var float RadarGUICircleRadius;//the radius of the radar display on the HUD (in pixels)
-var int RadarGUICircleOffsetX;//The X position offset (from the center of the GUI texture) for the center of the radar display
-var int RadarGUICircleOffsetY;//The Y position osset (from the center of the GUI texture) for the center of the radar display
 
-var int RadarBlipSize;
-var bool ShowAlliesAndEnemiesAsDifferentColors;
+var config float RadarDistanceMeters;
+var config float RadarAlpha;
+var config Color RadarCenterDotColor;
+var config float RadarGUICircleRadius;//the radius of the radar display on the HUD (in pixels)
+var config int RadarGUICircleOffsetX;//The X position offset (from the center of the GUI texture) for the center of the radar display
+var config int RadarGUICircleOffsetY;//The Y position osset (from the center of the GUI texture) for the center of the radar display
 
-var int RadarHudGuiWidth;
+var config int RadarBlipSize;
+var config bool ShowAlliesAndEnemiesAsDifferentColors;
+
+var config int RadarHudGuiWidth;
 
 var LinkedList RadarTargets;
 
-var float RadarHUDOffsetX;//the offset horizontally for the Radar position on the HUD (from the standard lower left placement)
-var float RadarHudOffsetY;//the offset vertically for the Radar position on the HUD (from the standard lower left placement)
+var config bool InitiallyPositionAbovePlayerHUDOnLowerLeft;
+var config float RadarHUDOffsetX;//the offset horizontally for the Radar position on the HUD (from the standard lower left placement)
+var config float RadarHudOffsetY;//the offset vertically for the Radar position on the HUD (from the standard lower left placement)
 
 var Texture RadarBackgroundTex;
 var Texture Indicator_SameLevel;
 var Texture Indicator_DiffLevel;
 
-var float RadarVelocityThreshold;//A player moves a max of 120units when crouching, and 400 running
-var float RadarSameLevelThreshold;//character height in ut99 is 78 units, and can jump 64->72 units
-var bool ShowTargetsIfBelowVelocityThreshold;
-var bool ShowTargetsIfCrouching;
-var bool IndicateTargetOnDifferentLevel;
+var config float RadarVelocityThreshold;//A player moves a max of 120units when crouching, and 400 running
+var config float RadarSameLevelThreshold;//character height in ut99 is 78 units, and can jump 64->72 units
+var config bool ShowTargetsIfBelowVelocityThreshold;
+var config bool ShowTargetsIfCrouching;
+var config bool IndicateTargetOnDifferentLevel;
 
 simulated function ModifyPlayer(Pawn Other) {
     Super.ModifyPlayer(Other);
@@ -101,8 +102,12 @@ simulated function PostRender(Canvas C) {
 
     //get position of target on HUD
     RadarHUDPositionCenter = Vect(0,0,0);
-    RadarHUDPositionCenter.X = (HalfRadarHudTexWidth * RadarGuiScale) + RadarHUDOffsetX;
-    RadarHUDPositionCenter.Y = (C.SizeY + RadarHUDOffsetY) - (HalfRadarHudTexHeight * RadarGuiScale);
+    if(InitiallyPositionAbovePlayerHUDOnLowerLeft){
+        RadarHUDPositionCenter.Y = -64 * PlayerHUDScale;//offset vertically upwards by 64 units -- the height of the player frag count HUD element
+    }
+    RadarHUDPositionCenter.X = RadarHUDPositionCenter.X + (HalfRadarHudTexWidth * RadarGuiScale) + RadarHUDOffsetX;
+    RadarHUDPositionCenter.Y = RadarHUDPositionCenter.Y + (C.ClipY + RadarHUDOffsetY) - (HalfRadarHudTexHeight * RadarGuiScale);
+
     class'HUDHelper'.static.DrawTextureAtXY(C, RadarBackgroundTex, RadarHUDPositionCenter.X, RadarHUDPositionCenter.Y, RadarGuiScale, PlayerHUDScale, True, True);
 
     RadarBlipScale = class'HUDHelper'.static.getScaleForTextureToGetDesiredWidth(Indicator_SameLevel, RadarBlipSize);
@@ -262,8 +267,9 @@ defaultproperties {
    ShowAlliesAndEnemiesAsDifferentColors=true,
    IndicateTargetOnDifferentLevel=false,
 
+   InitiallyPositionAbovePlayerHUDOnLowerLeft=true,
    RadarHUDOffsetX=0,
-   RadarHUDOffsetY=-50,
+   RadarHUDOffsetY=0,
    RadarBackgroundTex=Texture'RadarHudBackground',
    Indicator_SameLevel=Texture'RadarIcon_SameLevel',
    Indicator_DiffLevel=Texture'RadarIcon_DiffLevel',

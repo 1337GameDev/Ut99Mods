@@ -139,7 +139,7 @@ function AddConfiguredTargets() {
 
                 if(DoAddTargetIndicator) {
                     listElement = new class'IndicatorHudTargetListElement';
-                    indicatorSettings = new class'IndicatorSettings';
+                    indicatorSettings = new class'HeadHunter.IndicatorSettings';
 
                     listElement.Value = tournamentPlayer;
                     indicatorSettings.MaxViewDistance = 0;
@@ -272,192 +272,196 @@ function AddConfiguredTargets() {
                 }
             }
 
-            //ctf
-            ForEach AllActors(class'FlagBase', flagBase) {
-                DoAddTargetIndicator = true;//we want to add all flag bases -- but that could vary in the future
-                LabelText = "";
-                IndicatorColor = IndicatorHudInstance.default.IndicatorColor;
-                BuiltinIndicatorTextureToUse = 31; //HUDIndicator_Texture_BuiltIn.HudIndicator_Home
-                IsEnemy = false;
+			//ctf
+            if(Level.Game.IsA('CTFGame')) {
+				ForEach AllActors(class'FlagBase', flagBase) {
+					DoAddTargetIndicator = true;//we want to add all flag bases -- but that could vary in the future
+					LabelText = "";
+					IndicatorColor = IndicatorHudInstance.default.IndicatorColor;
+					BuiltinIndicatorTextureToUse = 31; //HUDIndicator_Texture_BuiltIn.HudIndicator_Home
+					IsEnemy = false;
 
-                if((PlayerOwner.PlayerReplicationInfo != None)) {
-                    IsEnemy = PlayerOwner.PlayerReplicationInfo.Team != flagBase.Team;
-                }
+					if((PlayerOwner.PlayerReplicationInfo != None)) {
+						IsEnemy = PlayerOwner.PlayerReplicationInfo.Team != flagBase.Team;
+					}
 
-                if(DoShowLabel){
-                    if(IsEnemy){
-                        LabelText = "Enemy Base";
-                    } else {
-                        LabelText = "Home Base";
-                    }
-                }
+					if(DoShowLabel){
+						if(IsEnemy){
+							LabelText = "Enemy Base";
+						} else {
+							LabelText = "Home Base";
+						}
+					}
 
-                if(flagBase.Team == 0) {
-                    IndicatorColor = class'ColorHelper'.default.RedColor;//red team
-                } else if(flagBase.Team == 1) {
-                    IndicatorColor = class'ColorHelper'.default.BlueColor;//blue team
-                }
+					if(flagBase.Team == 0) {
+						IndicatorColor = class'ColorHelper'.default.RedColor;//red team
+					} else if(flagBase.Team == 1) {
+						IndicatorColor = class'ColorHelper'.default.BlueColor;//blue team
+					}
 
-                if(DoAddTargetIndicator){
-                    listElement = new class'IndicatorHudTargetListElement';
-                    indicatorSettings = new class'IndicatorSettings';
+					if(DoAddTargetIndicator){
+						listElement = new class'IndicatorHudTargetListElement';
+						indicatorSettings = new class'IndicatorSettings';
 
-                    listElement.Value = flagBase;
-                    indicatorSettings.MaxViewDistance = 0;
-                    indicatorSettings.UseCustomColor = true;
-                    indicatorSettings.IndicatorColor = IndicatorColor;
-                    indicatorSettings.ShowTargetDistanceLabels = false;
-                    indicatorSettings.IndicatorLabel = LabelText;
-                    indicatorSettings.ShowIndicatorLabel = DoShowLabel;
-                    indicatorSettings.ShowIndicatorWhenOffScreen = false;
-                    indicatorSettings.ScaleIndicatorSizeToTarget = false;
-                    indicatorSettings.BuiltinIndicatorTexture = BuiltinIndicatorTextureToUse;
-                    listElement.IndicatorSettings = indicatorSettings;
+						listElement.Value = flagBase;
+						indicatorSettings.MaxViewDistance = 0;
+						indicatorSettings.UseCustomColor = true;
+						indicatorSettings.IndicatorColor = IndicatorColor;
+						indicatorSettings.ShowTargetDistanceLabels = false;
+						indicatorSettings.IndicatorLabel = LabelText;
+						indicatorSettings.ShowIndicatorLabel = DoShowLabel;
+						indicatorSettings.ShowIndicatorWhenOffScreen = false;
+						indicatorSettings.ScaleIndicatorSizeToTarget = false;
+						indicatorSettings.BuiltinIndicatorTexture = BuiltinIndicatorTextureToUse;
+						listElement.IndicatorSettings = indicatorSettings;
 
-                    IndicatorHudInstance.AddAdvancedTarget(
-                        listElement,
-                        false
-                    );
-                }
-            }
+						IndicatorHudInstance.AddAdvancedTarget(
+							listElement,
+							false
+						);
+					}
+				}
 
-            ForEach AllActors(class'CTFFlag', flag) {
-                BuiltinIndicatorTextureToUse = 24; //HUDIndicator_Texture_BuiltIn.HudIndicator_Flag2
-                //don't show the flag if it's at home
-                flagHolder = None;
-                if(flag.bHome) {
-                    continue;
-                } else {
-                   flagHolder = flag.Holder;
-                }
+				ForEach AllActors(class'CTFFlag', flag) {
+					BuiltinIndicatorTextureToUse = 24; //HUDIndicator_Texture_BuiltIn.HudIndicator_Flag2
+					//don't show the flag if it's at home
+					flagHolder = None;
+					if(flag.bHome) {
+						continue;
+					} else {
+					   flagHolder = flag.Holder;
+					}
 
-                DoAddTargetIndicator = true;//we want to add all flags -- but this could vary in the future
-                LabelText = "";
-                IndicatorColor = IndicatorHudInstance.default.IndicatorColor;
+					DoAddTargetIndicator = true;//we want to add all flags -- but this could vary in the future
+					LabelText = "";
+					IndicatorColor = IndicatorHudInstance.default.IndicatorColor;
 
-                IsEnemy = false;
+					IsEnemy = false;
 
-                if((PlayerOwner.PlayerReplicationInfo != None)) {
-                    IsEnemy = PlayerOwner.PlayerReplicationInfo.Team != flag.Team;
-                }
+					if((PlayerOwner.PlayerReplicationInfo != None)) {
+						IsEnemy = PlayerOwner.PlayerReplicationInfo.Team != flag.Team;
+					}
 
-                if(DoShowLabel){
-                    if(IsEnemy){
-                        LabelText = "Enemy Flag";
-                    } else {
-                        LabelText = "Our Flag";
-                    }
-                }
+					if(DoShowLabel){
+						if(IsEnemy){
+							LabelText = "Enemy Flag";
+						} else {
+							LabelText = "Our Flag";
+						}
+					}
 
-                switch(flag.Team) {
-                    case 0:
-                        IndicatorColor = class'ColorHelper'.default.RedColor;//red team
-                        break;
-                    case 1:
-                        IndicatorColor = class'ColorHelper'.default.BlueColor;//blue team
-                        break;
-                    case 2:
-                        IndicatorColor = class'ColorHelper'.default.GreenColor;//green team
-                        break;
-                    case 3:
-                        IndicatorColor = class'ColorHelper'.default.GoldColor;//yellow team
-                        break;
-                }
+					switch(flag.Team) {
+						case 0:
+							IndicatorColor = class'ColorHelper'.default.RedColor;//red team
+							break;
+						case 1:
+							IndicatorColor = class'ColorHelper'.default.BlueColor;//blue team
+							break;
+						case 2:
+							IndicatorColor = class'ColorHelper'.default.GreenColor;//green team
+							break;
+						case 3:
+							IndicatorColor = class'ColorHelper'.default.GoldColor;//yellow team
+							break;
+					}
 
-                if(DoAddTargetIndicator){
-                    listElement = new class'IndicatorHudTargetListElement';
-                    indicatorSettings = new class'IndicatorSettings';
+					if(DoAddTargetIndicator){
+						listElement = new class'IndicatorHudTargetListElement';
+						indicatorSettings = new class'IndicatorSettings';
 
-                    if(flag.bHome || flag.Holder == None) {
-                        listElement.Value = flag;
-                    } else {
-                       listElement.Value = flagHolder;
-                    }
+						if(flag.bHome || flag.Holder == None) {
+							listElement.Value = flag;
+						} else {
+						   listElement.Value = flagHolder;
+						}
 
-                    indicatorSettings.MaxViewDistance = 0;
-                    indicatorSettings.UseCustomColor = true;
-                    indicatorSettings.IndicatorColor = IndicatorColor;
-                    indicatorSettings.ShowTargetDistanceLabels = false;
-                    indicatorSettings.IndicatorLabel = LabelText;
-                    indicatorSettings.ShowIndicatorLabel = DoShowLabel;
-                    indicatorSettings.ShowIndicatorWhenOffScreen = false;
-                    indicatorSettings.BlinkIndicator = true;
-                    indicatorSettings.BuiltinIndicatorTexture = BuiltinIndicatorTextureToUse;
-                    listElement.IndicatorSettings = indicatorSettings;
+						indicatorSettings.MaxViewDistance = 0;
+						indicatorSettings.UseCustomColor = true;
+						indicatorSettings.IndicatorColor = IndicatorColor;
+						indicatorSettings.ShowTargetDistanceLabels = false;
+						indicatorSettings.IndicatorLabel = LabelText;
+						indicatorSettings.ShowIndicatorLabel = DoShowLabel;
+						indicatorSettings.ShowIndicatorWhenOffScreen = false;
+						indicatorSettings.BlinkIndicator = true;
+						indicatorSettings.BuiltinIndicatorTexture = BuiltinIndicatorTextureToUse;
+						listElement.IndicatorSettings = indicatorSettings;
 
-                    IndicatorHudInstance.AddAdvancedTarget(
-                        listElement,
-                        false
-                    );
-                }
+						IndicatorHudInstance.AddAdvancedTarget(
+							listElement,
+							false
+						);
+					}
+				}
             }
 
             //domination
-            ForEach AllActors(class'ControlPoint', point) {
-                DoAddTargetIndicator = true;//we want to add all flags -- but this could vary in the future
-                LabelText = "";
-                IndicatorColor = IndicatorHudInstance.default.IndicatorColor;
-                BuiltinIndicatorTextureToUse = 52; //HUDIndicator_Texture_BuiltIn.HudIndicator_Logo_NoTeam
-                IsEnemy = true;
+            if(Level.Game.IsA('Domination')) {
+				ForEach AllActors(class'ControlPoint', point) {
+					DoAddTargetIndicator = true;//we want to add all flags -- but this could vary in the future
+					LabelText = "";
+					IndicatorColor = IndicatorHudInstance.default.IndicatorColor;
+					BuiltinIndicatorTextureToUse = 52; //HUDIndicator_Texture_BuiltIn.HudIndicator_Logo_NoTeam
+					IsEnemy = true;
 
-                IndicatorColor = class'ColorHelper'.default.GrayColor;//Grey - No Team - The default
+					IndicatorColor = class'ColorHelper'.default.GrayColor;//Grey - No Team - The default
 
-                if(point.ControllingTeam != None) {
-                    switch(point.ControllingTeam.TeamIndex) {
-                        case 0:
-                            IndicatorColor = class'ColorHelper'.default.RedColor;//red team
-                            BuiltinIndicatorTextureToUse = 53; //HUDIndicator_Texture_BuiltIn.HudIndicator_Logo_RedTeam
-                            break;
-                        case 1:
-                            IndicatorColor = class'ColorHelper'.default.BlueColor;//blue team
-                            BuiltinIndicatorTextureToUse = 50; //HUDIndicator_Texture_BuiltIn.HudIndicator_Logo_BlueTeam
-                            break;
-                        case 2:
-                            IndicatorColor = class'ColorHelper'.default.GreenColor;//green team
-                            BuiltinIndicatorTextureToUse = 51; //HUDIndicator_Texture_BuiltIn.HudIndicator_Logo_GreenTeam
-                            break;
-                        case 3:
-                            IndicatorColor = class'ColorHelper'.default.GoldColor;//yellow team
-                            BuiltinIndicatorTextureToUse = 54; //HUDIndicator_Texture_BuiltIn.HudIndicator_Logo_YellowTeam
-                            break;
-                    }
+					if(point.ControllingTeam != None) {
+						switch(point.ControllingTeam.TeamIndex) {
+							case 0:
+								IndicatorColor = class'ColorHelper'.default.RedColor;//red team
+								BuiltinIndicatorTextureToUse = 53; //HUDIndicator_Texture_BuiltIn.HudIndicator_Logo_RedTeam
+								break;
+							case 1:
+								IndicatorColor = class'ColorHelper'.default.BlueColor;//blue team
+								BuiltinIndicatorTextureToUse = 50; //HUDIndicator_Texture_BuiltIn.HudIndicator_Logo_BlueTeam
+								break;
+							case 2:
+								IndicatorColor = class'ColorHelper'.default.GreenColor;//green team
+								BuiltinIndicatorTextureToUse = 51; //HUDIndicator_Texture_BuiltIn.HudIndicator_Logo_GreenTeam
+								break;
+							case 3:
+								IndicatorColor = class'ColorHelper'.default.GoldColor;//yellow team
+								BuiltinIndicatorTextureToUse = 54; //HUDIndicator_Texture_BuiltIn.HudIndicator_Logo_YellowTeam
+								break;
+						}
 
-                    if((PlayerOwner.PlayerReplicationInfo != None)) {
-                        IsEnemy = PlayerOwner.PlayerReplicationInfo.Team != point.ControllingTeam.TeamIndex;
-                    }
-                } else {
-                   HasNoTeam = true;
-                }
+						if((PlayerOwner.PlayerReplicationInfo != None)) {
+							IsEnemy = PlayerOwner.PlayerReplicationInfo.Team != point.ControllingTeam.TeamIndex;
+						}
+					} else {
+					   HasNoTeam = true;
+					}
 
-                if(DoShowLabel){
-                    if(IsEnemy){
-                        LabelText = "Capture "$point.PointName$"!";
-                    } else {
-                        LabelText = "Defend "$point.PointName$"!";
-                    }
-                }
+					if(DoShowLabel){
+						if(IsEnemy){
+							LabelText = "Capture "$point.PointName$"!";
+						} else {
+							LabelText = "Defend "$point.PointName$"!";
+						}
+					}
 
-                if(DoAddTargetIndicator){
-                    listElement = new class'IndicatorHudTargetListElement';
-                    indicatorSettings = new class'IndicatorSettings';
+					if(DoAddTargetIndicator){
+						listElement = new class'IndicatorHudTargetListElement';
+						indicatorSettings = new class'IndicatorSettings';
 
-                    listElement.Value = point;
-                    indicatorSettings.MaxViewDistance = 0;
-                    indicatorSettings.UseCustomColor = true;
-                    indicatorSettings.IndicatorColor = IndicatorColor;
-                    indicatorSettings.ShowTargetDistanceLabels = true;
-                    indicatorSettings.IndicatorLabel = LabelText;
-                    indicatorSettings.ShowIndicatorLabel = DoShowLabel;
-                    indicatorSettings.ShowIndicatorWhenOffScreen = false;
-                    indicatorSettings.BlinkIndicator = IsEnemy;
-                    indicatorSettings.BuiltinIndicatorTexture = BuiltinIndicatorTextureToUse;
-                    listElement.IndicatorSettings = indicatorSettings;
+						listElement.Value = point;
+						indicatorSettings.MaxViewDistance = 0;
+						indicatorSettings.UseCustomColor = true;
+						indicatorSettings.IndicatorColor = IndicatorColor;
+						indicatorSettings.ShowTargetDistanceLabels = true;
+						indicatorSettings.IndicatorLabel = LabelText;
+						indicatorSettings.ShowIndicatorLabel = DoShowLabel;
+						indicatorSettings.ShowIndicatorWhenOffScreen = false;
+						indicatorSettings.BlinkIndicator = IsEnemy;
+						indicatorSettings.BuiltinIndicatorTexture = BuiltinIndicatorTextureToUse;
+						listElement.IndicatorSettings = indicatorSettings;
 
-                    IndicatorHudInstance.AddAdvancedTarget(
-                        listElement,
-                        false
-                    );
-                }
+						IndicatorHudInstance.AddAdvancedTarget(
+							listElement,
+							false
+						);
+					}
+				}
             }
         }
 
@@ -466,8 +470,6 @@ function AddConfiguredTargets() {
 
             ForEach AllActors(class'Weapon', wep) {
                 DoAddTargetIndicator = false;
-                indicatorSettings.ShowIndicatorIfInventoryHeld = ShowPowerupsWhenPickedUp;
-
                 IsPowerWeapon = false;
                 LabelText = string(wep.Class);
                 IndicatorColor = IndicatorHudInstance.default.IndicatorColor;

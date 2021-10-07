@@ -2,6 +2,7 @@
 // SkullItem
 //=============================================================================
 class SkullItem extends Pickup;
+
 #exec MESH IMPORT MESH=Skull ANIVFILE=MODELS\Skull\Skull_a.3D DATAFILE=MODELS\Skull\Skull_d.3D X=0 Y=0 Z=0 LODSTYLE=12
 #exec MESHMAP SCALE MESHMAP=Skull X=0.04 Y=0.04 Z=0.08
 
@@ -18,7 +19,6 @@ class SkullItem extends Pickup;
 #exec AUDIO IMPORT FILE="Sounds\Skull\skulls_dropped.wav" NAME="SkullsDropped" GROUP="SkullItem"
 #exec AUDIO IMPORT FILE="Sounds\Skull\skull_bounce.wav" NAME="SkullBounce" GROUP="SkullItem"
 #exec AUDIO IMPORT FILE="Sounds\Skull\skull_pop.wav" NAME="SkullPop" GROUP="SkullItem"
-
 
 var Sound SkullsDroppedSound;
 var Sound BounceSound;
@@ -92,6 +92,8 @@ function bool HandlePickupQuery(inventory Item) {
                 Log("SkullItem: HandlePickupQuery-We already have the max skulls we can carry - "@NumCopies@" Max:"@MaxCount);
             }
 
+            //Log("SkullItem - HandlePickupQuery - Cannot pickup more skulls");
+            Pawn(Owner).ReceiveLocalizedMessage(class'HeadHunterMaxSkullsMessage', 0);
             return true;//if we are at the max skull count
         }
 
@@ -107,7 +109,7 @@ function bool HandlePickupQuery(inventory Item) {
             Pawn(Owner).ReceiveLocalizedMessage(Item.PickupMessageClass, 0, None, None, otherSkull.Class);
         }
 
-        otherSkull.PlaySound(item.PickupSound);
+        otherSkull.PlaySound(item.PickupSound,, 32.0);
 
         collectRemainder = GetRemainderAfterPickup(otherSkull);
         if(bLogToGameLogfile) {
@@ -124,6 +126,11 @@ function bool HandlePickupQuery(inventory Item) {
                 Log("SkullItem: HandlePickupQuery-We will collect MORE than max, so leave skull and transfer count");
                 Log("SkullItem: HandlePickupQuery-Other skull remaining count :"@otherSkull.NumCopies);
             }
+
+             //otherSkull.SetRespawn();
+            //Log("SkullItem - HandlePickupQuery - Cannot pickup more skulls");
+            Pawn(Owner).ReceiveLocalizedMessage(class'HeadHunterMaxSkullsMessage', 0);
+            return true;
         } else {
            //collect less than max
            NumCopies += otherSkull.NumCopies;
@@ -131,10 +138,9 @@ function bool HandlePickupQuery(inventory Item) {
            if(bLogToGameLogfile) {
                Log("SkullItem: HandlePickupQuery-We will collect LESS than max, so pick up the other skull - Current NumCopies:"@NumCopies);
            }
-        }
 
-        otherSkull.SetRespawn();
-        return true;
+           otherSkull.Destroy();
+        }
     } else {
           if(bLogToGameLogfile) {
               Log("SkullItem: HandlePickupQuery-item wasn't a skull - NumCopies:"@NumCopies);
@@ -163,7 +169,9 @@ function PickupFunction(Pawn Other) {
 
      if(NumCopies == 0){
          NumCopies++;
+     }
 
+     if(NumCopies == 1){
          if(UseInventoryToolbelt) {
              toolbelt = class'InventoryToolbelt'.static.GetCurrentPlayerInventoryToolbeltHudInstance(self, PlayerPawn(Owner));
 
@@ -194,8 +202,13 @@ function bool CanPickupMore() {
 }
 
 function Destroyed() {
-    Super.Destroyed();
     DestroyFlame();
+
+    if(HHGameInfo != None) {
+        HHGameInfo.RemoveSkullItemIndicator(self);
+    }
+
+    Super.Destroyed();
 }
 
 function BecomePickup(){
@@ -206,6 +219,10 @@ function BecomePickup(){
 function BecomeItem(){
     Super.BecomeItem();
     DestroyFlame();
+
+    if(HHGameInfo != None) {
+        HHGameInfo.RemoveSkullItemIndicator(self);
+    }
 }
 
 function DropFrom(vector StartLocation) {
@@ -217,7 +234,19 @@ function DropFrom(vector StartLocation) {
 // Give this inventory item to a pawn.
 //
 function GiveTo(Pawn Other) {
-	Super.GiveTo(Other);
+    local SkullItem skull;
+    skull = SkullItem(Other.FindInventoryType(class'HeadHunter.SkullItem') );
+
+	Instigator = Other;
+	BecomeItem();
+
+	if(skull == None){
+	    Other.AddInventory( Self );
+	} else {
+	    skull.NumCopies = Min(skull.NumCopies+Self.NumCopies, skull.MaxCount);
+	}
+
+	GotoState('Idle2');
     //invoke normal pickup logic
     PickupFunction(Other);
 }
@@ -225,6 +254,7 @@ function GiveTo(Pawn Other) {
 simulated function PreBeginPlay() {
     CreateFlame();
     HHGameInfo = HeadHunterGameInfo(Level.Game);
+    Self.NumCopies = Max(Self.NumCopies, 1);
 }
 
 simulated function PostBeginPlay() {
@@ -276,7 +306,8 @@ simulated function CheckForHUDMutator() {
 event float BotDesireability(Pawn Bot) {
     local Inventory Inv;
     local SkullItem skull;
-    local int desirability;
+    local float desirability, PercentageTimeToCollection;
+
     // If we already have the max Skulls, we don't want another one.
     desirability = MaxDesireability;
     Inv = Bot.FindInventoryType(class'SkullItem');
@@ -286,6 +317,15 @@ event float BotDesireability(Pawn Bot) {
 
         if(skull.NumCopies >= skull.MaxCount) {
             desirability = -1;
+        }
+    }
+
+    if(HHGameInfo != None && (desirability > 0)){
+        if(HHGameInfo.SkullsCollectedCountdown > 0){
+            //calculate distance to skull in proportion to time remaining to pickup
+
+            PercentageTimeToCollection = HHGameInfo.SkullsCollectedCountdown / HHGameInfo.SkullCollectTimeInterval;
+            desirability = Max(2, PercentageTimeToCollection*MaxDesireability);
         }
     }
 
@@ -330,11 +370,14 @@ static function int SpawnNumberFromPoint(Actor context, Vector point, int number
    local VectorObj vObj;
    local SkullItemProj skull;
 
+   local HeadHunterGameInfo hhGameInfo;
+
    local Vector skullDir;
    local int numberSkullsSpawned;
 
    PointsToSpawnAt = class'MathHelper'.static.GetNumberEquadistantPointsAroundCircleCenter(Vect(0,0,0), 50.0, numberOfSkulls, Vect(0,0,1));
    if(PointsToSpawnAt != None){
+       hhGameInfo = HeadHunterGameInfo(context.Level.Game);
        le = PointsToSpawnAt.Head;
 
        while(le != None){
@@ -357,11 +400,17 @@ static function int SpawnNumberFromPoint(Actor context, Vector point, int number
                skull.Speed = VSize(skull.Velocity);
            }
 
+           if((hhGameInfo != None) && (hhGameInfo.HHRepInfo != None)) {
+               if(hhGameInfo.HHRepInfo.ShowDroppedSkullIndicators){
+                   hhGameInfo.AddSkullItemProjIndicator(skull);
+               }
+           }
+
            le = le.Next;
        }
 
        if(numberSkullsSpawned > 0){
-           context.PlaySound(class'Headhunter.SkullItem'.default.SkullsDroppedSound, SLOT_Misc, 3.5);
+           context.PlaySound(class'Headhunter.SkullItem'.default.SkullsDroppedSound,, 32.0);
        }
    }
 
@@ -369,6 +418,7 @@ static function int SpawnNumberFromPoint(Actor context, Vector point, int number
 }
 
 defaultproperties {
+     DrawType=DT_Mesh,
      bBounce=true,
      bCanHaveMultipleCopies=true,
      bDisplayableInv=false, //// Item displayed in HUD
@@ -409,5 +459,6 @@ defaultproperties {
      bAlwaysRelevant=true,
 
 	 CheckHUDMutIntervalSecs=0.25,
+	 MaxDesireability=4.0
 }
 

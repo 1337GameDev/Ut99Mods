@@ -15,6 +15,11 @@
 //
 // Switch 4: Left game.
 //	RelatedPRI_1 is the player.
+//
+// Switch 5: Skulls collecting countdown
+//	OptionalObject is an IntObj representing the seconds until skull collection
+//
+// Switch 6: Skulls collecting NOW
 
 
 class HeadHunterMessage expands CriticalEventPlus;
@@ -33,7 +38,7 @@ static function string GetString(
 {
 	switch (Switch)
 	{
-		case 0:
+		case 0://overtime
 			return Default.OverTimeMessage;
 			break;
 		case 1:
@@ -42,13 +47,13 @@ static function string GetString(
 
 			return RelatedPRI_1.PlayerName$class'GameInfo'.Default.EnteredMessage;
 			break;
-		case 2:
+		case 2://entered game
 			if (RelatedPRI_1 == None)
 				return "";
 
 			return RelatedPRI_1.OldName@Default.GlobalNameChange@RelatedPRI_1.PlayerName;
 			break;
-		case 3:
+		case 3://team change
 			if (RelatedPRI_1 == None)
 				return "";
 			if (OptionalObject == None)
@@ -56,11 +61,20 @@ static function string GetString(
 
 			return RelatedPRI_1.PlayerName@Default.NewTeamMessage@TeamInfo(OptionalObject).TeamName$Default.NewTeamMessageTrailer;
 			break;
-		case 4:
+		case 4://left game
 			if (RelatedPRI_1 == None)
 				return "";
 
 			return RelatedPRI_1.PlayerName$class'GameInfo'.Default.LeftMessage;
+			break;
+		case 5://skulls collecting countdown
+			if (OptionalObject == None)
+				return "";
+
+			return "Skulls collecting in "$IntObj(OptionalObject).Value$" seconds.";
+			break;
+		case 6://skulls collecting NOW
+			return "Skulls collected!";
 			break;
 	}
 	return "";

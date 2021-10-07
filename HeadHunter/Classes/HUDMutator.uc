@@ -12,6 +12,8 @@ simulated function PostRender(Canvas C) {
 // Fixed version of the Mutator function
 simulated function RegisterThisHUDMutator() {
     local PlayerPawn P;
+    local bool Registered;
+    local int NumPlayersSearched;
 
     if(bLogToGameLogfile) {
         Log("HUDMutator: RegisterThisHUDMutator:"@self.class);
@@ -23,11 +25,18 @@ simulated function RegisterThisHUDMutator() {
             P.myHUD.HUDMutator = Self;
             bHUDMutator = True;
             PlayerOwner = P;
+
+            Registered = true;
         }
+        NumPlayersSearched++;
     }
 
     if(bLogToGameLogfile) {
         Log("HUDMutator: PlayerPawn Found in loop:"@P);
+    }
+
+    if(!Registered){
+        Log(self.Class$": PlayerPawn.myHud NOT found in any of the ["$NumPlayersSearched$"] PlayerPawns checked.");
     }
 }
 

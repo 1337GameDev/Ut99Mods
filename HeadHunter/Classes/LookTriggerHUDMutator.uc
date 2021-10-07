@@ -77,14 +77,14 @@ simulated final function DrawLookIndicatorLocation(Canvas C, PlayerPawn Player) 
 
         PlayerHUDScale = PlayerHUD.Scale;
 
-        screenMiddleX = C.SizeX / 2.0;
-        screenMiddleY = C.SizeY / 2.0;
+        screenMiddleX = C.ClipX / 2.0;
+        screenMiddleY = C.ClipY / 2.0;
         screenMiddlePos = Vect(0,0,0);
         screenMiddlePos.X = screenMiddleX;
         screenMiddlePos.Y = screenMiddleY;
 
-        screenSmallestDimension = Min(C.SizeX, C.SizeY);
-        screenLargestDimension =  Max(C.SizeX, C.SizeY);
+        screenSmallestDimension = Min(C.ClipX, C.ClipY);
+        screenLargestDimension =  Max(C.ClipX, C.ClipY);
 
         if(TriggerActor.UseHudColorForIndicator) {
             ColorForIndicator = PlayerHUD.HUDColor;
@@ -143,8 +143,8 @@ simulated final function DrawLookIndicatorLocation(Canvas C, PlayerPawn Player) 
         //if the target is behind, then apply special rules to "glue" the indicator to the side of the screen
         //set the position of the indicator like normal
 
-        drawAtScreenX = Clamp(targetScreenXPos, IndicatorXLimitMargin, C.SizeX-IndicatorXLimitMargin);
-        drawAtScreenY = Clamp(targetScreenYPos, IndicatorYLimitMargin, C.SizeY-IndicatorYLimitMargin);
+        drawAtScreenX = Clamp(targetScreenXPos, IndicatorXLimitMargin, C.ClipX-IndicatorXLimitMargin);
+        drawAtScreenY = Clamp(targetScreenYPos, IndicatorYLimitMargin, C.ClipY-IndicatorYLimitMargin);
 
         if(ShowIndicator) {
             C.DrawColor = ColorForIndicator*TriggerActor.BaseAlphaValue;

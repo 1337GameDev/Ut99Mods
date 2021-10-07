@@ -42,13 +42,10 @@ simulated final function DrawWaitMessages(Canvas C, PlayerPawn Player) {
 
     if((Player != None) && (TriggerActor != None)){
         PlayerHUD = ChallengeHUD(Player.myHUD);
-        //C.ViewPort.Actor.PlayerCalcView(Camera, CamLoc, CamRot);
-        //GetAxes(CamRot, camX, camY, camZ);
-
         PlayerHUDScale = PlayerHUD.Scale;
 
-        screenMiddleX = C.SizeX / 2.0;
-        screenMiddleY = C.SizeY / 2.0;
+        screenMiddleX = C.ClipX / 2.0;
+        screenMiddleY = C.ClipY / 2.0;
         screenMiddlePos = Vect(0,0,0);
         screenMiddlePos.X = screenMiddleX;
         screenMiddlePos.Y = screenMiddleY;
@@ -66,7 +63,7 @@ simulated final function DrawWaitMessages(Canvas C, PlayerPawn Player) {
 
 		//if we can activate this trigger, OR we cant AND it's set to show messages after it's been activated
 		if(TriggerActor.CanActivateTrigger() || (!TriggerActor.CanActivateTrigger() && TriggerActor.ShowMessagesAfterActivated)){
-			if(TriggerActor.CanActivateTrigger()){
+			if(TriggerActor.CanActivateTrigger() ){
 				WaitMessageXPos = screenMiddleX;
 				WaitMessageYPos = screenMiddleY;
 

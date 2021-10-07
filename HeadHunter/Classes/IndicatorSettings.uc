@@ -6,7 +6,6 @@ class IndicatorSettings extends Object;
 
 var IndicatorTextureVariations TextureVariations;
 
-
 var byte BuiltinIndicatorTexture;//IndicatorHud.HUDIndicator_Texture_BuiltIn
 
 var bool DisableIndicator;

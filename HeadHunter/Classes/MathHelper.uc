@@ -75,32 +75,23 @@ static final function LinkedList GetNumberEquadistantPointsAroundCircleCenter(Ve
       PointsList = new class'LinkedList';
       RotatedPointsList = new class'LinkedList';
 
-      if(NumPoints == 1) {
-          VectObj = new class'VectorObj';
-          VectObj.Value = CircleCenter;
-          PointsList.Push(VectObj);
-          RotatedPointsList.Push(VectObj);
-      } else if(NumPoints > 1) {
-          for(i=0; i<NumPoints; i++) {
-              NewPoint = Vect(0,0,0);
-              VectObj = new class'VectorObj';
-              RadianFraction = i / float(NumPoints);
-              NumRadians = 2.0 * pi * RadianFraction;
+	  for(i=0; i<NumPoints; i++) {
+		  NewPoint = Vect(0,0,0);
+		  VectObj = new class'VectorObj';
+		  RadianFraction = i / float(NumPoints);
+		  NumRadians = 2.0 * pi * RadianFraction;
 
-              NewPoint.X = CircleCenter.X + (Radius * Cos(NumRadians));
-              NewPoint.Y = CircleCenter.Y + (Radius * Sin(NumRadians));
+		  NewPoint.X = CircleCenter.X + (Radius * Cos(NumRadians));
+		  NewPoint.Y = CircleCenter.Y + (Radius * Sin(NumRadians));
 
-              VectObj.Value = NewPoint;
-              PointsList.Push(VectObj);
+		  VectObj.Value = NewPoint;
+		  PointsList.Push(VectObj);
 
-              //rotated form
-              VectObj = new class'VectorObj';
-              VectObj.Value = NewPoint >> RotationToAlign;
-              RotatedPointsList.Push(VectObj);
-         }
-
-         return RotatedPointsList;
-      }
+		  //rotated form
+		  VectObj = new class'VectorObj';
+		  VectObj.Value = NewPoint >> RotationToAlign;
+		  RotatedPointsList.Push(VectObj);
+	 }
 
       return RotatedPointsList;//if NumPoints == 0, this will be empty, which is fine
 }
