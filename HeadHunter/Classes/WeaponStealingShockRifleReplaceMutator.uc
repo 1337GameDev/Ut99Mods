@@ -16,3 +16,11 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant) {
 
 	return true;
 }
+
+function bool AlwaysKeep(Actor Other) {
+	if (Other.IsA('WeaponStealingShockRifle')) {
+		return true;
+	}
+
+	return Super.AlwaysKeep(Other);
+}

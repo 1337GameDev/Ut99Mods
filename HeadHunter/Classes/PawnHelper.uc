@@ -3,7 +3,7 @@ class PawnHelper extends Actor nousercreate;
 //***************************************
 //Client-predictable eye height
 //***************************************
-static final function float GetEyeHeight( Pawn Other) {
+static final function float GetEyeHeight(Pawn Other) {
 	local float ForceEyeHeight;
 
 	if ((Other.Mesh != None) && Other.HasAnim(Other.AnimSequence) ) {
@@ -57,13 +57,15 @@ static final function HealPawn(Pawn p, int HealingAmount, sound HealSound, strin
 		    p.Health = HealMax;
 		}
 
-        if(HealMessage != ""){
-		    p.ReceiveLocalizedMessage(class'HealMessage', 0, None, None, healStr);
-		}
+        if(HealingAmount > 0) {
+            if((HealMessage != "")){
+		        p.ReceiveLocalizedMessage(class'HealMessage', 0, None, None, healStr);
+		    }
 
-        if(HealSound != None){
-		    p.PlaySound(HealSound,,2.5);
-		    p.MakeNoise(0.2);
+            if(HealSound != None){
+		        p.PlaySound(HealSound,,2.5);
+		        p.MakeNoise(0.2);
+		    }
 		}
 	}
 }

@@ -28,10 +28,20 @@ var() int ProjectileLifetime;
 
 var Name WielderDamageType;
 
+var float BossGibDamageMultiplier;
+var float SmallGibDamageMultiplier;
+var float BaseGibDamage;
+
+var float BaseGibHealMultiplier;//a multiplier based from the damage it deals, for how much it heals
+
+var float DistanceThresholdToAddExtraDamage;//if the target is close enough
+var float ExtraDamageMultiplier;
+
 function HurtOwner(int Damage, Pawn SourceOfDamage){
 	local Pawn PawnOwner;
 	local int PredictedDamaged;
 	local Vector HitLocationToUse;
+	local Inventory Udmg;
 
 	PawnOwner = Pawn(Owner);
     if(PawnOwner == None){
@@ -39,29 +49,22 @@ function HurtOwner(int Damage, Pawn SourceOfDamage){
     }
 
 	Damage = Max(Damage, 0) * PawnOwner.DamageScaling;
+	Udmg = PawnOwner.FindInventoryType(class'Botpack.UDamage');
+
+	if(Udmg != None){//reduce damage to owner via this powerup, as this is the benefit of the power -- a REALLY powerful weapon without instantly killing yourself
+	     Damage = Damage / 3.0;//remove UDamage scaling
+	}
+
 	HitLocationToUse = Location + CollisionHeight * vect(0,0,0.5);
 
 	//hurt owner
 	PredictedDamaged = class'PawnHelper'.static.PredictDamageToPawn(PawnOwner, Damage, SourceOfDamage, HitLocationToUse, Vect(0,0,0), WielderDamageType);
 
-	if(PawnOwner.Health <= PredictedDamaged){
+	if(PawnOwner.Health <= PredictedDamaged) {
 		PawnOwner.gibbedBy(SourceOfDamage);
 	} else {
 		PawnOwner.TakeDamage(Damage, SourceOfDamage, HitLocationToUse, Vect(0,0,0), WielderDamageType);
 	}
-}
-
-function SetAmmoFromHealth(){
-     local int CurrentHealth;
-     if(Owner != None){
-         CurrentHealth = Pawn(Owner).Health;
-         if(AmmoType == None){
-		     // ammocheck
-		     GiveAmmo(Pawn(Owner));
-	     }
-
-         AmmoType.AmmoAmount = CurrentHealth / Min(PrimaryFireHealthCost, 1);
-     }
 }
 
 function UTPlayerChunks SpawnNextChunk(Vector Pos, Rotator AimVector, float ChunkInitialSpeed){
@@ -69,14 +72,12 @@ function UTPlayerChunks SpawnNextChunk(Vector Pos, Rotator AimVector, float Chun
      local int NumberChunksDefined, LoopCounter;
      local class<UTPlayerChunks> ClassToSpawn;
      local UTPlayerChunks SpawnedChunk;
-     local Vector X,Y,Z;
      local Pawn PawnOwner;
-     local Rotator RandRot;
-     local Vector ResultingProjVelocity;
+     local float InitialChunkSpeed;
      local GibberProjectileContext ProjectileContext;
 
      PawnOwner = Pawn(Owner);
-     IsOwnerBoss = class'PawnHelper'.static.IsBoss(Pawn(Owner));
+     IsOwnerBoss = class'PawnHelper'.static.IsBoss(Pawn(Owner)) || true;
 
      if(IsOwnerBoss){
          NumberChunksDefined = ArrayCount(BossChunksToFire);
@@ -92,6 +93,8 @@ function UTPlayerChunks SpawnNextChunk(Vector Pos, Rotator AimVector, float Chun
      //find next valid chunk
      While(true){
           CurrentChunkIdx++;
+          //CurrentChunkIdx = 3;
+
           LoopCounter++;
           CurrentChunkIdx = CurrentChunkIdx % NumberChunksDefined;
 
@@ -109,33 +112,35 @@ function UTPlayerChunks SpawnNextChunk(Vector Pos, Rotator AimVector, float Chun
 
       //now spawn the class if it's valid
       if(ClassToSpawn != None) {
-          AimVector = class'RotatorHelper'.static.RandomlyVaryRotation(AimVector, 25, 25, 25);//yaw, pitch, roll
+          AimVector = class'RotatorHelper'.static.RandomlyVaryRotation(AimVector, 2, 2, 2);//yaw, pitch, roll
           SpawnedChunk = Spawn(ClassToSpawn,,'GibberChunk', Pos, AimVector);
 
           if(SpawnedChunk != None){
 			  SpawnedChunk.Instigator = PawnOwner;
 			  SpawnedChunk.Initfor(self);
+			  InitialChunkSpeed = (ChunkInitialSpeed + FRand() * 600);
+
 			  ProjectileContext = Spawn(class'GibberProjectileContext');
 
               if(ProjectileContext != None){
-			      ProjectileContext.DamageMultiplier = PawnOwner.DamageScaling;
-			      ProjectileContext.DoesFiringHurtOwner = Self.DoesFiringHurtOwner;
+                  ProjectileContext.DoesFiringHurtOwner = DoesFiringHurtOwner;
+                  ProjectileContext.BossGibDamageMultiplier = BossGibDamageMultiplier;
+                  ProjectileContext.SmallGibDamageMultiplier = SmallGibDamageMultiplier;
+                  ProjectileContext.BaseGibDamage = BaseGibDamage;
+                  ProjectileContext.BaseGibHealMultiplier = BaseGibHealMultiplier;
+                  ProjectileContext.DistanceThresholdToAddExtraDamage = DistanceThresholdToAddExtraDamage;
+                  ProjectileContext.ExtraDamageMultiplier = ExtraDamageMultiplier;
+                  ProjectileContext.SourcePawn = PawnOwner;
+                  ProjectileContext.BaseGibSpeed = InitialChunkSpeed;
+
 			      SpawnedChunk.Inventory = ProjectileContext;
+                  ProjectileContext.ChunkOwner = SpawnedChunk;
 			      ProjectileContext.SetOwner(SpawnedChunk);
+
+			      ProjectileContext.SetInMotion();
 			  }
 
 			  SpawnedChunk.LifeSpan = ProjectileLifetime;
-
-			  GetAxes(PawnOwner.ViewRotation, X, Y, Z);
-			  ResultingProjVelocity = X * (Instigator.Velocity Dot X)*0.4 + Vector(Rotation) * (ChunkInitialSpeed + FRand() * 600);
-			  RandRot = class'RotatorHelper'.static.RandomlyVaryRotation(RandRot, 2, 2, 0);//yaw, pitch, roll
-              SpawnedChunk.Velocity = ResultingProjVelocity << RandRot;
-
-			  if(SpawnedChunk.Role == ROLE_Authority) {
-                  if(SpawnedChunk.Region.zone.bWaterZone) {
-					  SpawnedChunk.Velocity *= 0.65;
-				  }
-			  }
           }
       }
 
@@ -190,36 +195,78 @@ function float SuggestAttackStyle() {
 
 	EnemyDist = VSize(Pawn(Owner).Enemy.Location - Owner.Location);
 
-	if(EnemyDist < 1000) {
+	if(EnemyDist <= DistanceThresholdToAddExtraDamage) {
 		return 0.4;
 	} else {
 		return 0;
 	}
 }
 
-function float RateSelf(out int bUseAltMode) {
-	local Pawn P;
+function float SuggestDefenseStyle() {
+	return -0.3;
+}
 
-	if(AmmoType.AmmoAmount <=0) {
-		return -2;
-    }
+function float RateSelf(out int bUseAltMode) {
+    local Pawn P;
+	local float EnemyDist, rating;
+	local vector EnemyDir;
 
 	P = Pawn(Owner);
 
-	if((P.Enemy == None) || (Owner.IsA('Bot') && Bot(Owner).bQuickFire)) {
+	if (P.Enemy == None) {
 		bUseAltMode = 0;
 		return AIRating;
 	}
 
-	if(P.Enemy.IsA('StationaryPawn')) {
+	EnemyDir = P.Enemy.Location - Owner.Location;
+	EnemyDist = VSize(EnemyDir);
+	rating = FClamp(AIRating - (EnemyDist - 450) * 0.001, 0.2, AIRating);
+
+    if ( P.Enemy.IsA('StationaryPawn')) {
 		bUseAltMode = 0;
-		return (AIRating + 0.4);
+		return AIRating + 0.3;
+	}
+
+	if (EnemyDist > 900) {
+		bUseAltMode = 0;
+
+		if (EnemyDist > 2000) {
+			if (EnemyDist > 3500) {
+				return 0.2;
+			}
+
+            return (AIRating - 0.3);
+		}
+		if (EnemyDir.Z < -0.5 * EnemyDist) {
+			bUseAltMode = 0;
+			return (AIRating - 0.3);
+		}
+	} else if ((EnemyDist < 750) && (P.Enemy.Weapon != None) && P.Enemy.Weapon.bMeleeWeapon) {
+		bUseAltMode = 1;
+		return (AIRating + 0.3);
+	} else if ( (EnemyDist < DistanceThresholdToAddExtraDamage) || (EnemyDir.Z > 30) ) {
+		bUseAltMode = 1;
+		return (AIRating + 0.2);
 	} else {
-		bUseAltMode = int( 700 > VSize(P.Enemy.Location - Owner.Location) );
+		bUseAltMode = int(FRand() < 0.65);
+	}
+
+	return rating;
+}
+
+event float BotDesireability(Pawn Bot) {
+    local Inventory Inv;
+    local int desirability;
+
+    // If we already have the max Skulls, we don't want another one.
+    desirability = MaxDesireability;
+    Inv = Bot.FindInventoryType(class'Gibber');
+
+    if(Inv != None) {
+        desirability = -1;
     }
 
-	AIRating *= FMin(Pawn(Owner).DamageScaling, 1.5);
-	return AIRating;
+    return desirability;
 }
 
 simulated function PlayFiring() {
@@ -235,21 +282,28 @@ simulated function PlayAltFiring() {
 }
 
 function AltFire(float Value) {
-    Log("Gibber - AltFire - Level.TimeSeconds:"$Level.TimeSeconds$" - TimeWhenLastAltFire:"$TimeWhenLastAltFire$" - AltFireDelay:"$AltFireDelay);
     if((Level.TimeSeconds - TimeWhenLastAltFire) < AltFireDelay){
         return;
     }
 
-	if(AmmoType == None){
-		// ammocheck
-		GiveAmmo(Pawn(Owner));
-	}
-
 	GotoState('AltFiring');
 	bCanClientFire = true;
-	bPointing=True;
+	bPointing = true;
 	Pawn(Owner).PlayRecoil(FiringSpeed);
 	ClientAltFire(value);
+}
+
+function Fire(float Value) {//copied from TournamentWeapon
+		GotoState('NormalFire');
+		bPointing = true;
+		bCanClientFire = true;
+		ClientFire(Value);
+
+		if (bRapidFire || (FiringSpeed > 0)){
+			Pawn(Owner).PlayRecoil(FiringSpeed);
+		}
+
+		ProjectileFire(ProjectileClass, ProjectileSpeed, bWarnTarget);
 }
 
 function Projectile ShotgunFire() {
@@ -257,6 +311,7 @@ function Projectile ShotgunFire() {
 	local UTPlayerChunks ChunkFired;
 	local Pawn PawnOwner;
 	local bool SpawnedChunks;
+	local GibberProjectileContext projContext;
     SpawnedChunks = false;
 
 	PawnOwner = Pawn(Owner);
@@ -266,25 +321,65 @@ function Projectile ShotgunFire() {
 
 	Start = Owner.Location + CalcDrawOffset() + FireOffset.X * X + FireOffset.Y * Y + FireOffset.Z * Z;
 	AdjustedAim = PawnOwner.AdjustAim(AltFireProjSpeed, Start, AimError, True, bAltWarnTarget);
-	Start = Start - Sin(0)*Y*4 + (Cos(0)*4 - 10.78)*Z;
+
+    Start = Start - Sin(0)*Y*4 + (Cos(0)*4 - 10.78)*Z;
 
 	ChunkFired = SpawnNextChunk(Start, AdjustedAim, AltFireProjSpeed);
 	SpawnedChunks = (ChunkFired != None);
+	if(SpawnedChunks){
+	     projContext = GibberProjectileContext(ChunkFired.Inventory);
+	     if(projContext != None){
+	         projContext.WasFromShotgunBlast = true;
+	     }
+	}
 
     ChunkFired = SpawnNextChunk(Start - (Z*1.2), AdjustedAim, AltFireProjSpeed);
     SpawnedChunks = SpawnedChunks && (ChunkFired != None);
+    if(SpawnedChunks){
+	     projContext = GibberProjectileContext(ChunkFired.Inventory);
+	     if(projContext != None){
+	         projContext.WasFromShotgunBlast = true;
+	     }
+	}
+
     ChunkFired = SpawnNextChunk(Start + 2 * Y + Z, AdjustedAim, AltFireProjSpeed);
     SpawnedChunks = SpawnedChunks && (ChunkFired != None);
+    if(SpawnedChunks){
+	     projContext = GibberProjectileContext(ChunkFired.Inventory);
+	     if(projContext != None){
+	         projContext.WasFromShotgunBlast = true;
+	     }
+	}
+
     ChunkFired = SpawnNextChunk(Start - (Y*1.2), AdjustedAim, AltFireProjSpeed);
     SpawnedChunks = SpawnedChunks && (ChunkFired != None);
+    if(SpawnedChunks){
+	     projContext = GibberProjectileContext(ChunkFired.Inventory);
+	     if(projContext != None){
+	         projContext.WasFromShotgunBlast = true;
+	     }
+	}
+
     ChunkFired = SpawnNextChunk(Start + 2 * Y - Z, AdjustedAim, AltFireProjSpeed);
     SpawnedChunks = SpawnedChunks && (ChunkFired != None);
+    if(SpawnedChunks){
+	     projContext = GibberProjectileContext(ChunkFired.Inventory);
+	     if(projContext != None){
+	         projContext.WasFromShotgunBlast = true;
+	     }
+	}
+
     ChunkFired = SpawnNextChunk(Start + Y - Z, AdjustedAim, AltFireProjSpeed);
     SpawnedChunks = SpawnedChunks && (ChunkFired != None);
+    if(SpawnedChunks){
+	     projContext = GibberProjectileContext(ChunkFired.Inventory);
+	     if(projContext != None){
+	         projContext.WasFromShotgunBlast = true;
+	     }
+	}
 
     if(SpawnedChunks && Self.DoesFiringHurtOwner){
         HurtOwner(AltFireHealthCost, PawnOwner);
-        SetAmmoFromHealth();
     }
 
 	return None;
@@ -323,29 +418,25 @@ state NormalFire {
 		local Vector Start, X,Y,Z;
 		local UTPlayerChunks ChunkFired;
 		local Pawn PawnOwner;
-
         PawnOwner = Pawn(Owner);
+
 		Owner.MakeNoise(PawnOwner.SoundDampening);
 		GetAxes(PawnOwner.ViewRotation,X,Y,Z);
 		Start = PawnOwner.Location + CalcDrawOffset() + FireOffset.X * X + FireOffset.Y * Y + FireOffset.Z * Z;
 		AdjustedAim = PawnOwner.AdjustAim(PrimaryFireProjSpeed, Start, AimError, True, bWarnTarget);
-		Start = Start - Sin(Angle)*Y*4 + (Cos(Angle)*4 - 10.78)*Z;
 
         ChunkFired = SpawnNextChunk(Start, AdjustedAim, PrimaryFireProjSpeed);
 
 		if(Self.DoesFiringHurtOwner && (ChunkFired != None)){
             HurtOwner(PrimaryFireHealthCost, PawnOwner);
-            SetAmmoFromHealth();
         }
 
         return None;
 	}
 
 	function Tick(float DeltaTime) {
-		if (Owner==None) {
+		if (Owner == None) {
 			GotoState('Pickup');
-		} else {
-		    SetAmmoFromHealth();
 		}
 	}
 
@@ -353,7 +444,6 @@ state NormalFire {
 		Super.BeginState();
 		Angle = 0;
 		AmbientGlow = 200;
-		SetAmmoFromHealth();
 	}
 
 	function EndState() {
@@ -361,8 +451,6 @@ state NormalFire {
 		AmbientSound = None;
 		AmbientGlow = 0;
 		OldFlashCount = FlashCount;
-		SetAmmoFromHealth();
-
 		Super.EndState();
 	}
 
@@ -380,18 +468,13 @@ simulated function PlaySpinDown() {
 
 state ClientFiring {
 	simulated function Tick(float DeltaTime) {
-		if((Pawn(Owner) != None) && (Pawn(Owner).bFire != 0) ) {
-			SetAmmoFromHealth();
-		} else {
+		if((Pawn(Owner) == None) || (Pawn(Owner).bFire == 0) ) {
 			AmbientSound = None;
 		}
 	}
 
 	simulated function AnimEnd() {
-		if ((AmmoType != None) && (AmmoType.AmmoAmount <= 0)) {
-			PlaySpinDown();
-			GotoState('');
-		} else if(!bCanClientFire) {
+		if(!bCanClientFire) {
 			GotoState('');
 		} else if(Pawn(Owner) == None) {
 			PlaySpinDown();
@@ -410,10 +493,7 @@ state ClientFiring {
 ///////////////////////////////////////////////////////////////
 state ClientAltFiring {
 	simulated function AnimEnd() {
-		if (AmmoType.AmmoAmount <= 0) {
-			PlayIdleAnim();
-			GotoState('');
-		} else if(!bCanClientFire) {
+		if(!bCanClientFire) {
 			GotoState('');
 		} else if(Pawn(Owner) == None) {
 			PlayIdleAnim();
@@ -461,9 +541,7 @@ state AltFiring {
 			TimeWhenLastAltFire = Level.TimeSeconds;
 
 			Count = 0;
-			SetAmmoFromHealth();
 			Finish();
-			TweenAnim('Idle', 0.1);
 			GotoState('');
 		}
 	}
@@ -472,14 +550,12 @@ state AltFiring {
 		AmbientGlow = 0;
 		AmbientSound = None;
         GotoState('');
-        SetAmmoFromHealth();
 		Super.EndState();
 	}
 
 Begin:
     Owner.PlayOwnedSound(AltFireSound, SLOT_None, Pawn(Owner).SoundDampening);
 	AmbientGlow = 200;
-	SetAmmoFromHealth();
 	FinishAnim();
 	Count = 0;
 }
@@ -487,9 +563,6 @@ Begin:
 state Idle {
 Begin:
 	bPointing=False;
-	if ((AmmoType != None) && (AmmoType.AmmoAmount<=0) ){
-		Pawn(Owner).SwitchToBestWeapon();  //Goto Weapon that has Ammo
-	}
     if(Pawn(Owner).bFire!=0 ) {
         Fire(0.0);
     }
@@ -499,7 +572,6 @@ Begin:
 
 	Disable('AnimEnd');
 	PlayIdleAnim();
-	SetAmmoFromHealth();
 }
 
 ///////////////////////////////////////////////////////////
@@ -523,12 +595,39 @@ simulated function TweenDown() {
 	}
 }
 
+function GiveAmmo(Pawn Other) {
+    return;
+}
+
+//
+// Advanced function which lets existing items in a pawn's inventory
+// prevent the pawn from picking something up. Return true to abort pickup
+// or if item handles the pickup
+function bool HandlePickupQuery(inventory Item) {
+    if(Gibber(Item) != None){
+        return true;
+    }
+
+    if (Inventory == None){
+        return false;
+    }
+
+    return Inventory.HandlePickupQuery(Item);
+}
+
 defaultproperties {
+     BossGibDamageMultiplier=1.5,
+     SmallGibDamageMultiplier=0.8,
+     BaseGibDamage=10,
+     BaseGibHealMultiplier=0.1,
+     DistanceThresholdToAddExtraDamage=300,
+     ExtraDamageMultiplier=10.0,
+
      DownSound=Sound'Botpack.PulseGun.PulseDown'
-     WeaponDescription="Classification: Gib Rifle\n\nPrimary Fire: \n\nSecondary Fire: \n\nTechniques: "
+     WeaponDescription="Classification: Gib Rifle\n\nPrimary Fire: Shoot a chunk of your body (which hurts you) and deal some damage. Pick it up to heal some of the lost health. \n\nSecondary Fire: A deadly shotgun blast -- at a steep cost. \n\nTechniques: Lead and bounce gibs around to hit enemies, or close the gap for a devestating slaughter!"
      InstFlash=-0.150000
      InstFog=(X=139.000000,Y=218.000000,Z=72.000000)
-     AmmoName=Class'Botpack.PAmmo'
+     AmmoName=None,
      PickupAmmoCount=100
      bRapidFire=True
      FireOffset=(X=15.000000,Y=-15.000000,Z=2.000000)
@@ -536,7 +635,7 @@ defaultproperties {
      AltProjectileClass=None
      shakemag=50.000000
      shakevert=5.000000
-     AIRating=0.700000
+     AIRating=0.750000
      RefireRate=0.950000
      AltRefireRate=0.990000
      FireSound=Sound'Botpack.Male.MLand3'
@@ -561,7 +660,7 @@ defaultproperties {
      MuzzleFlashStyle=STY_Translucent
      MuzzleFlashMesh=LodMesh'Botpack.muzzPF3'
      MuzzleFlashScale=0.400000
-     MuzzleFlashTexture=Texture'Botpack.Skins.MuzzyPulse'
+     MuzzleFlashTexture=Texture'Botpack.Skins.TPEFFECT'
      PickupSound=Sound'UnrealShare.Pickups.WeaponPickup'
      Icon=Texture'Botpack.Icons.UsePulse'
      Mesh=LodMesh'Botpack.PulsePickup'

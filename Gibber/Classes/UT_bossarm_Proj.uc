@@ -12,6 +12,19 @@ var() sound    HealSound;
 
 var() bool HasLanded;
 
+var float SpawnedTime;
+
+function PreBeginPlay(){
+    SpawnedTime = Level.TimeSeconds;
+}
+
+function SetHealingAndDamage(GibberProjectileContext projContext) {
+    if(projContext != None){
+        Damage = projContext.BaseGibDamage * projContext.SmallGibDamageMultiplier * projContext.BossGibDamageMultiplier;
+        HealAmount = Damage * projContext.BaseGibHealMultiplier;
+    }
+}
+
 function Touch(Actor Other) {
 	local Pawn p;
 	local GibberProjectileContext projContext;
@@ -25,26 +38,33 @@ function Touch(Actor Other) {
     if((Other.bHidden) || (p == None)){
         return;
     }
-    DamageToUse = Damage;
-    HealingToUse = HealAmount;
     ProjectileHurtOwner = true;
 
     projContext = GibberProjectileContext(Self.Inventory);
     if(projContext != None){
-        DamageToUse *= projContext.DamageMultiplier;
-        HealingToUse *= projContext.DamageMultiplier;
+        SetHealingAndDamage(projContext);
         ProjectileHurtOwner = projContext.DoesFiringHurtOwner;
+
+        if(projContext.WasFromShotgunBlast && ((Level.TimeSeconds-SpawnedTime) <= projContext.LifetimeThresholdToAddExtraDamage) && (VSize(projContext.Location - Self.Location) <= projContext.DistanceThresholdToAddExtraDamage)) {
+            Damage *= projContext.ExtraDamageMultiplier;
+        }
     }
+
+    DamageToUse = Damage;
+    HealingToUse = HealAmount;
 
     //account for hitting the owner, or the
     if((Self.Instigator == p) || (Self.Instigator == p.Owner)){
         if(ProjectileHurtOwner) {
             //heal the originator
-            class'PawnHelper'.static.HealPawn(Self.Instigator, HealingToUse, Self.HealSound, "You picked up one of your gibs: +"$HealingToUse);
+            if(HealingToUse >= 1){
+                class'PawnHelper'.static.HealPawn(Self.Instigator, HealingToUse, Self.HealSound, "You picked up one of your gibs: +"$int(HealingToUse));
+            }
             Self.Destroy();
         }
     } else if(Self.Physics != PHYS_None){
         HitLocationToUse = Location + CollisionHeight * vect(0,0,0.5);
+
 		//apply damage, based on prediction if this will kill the target
 		PredictedDamageTaken = class'PawnHelper'.static.PredictDamageToPawn(p, DamageToUse, Self.Instigator, HitLocationToUse, (MomentumTransfer * Normal(Velocity)), MyDamageType);
 
@@ -92,8 +112,8 @@ singular event BaseChange() {
 }
 
 defaultproperties {
-    Damage=15
-    HealAmount=2
+    Damage=0
+    HealAmount=0
     HealSound=Sound'UnrealShare.Pickups.Health2'
     MomentumTransfer=10000
     MyDamageType=shredded

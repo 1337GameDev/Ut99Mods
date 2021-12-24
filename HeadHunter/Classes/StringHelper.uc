@@ -79,6 +79,5 @@ static final function string ClearSpaces(string Text) {
 	return Text;
 }
 
-defaultproperties
-{
+defaultproperties {
 }

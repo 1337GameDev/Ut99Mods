@@ -12,6 +12,18 @@ var() sound    HealSound;
 
 var() bool HasLanded;
 
+var float SpawnedTime;
+function PreBeginPlay(){
+    SpawnedTime = Level.TimeSeconds;
+}
+
+function SetHealingAndDamage(GibberProjectileContext projContext) {
+    if(projContext != None){
+        Damage = projContext.BaseGibDamage * projContext.BossGibDamageMultiplier;
+        HealAmount = Damage * projContext.BaseGibHealMultiplier;
+    }
+}
+
 function Touch(Actor Other) {
 	local Pawn p;
 	local GibberProjectileContext projContext;
@@ -25,22 +37,29 @@ function Touch(Actor Other) {
     if((Other.bHidden) || (p == None)){
         return;
     }
-    DamageToUse = Damage;
-    HealingToUse = HealAmount;
+
     ProjectileHurtOwner = true;
 
     projContext = GibberProjectileContext(Self.Inventory);
     if(projContext != None){
-        DamageToUse *= projContext.DamageMultiplier;
-        HealingToUse *= projContext.DamageMultiplier;
+        SetHealingAndDamage(projContext);
         ProjectileHurtOwner = projContext.DoesFiringHurtOwner;
+
+        if(projContext.WasFromShotgunBlast && ((Level.TimeSeconds-SpawnedTime) <= projContext.LifetimeThresholdToAddExtraDamage) && (VSize(projContext.Location - Self.Location) <= projContext.DistanceThresholdToAddExtraDamage)) {
+            Damage *= projContext.ExtraDamageMultiplier;
+        }
     }
+
+    DamageToUse = Damage;
+    HealingToUse = HealAmount;
 
     //account for hitting the owner, or the
     if((Self.Instigator == p) || (Self.Instigator == p.Owner)){
         if(ProjectileHurtOwner) {
             //heal the originator
-            class'PawnHelper'.static.HealPawn(Self.Instigator, HealingToUse, Self.HealSound, "You picked up one of your gibs: +"$HealingToUse);
+            if(HealingToUse >= 1){
+                class'PawnHelper'.static.HealPawn(Self.Instigator, HealingToUse, Self.HealSound, "You picked up one of your gibs: +"$int(HealingToUse));
+            }
             Self.Destroy();
         }
     } else if(Self.Physics != PHYS_None){

@@ -89,15 +89,12 @@ simulated function ProcessTouch(Actor Touched, Vector HitLocation) {
             return;
         }
 
-        //Log("SkullItemProj - ProcessTouch - Touched: "$Touched.Name);
         skullInv = Pawn(Touched).FindInventoryType(class'Headhunter.SkullItem');
 
         if(skullInv != None){
             skull = SkullItem(skullInv);
-            //Log("SkullItemProj - ProcessTouch - Pawn already has skull");
             //we already have a skull, so attempt to give us another
             if(skull.CanPickupMore()){
-                //Log("SkullItemProj - ProcessTouch - Pawn \""$Touched.Name$"\" CAN pickup more skulls, as they had:"$skull.NumCopies);
                 skull.NumCopies++;
 
                 if(Level.NetMode != NM_DedicatedServer) {
@@ -106,14 +103,12 @@ simulated function ProcessTouch(Actor Touched, Vector HitLocation) {
 
                 Destroy();
             } else {
-                //Log("SkullItemProj - ProcessTouch - Pawn \""$Touched.Name$"\" can NOT pickup more skulls");
                 touchedPawn.ReceiveLocalizedMessage(class'HeadHunterMaxSkullsMessage', 0);
                 return;
             }
         } else {
-            //Log("SkullItemProj - ProcessTouch - Pawn \""$Touched.Name$"\" did not have any skulls, so pick this up");
-
             skull = Spawn(class'Headhunter.SkullItem',,,Location, Rotation);
+            skull.NumCopies = 1;
             skull.GiveTo(Pawn(Touched));
 
             if(Level.NetMode != NM_DedicatedServer) {
@@ -135,7 +130,7 @@ simulated function HitWall(Vector HitNormal, Actor Wall) {
 	}
 
     PrevVelocity = Velocity;
-	Velocity = 0.75 * (( Velocity dot HitNormal ) * HitNormal * (-2.0) + Velocity);   // Reflect off Wall w/damping
+	Velocity = 0.75 * ((Velocity dot HitNormal) * HitNormal * (-2.0) + Velocity);   // Reflect off Wall w/damping
     speed = VSize(Velocity);
 
     if(speed < 20) {
@@ -144,7 +139,10 @@ simulated function HitWall(Vector HitNormal, Actor Wall) {
         if((degreesBetweenVectors <= AngleForSteepSurface) || (NumSteepBounces >= MaxBouncesOnSteepSurface)){
 		    //create a SkullItem in place of this
 		    skull = Spawn(class'Headhunter.SkullItem',,,Location,Rotation);
-		    if(skull != None){
+
+            if(skull != None){
+		        skull.NumCopies = 1;
+
 		        if((HHGameInfo != None) && (HHGameInfo.HHRepInfo != None) && HHGameInfo.HHRepInfo.ShowDroppedSkullIndicators) {
                     HHGameInfo.AddSkullItemIndicator(skull);
                 }
@@ -198,8 +196,8 @@ defaultproperties {
      LightPeriod=64,
      LightPhase=255,
      bBounce=True,
-     CollisionRadius=18.000000,
-     CollisionHeight=15.000000,
+     CollisionRadius=25.000000,
+     CollisionHeight=25.000000,
      bAlwaysRelevant=True,
      LODBias=8.0,
      LifeSpan=0,

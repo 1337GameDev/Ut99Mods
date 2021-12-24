@@ -65,31 +65,36 @@ function CreateFlame() {
 // Advanced function which lets existing items in a pawn's inventory
 // prevent the pawn from picking something up. Return true to abort pickup
 // or if item handles the pickup
-function bool HandlePickupQuery(inventory Item) {
+function bool HandlePickupQuery(Inventory Item) {
     local int collectRemainder; //The remainder after we try to collect the skulls - to see if we would leave any behind
     local SkullItem otherSkull;
 
     if(bBroadCastLog) {
-        BroadCastMessage("SkullItem: HandlePickupQuery From "@Name);
+        BroadCastMessage("SkullItem["$Self.Name$"]: HandlePickupQuery From "@Name);
     }
 
     if(bLogToGameLogfile) {
-        Log("SkullItem: HandlePickupQuery From"@Name);
+        Log("SkullItem["$Self.Name$"]: HandlePickupQuery From: "$Name$" - Other item:"$Item.Name);
     }
 
     otherSkull = SkullItem(Item);
+
     if(otherSkull != None){
-        if(otherSkull.NumCopies == 0){
+	    if(bLogToGameLogfile){
+            Log("SkullItem["$Self.Name$"] - HandlePickupQuery - Other skull has num copies:"$otherSkull.NumCopies);
+        }
+
+		if(otherSkull.NumCopies == 0){
             otherSkull.NumCopies = 1;
         }
 
         if(bLogToGameLogfile) {
-            Log("SkullItem: HandlePickupQuery-item ["@otherSkull.Name@"] is a skull - NumCopies:"@NumCopies@" Other.NumCopies"@otherSkull.NumCopies@" Max:"@MaxCount);
+            Log("SkullItem["$Self.Name$"]: HandlePickupQuery-item ["@otherSkull.Name@"] is a skull - NumCopies:"@NumCopies@" Other.NumCopies"@otherSkull.NumCopies@" Max:"@MaxCount);
         }
 
         if(!CanPickupMore()) {
             if(bLogToGameLogfile) {
-                Log("SkullItem: HandlePickupQuery-We already have the max skulls we can carry - "@NumCopies@" Max:"@MaxCount);
+                Log("SkullItem["$Self.Name$"]: HandlePickupQuery-We already have the max skulls we can carry - "@NumCopies@" Max:"@MaxCount);
             }
 
             //Log("SkullItem - HandlePickupQuery - Cannot pickup more skulls");
@@ -113,7 +118,7 @@ function bool HandlePickupQuery(inventory Item) {
 
         collectRemainder = GetRemainderAfterPickup(otherSkull);
         if(bLogToGameLogfile) {
-            Log("SkullItem: HandlePickupQuery-collectRemainder:"@collectRemainder);
+            Log("SkullItem["$Self.Name$"]: HandlePickupQuery-collectRemainder: "@collectRemainder);
         }
 
         if(collectRemainder != 0) {//we will collect more than the max
@@ -123,8 +128,8 @@ function bool HandlePickupQuery(inventory Item) {
             otherSkull.NumCopies = collectRemainder;
 
             if(bLogToGameLogfile) {
-                Log("SkullItem: HandlePickupQuery-We will collect MORE than max, so leave skull and transfer count");
-                Log("SkullItem: HandlePickupQuery-Other skull remaining count :"@otherSkull.NumCopies);
+                Log("SkullItem["$Self.Name$"]: HandlePickupQuery-We will collect MORE than max, so leave skull and transfer count");
+                Log("SkullItem["$Self.Name$"]: HandlePickupQuery-Other skull remaining count: "@otherSkull.NumCopies);
             }
 
              //otherSkull.SetRespawn();
@@ -133,17 +138,23 @@ function bool HandlePickupQuery(inventory Item) {
             return true;
         } else {
            //collect less than max
+		   if(bLogToGameLogfile) {
+		       Log("SkullItem["$Self.Name$"] - HandlePickupQuery - collectRemainder==0 - This skull NumCopies: "$NumCopies$" - Other skull NumCopies: "$otherSkull.NumCopies);
+		       Log("SkullItem["$Self.Name$"]: HandlePickupQuery - We will collect LESS than max, so pick up the other skull");
+		   }
+
            NumCopies += otherSkull.NumCopies;
 
            if(bLogToGameLogfile) {
-               Log("SkullItem: HandlePickupQuery-We will collect LESS than max, so pick up the other skull - Current NumCopies:"@NumCopies);
-           }
+		       Log("SkullItem["$Self.Name$"] - HandlePickupQuery - After adding other skull copies - This skull NumCopies: "$NumCopies$" - Other skull NumCopies: "$otherSkull.NumCopies);
+		   }
 
            otherSkull.Destroy();
+           return true;
         }
     } else {
           if(bLogToGameLogfile) {
-              Log("SkullItem: HandlePickupQuery-item wasn't a skull - NumCopies:"@NumCopies);
+              Log("SkullItem["$Self.Name$"]: HandlePickupQuery-item wasn't a skull - This skull NumCopies:"@NumCopies);
           }
     }
 
@@ -168,7 +179,7 @@ function PickupFunction(Pawn Other) {
      }
 
      if(NumCopies == 0){
-         NumCopies++;
+         NumCopies = 1;
      }
 
      if(NumCopies == 1){
@@ -241,7 +252,7 @@ function GiveTo(Pawn Other) {
 	BecomeItem();
 
 	if(skull == None){
-	    Other.AddInventory( Self );
+	    Other.AddInventory(Self);
 	} else {
 	    skull.NumCopies = Min(skull.NumCopies+Self.NumCopies, skull.MaxCount);
 	}
@@ -325,7 +336,9 @@ event float BotDesireability(Pawn Bot) {
             //calculate distance to skull in proportion to time remaining to pickup
 
             PercentageTimeToCollection = HHGameInfo.SkullsCollectedCountdown / HHGameInfo.SkullCollectTimeInterval;
-            desirability = Max(2, PercentageTimeToCollection*MaxDesireability);
+            desirability = FClamp(PercentageTimeToCollection*MaxDesireability, 2, MaxDesireability);
+
+            desirability = MaxDesireability;
         }
     }
 
@@ -418,6 +431,7 @@ static function int SpawnNumberFromPoint(Actor context, Vector point, int number
 }
 
 defaultproperties {
+     bLogToGameLogfile=false,
      DrawType=DT_Mesh,
      bBounce=true,
      bCanHaveMultipleCopies=true,
@@ -439,8 +453,8 @@ defaultproperties {
      Icon=Texture'UnrealShare.Icons.ICONSKULL',
      Physics=PHYS_None,
      SoundRadius=16,
-     CollisionRadius=18.000000,
-     CollisionHeight=15.000000,
+     CollisionRadius=25.000000,
+     CollisionHeight=25.000000,
      bCollideActors=true,
      bCollideWorld=true,
      MaxCount=2,
@@ -454,11 +468,10 @@ defaultproperties {
      LightPhase=255,
      Mass=3.000000,
      bBroadCastLog=false,
-     bLogToGameLogfile=false,
      bRotatingPickup=false,
      bAlwaysRelevant=true,
 
 	 CheckHUDMutIntervalSecs=0.25,
-	 MaxDesireability=4.0
+	 MaxDesireability=5.0
 }
 

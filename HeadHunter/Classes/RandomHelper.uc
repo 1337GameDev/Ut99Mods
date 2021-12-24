@@ -22,10 +22,19 @@ static final function float fRandom_Seed(float Scale, out int RandomSeed) {
 }
 
 static final function Rotator GetRandomRotation(){
-		local Rotator RandRot;
-		RandRot.Pitch = FRand() * 200 - 100;//-100 -> 100
-		RandRot.Yaw = FRand() * 200 - 100;//-100 -> 100
-		RandRot.Roll = FRand() * 200 - 100;//-100 -> 100
+	return class'HeadHunter.RandomHelper'.static.GetRandomRotationWithLimits(65535, 65535, 65535);
+}
 
-		return RandRot;
+static final function Rotator GetRandomRotationWithLimits(optional int maxPitch, optional int maxYaw, optional int maxRoll){
+	local Rotator RandRot;
+
+    maxPitch = Clamp(maxPitch, 1, 65535);
+    maxYaw = Clamp(maxYaw, 1, 65535);
+    maxRoll = Clamp(maxRoll, 1, 65535);
+
+	RandRot.Pitch = Rand(maxPitch);
+	RandRot.Yaw = Rand(maxYaw);
+	RandRot.Roll = Rand(maxRoll);
+
+	return RandRot;
 }

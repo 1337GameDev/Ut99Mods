@@ -1,0 +1,2 @@
+[Public]
+Object=(Name=ItemSpawnerWeapon.ItemSpawnerWeaponGiveMutator,Class=Class,MetaClass=Engine.Mutator,Description="Item Spawner Weapon, Give human players the Item Spawner, a weapon in slot 0 (same as Translocator).")

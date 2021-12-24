@@ -88,6 +88,7 @@ static function InventoryToolbelt GetCurrentPlayerInventoryToolbeltHudInstance(A
 
     foreach context.AllActors(class'PlayerPawn', pp) {
        m = class'HUDMutator'.static.GetHUDMutatorFromPlayerPawnByClassName(pp, 'InventoryToolbelt');
+
        if(m == None){
            continue;
        } else {

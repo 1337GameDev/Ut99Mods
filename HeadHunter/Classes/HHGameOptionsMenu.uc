@@ -23,7 +23,7 @@ function Created() {
 
 	Super.Created();
 
-	ShowDroppedSkullIndicatorsCheckbox = UWindowCheckBox(CreateControl(class'UWindowCheckBox', ControlLeft, ControlOffset, ControlWidth+85, 1));
+	ShowDroppedSkullIndicatorsCheckbox = UWindowCheckBox(CreateControl(class'UWindowCheckBox', ControlLeft+3, ControlOffset, ControlWidth+85, 1));
 	ShowDroppedSkullIndicatorsCheckbox.SetText(ShowDroppedSkullIndicatorsText);
 	ShowDroppedSkullIndicatorsCheckbox.SetHelpText(ShowDroppedSkullIndicatorsHelp);
 	ShowDroppedSkullIndicatorsCheckbox.SetFont(F_Normal);
@@ -31,7 +31,7 @@ function Created() {
 	ShowDroppedSkullIndicatorsCheckbox.Align = TA_Right;
 	ControlOffset += 25;
 
-	ShowPlayersWithSkullThresholdCheckbox = UWindowCheckBox(CreateControl(class'UWindowCheckBox', ControlLeft, ControlOffset, ControlWidth+132, 1));
+	ShowPlayersWithSkullThresholdCheckbox = UWindowCheckBox(CreateControl(class'UWindowCheckBox', ControlLeft+3, ControlOffset, ControlWidth+132, 1));
 	ShowPlayersWithSkullThresholdCheckbox.SetText(ShowPlayersWithSkullThresholdText);
 	ShowPlayersWithSkullThresholdCheckbox.SetHelpText(ShowPlayersWithSkullThresholdHelp);
 	ShowPlayersWithSkullThresholdCheckbox.SetFont(F_Normal);
@@ -39,7 +39,7 @@ function Created() {
 	ShowPlayersWithSkullThresholdCheckbox.Align = TA_Right;
 	ControlOffset += 25;
 
-	SkullThresholdToShowPlayersEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlLeft, ControlOffset, ControlWidth+105, 1));
+	SkullThresholdToShowPlayersEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlLeft+3, ControlOffset, ControlWidth+105, 1));
 	SkullThresholdToShowPlayersEdit.SetText(SkullThresholdToShowPlayersText);
 	SkullThresholdToShowPlayersEdit.SetHelpText(SkullThresholdToShowPlayersHelp);
 	SkullThresholdToShowPlayersEdit.SetFont(F_Normal);
@@ -51,7 +51,7 @@ function Created() {
 	SkullThresholdToShowPlayersEdit.SetValue(String(class'HeadHunterGameInfo'.default.SkullThresholdToShowPlayers));
 	ControlOffset += 25;
 
-	SkullCollectIntervalEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlLeft, ControlOffset, ControlWidth+78, 1));
+	SkullCollectIntervalEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlLeft+3, ControlOffset, ControlWidth+78, 1));
 	SkullCollectIntervalEdit.SetText(SkullCollectIntervalText);
 	SkullCollectIntervalEdit.SetHelpText(SkullCollectIntervalHelp);
 	SkullCollectIntervalEdit.SetFont(F_Normal);
@@ -63,7 +63,7 @@ function Created() {
 	SkullCollectIntervalEdit.SetValue(String(class'HeadHunterGameInfo'.default.SkullCollectTimeInterval));
 	ControlOffset += 25;
 
-	SkullCarryLimitEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlLeft, ControlOffset, ControlWidth+30, 1));
+	SkullCarryLimitEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlLeft+3, ControlOffset, ControlWidth+30, 1));
 	SkullCarryLimitEdit.SetText(SkullCarryLimitText);
 	SkullCarryLimitEdit.SetHelpText(SkullCarryLimitHelp);
 	SkullCarryLimitEdit.SetFont(F_Normal);

@@ -4,6 +4,7 @@
 class ActorNearbyTrigger extends ManualTrigger;
 
 #exec texture Import File=Textures\ActorIcons\ActorNearbyTrigger.bmp Name=ActorNearbyTrigger Mips=Off Flags=2
+var(Logging) bool bLogToGameLogfile;
 
 enum ANT_COMPARISON {
 	ANT_EQUALS,
@@ -50,7 +51,9 @@ function CheckRequiredActors(){
             continue;
         }
 
-        Log("ActorNearbyTrigger - Actor within range:"$a.Name);
+        if(bLogToGameLogfile){
+            Log("ActorNearbyTrigger - Actor within range:"$a.Name);
+        }
 
         for(i=0; i<32; i++) {
             ConsiderActor = true;
@@ -112,5 +115,6 @@ function CheckRequiredActors(){
 DefaultProperties {
    ActorsNeeded(0)=(ActorClass=class'Engine.Mover',ActorTag="TriggerMover1",NumberNeeded=1,QuantityComparison=ANT_EQUALS),
    Texture=Texture'ActorNearbyTrigger',
-   Message="You have triggered this due to nearby actors."
+   Message="You have triggered this due to nearby actors.",
+   bLogToGameLogfile=false
 }

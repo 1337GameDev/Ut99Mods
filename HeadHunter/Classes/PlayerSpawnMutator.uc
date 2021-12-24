@@ -40,7 +40,6 @@ static function PlayerSpawnMutator RegisterToPlayerSpawn(Actor context, PlayerSp
     return mut;
 }
 
-defaultproperties
-{
-FirstSpawnOnly=false
+defaultproperties {
+    FirstSpawnOnly=false
 }

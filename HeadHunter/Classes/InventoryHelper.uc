@@ -57,6 +57,21 @@ static function int GetItemCountInInventory(Pawn pawn, bool IncludeCopies) {
    return Count;
 }
 
+static function LinkedList GetAllItemsOfTypeInInventory(Pawn pawn, class<Inventory> invClass) {
+   local Inventory Inv;
+   local LinkedList List;
+
+   List = new class'LinkedList';
+
+   for(Inv=pawn.Inventory; Inv!=None; Inv=Inv.Inventory) {
+       if(Inv.Class == invClass) {
+            List.Push(Inv);
+       }
+   }
+
+   return List;
+}
+
 static function int DeleteInventoriesOnGround(Actor context, name invClass) {
     local int countDeleted;
     local Inventory inv;

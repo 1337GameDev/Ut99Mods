@@ -4,6 +4,7 @@
 class InventoryTrigger extends ManualTrigger;
 
 #exec texture Import File=Textures\ActorIcons\InventoryTrigger.bmp Name=InventoryTrigger Mips=Off Flags=2
+var(Logging) bool bLogToGameLogfile;
 
 enum IT_COMPARISON {
 	IT_EQUALS,
@@ -144,5 +145,6 @@ DefaultProperties {
 
    InsufficientCountMessage="You do not have the required items.",
    Texture=Texture'InventoryTrigger',
-   Message="You have the required items."
+   Message="You have the required items.",
+   bLogToGameLogfile=false
 }

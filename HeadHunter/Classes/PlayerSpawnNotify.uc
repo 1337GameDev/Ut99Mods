@@ -25,7 +25,6 @@ static function PlayerSpawnNotify RegisterForPlayerSpawnEvent(Actor context, Pla
     return notify;
 }
 
-defaultproperties
-{
-ActorClass=Class'Engine.PlayerPawn'
+defaultproperties {
+    ActorClass=Class'Engine.PlayerPawn'
 }

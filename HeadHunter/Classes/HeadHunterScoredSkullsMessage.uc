@@ -16,7 +16,7 @@ static function string GetString(
 	optional PlayerReplicationInfo RelatedPRI_2,
 	optional Object OptionalObject
 	) {
-	if ((OptionalObject != None)){
+	if ((OptionalObject == None)){
         return "You scored "$SkullItem(OptionalObject).NumCopies$" points!";
 	}
 

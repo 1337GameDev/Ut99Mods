@@ -9,15 +9,12 @@ var float LastChecked;
 
 var FontInfo MyFonts;
 
-function PreBeginPlay()
-{
-    if(bLogToGameLogfile)
-    {
+function PreBeginPlay() {
+    if(bLogToGameLogfile) {
         Log("SkullItemHud: PreBeginPlay");
     }
 
     MyFonts = class'MyFontsSingleton'.static.GetRef(self);
-
 }
 
 simulated function PostRender(canvas C) {
@@ -38,6 +35,7 @@ simulated function PostRender(canvas C) {
                         MySkullItem = SkullItem(inv);
                         break;
                     }
+
                     inv = inv.inventory;
                 }
             }
@@ -51,6 +49,7 @@ simulated function PostRender(canvas C) {
             } else {
                C.DrawColor = SkullCountColor;
             }
+
             C.Style = ERenderStyle.STY_Translucent;
             C.SetPos(C.ClipX - 58 * HudScale, C.ClipY - 133 * HudScale);
             IconScale = class'HudHelper'.static.getScaleForTextureToGetDesiredWidth(MySkullItem.Icon, 64.0);
@@ -71,8 +70,7 @@ simulated function PostRender(canvas C) {
     }
 }
 
-defaultproperties
-{
+defaultproperties {
    bLogToGameLogfile=false
    ShowMaxAmount=false
    UseHudColorForSkullCount=false

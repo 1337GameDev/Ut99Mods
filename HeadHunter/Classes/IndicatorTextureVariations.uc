@@ -1,7 +1,7 @@
 class IndicatorTextureVariations extends Object;
 
 var texture InViewTex;//when the target is on screen
-var texture BehindViewTex;//when it is within the "screen" as the target is behind he player
+var texture BehindViewTex;//the texture to display (or None to show nothing) if the target is behind the player
 
 var texture OffTopLeftViewTex;
 var texture OffLeftViewTex;
@@ -17,7 +17,7 @@ function SetTextures(out texture topLeft, out texture left, out texture bottomLe
         inview = InViewTex;
     }
 
-    if(!ShowIndicatorWhenOffScreen){
+    if(ShowIndicatorWhenOffScreen){
         if(OffTopLeftViewTex != None) {
 			topLeft = OffTopLeftViewTex;
 		}
@@ -50,8 +50,7 @@ function SetTextures(out texture topLeft, out texture left, out texture bottomLe
 			top = OffTopViewTex;
 		}
 
-		if(BehindViewTex != None) {
-			behind = BehindViewTex;
-		}
+		//allow this to be empty, in case a person wants to disable this from showing
+        behind = BehindViewTex;
     }
 }

@@ -3,7 +3,7 @@ Copy macros.doskey file to a location on C:
 Run this:
 reg add "HKCU\Software\Microsoft\Command Processor" /v Autorun /d "doskey /macrofile=\"C:\doskey\macros.doskey\"" /f
 
-This will force the doskey script to run on every instance of cmd.
+This will for the doskey script to run on every instance of cmd.
 
 Verify using:
 reg query "HKCU\Software\Microsoft\Command Processor" /v Autorun

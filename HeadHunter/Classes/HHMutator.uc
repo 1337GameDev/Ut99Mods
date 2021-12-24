@@ -5,6 +5,7 @@
 class HHMutator expands Mutator;
 
 var HeadHunterGameInfo MyGame;
+var bool bLogToGameLogfile;
 
 function PostBeginPlay()
 {
@@ -59,7 +60,10 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 		if ( Other.IsA('TournamentWeapon') )
 			return true;
 
-		log("Found "$Other$" at "$Other.location);
+        if(bLogToGameLogfile){
+		    log("Found "$Other$" at "$Other.location);
+		}
+		
 		//Assert(false);
 		if ( Other.IsA('Stinger') )
 		{
@@ -238,6 +242,6 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 	return true;
 }
 
-defaultproperties
-{
+defaultproperties {
+     bLogToGameLogfile=false
 }

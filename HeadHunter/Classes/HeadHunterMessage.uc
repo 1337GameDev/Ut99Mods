@@ -80,6 +80,23 @@ static function string GetString(
 	return "";
 }
 
+static simulated function ClientReceive( 
+	PlayerPawn P,
+	optional int Switch,
+	optional PlayerReplicationInfo RelatedPRI_1, 
+	optional PlayerReplicationInfo RelatedPRI_2,
+	optional Object OptionalObject
+	)
+{
+	Super.ClientReceive(P, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
+
+	if(Switch == 6) {
+	    Log("HeadHunterMessage - ClientRecieve - collecting skulls message switch");
+	}
+
+	//P.ClientPlaySound(sound'Announcer.FirstBlood',, true);
+}
+
 defaultproperties
 {
      OvertimeMessage="Score tied at the end of regulation. Sudden Death Overtime!!!"

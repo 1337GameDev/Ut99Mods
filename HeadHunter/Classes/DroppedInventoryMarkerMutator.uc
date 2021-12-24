@@ -1,3 +1,9 @@
+//=============================================================================
+// DroppedInventoryMarkerMutator
+//
+// This is a mutator loaded by IndicatorHUD to mark items when they are dropped, via the property 'PlayerLastTouched' as this isn't used by the engine AFAIK (it sets this property to 'Dropped' and '')
+//=============================================================================
+
 class DroppedInventoryMarkerMutator extends Mutator nousercreate;
 
 static function DroppedInventoryMarkerMutator RegisterMutator(Actor context) {
@@ -20,6 +26,8 @@ function bool HandlePickupQuery(Pawn Other, Inventory item, out byte bAllowPicku
 	return DenyPickup;
 }
 
+//ensures any item dropped by a player when they die is marked
+//does not modify any item tossed out, as Inventory.bTossedOut exists to denote that
 function bool PreventDeath(Pawn Killed, Pawn Killer, name damageType, vector HitLocation) {
     local Inventory Inv;
     local bool DeathPrevented;

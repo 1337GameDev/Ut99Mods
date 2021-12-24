@@ -21,9 +21,9 @@ var() config int SkullCollectTimeInterval;//how often are skulls collected to be
 var int SkullsCollectedCountdown;//countdown until skulls will be collected
 
 var bool bHasInitAnyHUDMutators;
-var bool ShowDroppedSkullIndicators;
-var bool ShowPlayersWithSkullThreshold;
-var int SkullThresholdToShowPlayers;
+var config bool ShowDroppedSkullIndicators;
+var config bool ShowPlayersWithSkullThreshold;
+var config int SkullThresholdToShowPlayers;
 
 var IndicatorHudGlobalTargets GlobalIndicatorTargets;
 
@@ -88,22 +88,25 @@ function InitGameReplicationInfo() {
 //warning: this is called before actors' PreBeginPlay (so game replication info is not initialized yet).
 //
 event InitGame(string Options, out string Error) {
-    local int showDroppedSkullInt, showPlayersWithThreshInt;
+    local string InOpt;
 	Super.InitGame(Options, Error);
 
     SkullCollectGoal = GetIntOption(Options, "SkullCollectGoal", SkullCollectGoal);
 	SkullCarryLimit = GetIntOption(Options, "SkullCarryLimit", SkullCarryLimit);
 	SkullCollectTimeInterval = GetIntOption(Options, "SkullCollectTimeInterval", SkullCollectTimeInterval);
-
-    showDroppedSkullInt = GetIntOption(Options, "ShowDroppedSkullIndicators", showDroppedSkullInt);
-    ShowDroppedSkullIndicators = bool(showDroppedSkullInt);
-
-    showPlayersWithThreshInt = GetIntOption(Options, "ShowPlayersWithSkullThreshold", showPlayersWithThreshInt);
-    ShowPlayersWithSkullThreshold = bool(showPlayersWithThreshInt);
-
     SkullThresholdToShowPlayers = GetIntOption(Options, "SkullThresholdToShowPlayers", SkullThresholdToShowPlayers);
+	SkullsCollectedCountdown = SkullCollectTimeInterval;//set the countown to the initial value of the interval
 
-	SkullsCollectedCountdown = SkullCollectTimeInterval;
+	//handle bool values
+    InOpt = ParseOption(Options, "ShowDroppedSkullIndicators");
+    if(InOpt != ""){
+        ShowDroppedSkullIndicators = bool(InOpt);
+    }
+
+    InOpt = ParseOption(Options, "ShowPlayersWithSkullThreshold");
+    if(InOpt != ""){
+        ShowPlayersWithSkullThreshold = bool(InOpt);
+    }
 }
 
 //
@@ -140,7 +143,7 @@ function ScoreKill(pawn Killer, pawn Other) {
 }
 
 // Monitor killed messages for fraglimit
-function Killed(pawn killer, pawn Other, name damageType) {
+function Killed(Pawn killer, Pawn Other, name damageType) {
     local String Message, KillerWeapon, OtherWeapon;
 	local bool bSpecialDamage;
 
@@ -148,8 +151,9 @@ function Killed(pawn killer, pawn Other, name damageType) {
 	local bool bAutoTaunt;
 	local SkullItem existingSkull;
 
-    if (Other == None)
+    if(Other == None){
 		return;
+    }
 
     //spawn skulls from killed player
     NumSkullsToDrop = 1;
@@ -162,58 +166,68 @@ function Killed(pawn killer, pawn Other, name damageType) {
 
     NumSkullsSpawned = class'HeadHunter.SkullItem'.static.SpawnNumberFromPoint(Other, Other.Location, NumSkullsToDrop, Other.Velocity + (Vect(0,0,1) * 150));
 
-	if ( (damageType == 'Decapitated') && (Killer != Other) && (Killer != None) )
-	{
+	if ( (damageType == 'Decapitated') && (Killer != None) && (Killer != Other) ) {
 		if (Level.Game.LocalLog != None)
 			Level.Game.LocalLog.LogSpecialEvent("headshot", Killer.PlayerReplicationInfo.PlayerID, Other.PlayerReplicationInfo.PlayerID);
 		if (Level.Game.WorldLog != None)
 			Level.Game.WorldLog.LogSpecialEvent("headshot", Killer.PlayerReplicationInfo.PlayerID, Other.PlayerReplicationInfo.PlayerID);
-		Killer.ReceiveLocalizedMessage( class'DecapitationMessage' );
+		Killer.ReceiveLocalizedMessage(class'DecapitationMessage');
 	}
 
 	// ---------------------------------------------------------------------- Copied from GameInfo.Killed ---------------------------------------------------------------------- //
 
-	if (Other.bIsPlayer)
-	{
-		if ( (Killer != None) && (!Killer.bIsPlayer) )
-		{
-			Message = Killer.KillMessage(damageType, Other);
-			BroadcastMessage( Message, false, 'DeathMessage');
-			if ( LocalLog != None )
-				LocalLog.LogSuicide(Other, DamageType, None);
-			if ( WorldLog != None )
-				WorldLog.LogSuicide(Other, DamageType, None);
-			return;
-		}
-		if ( (DamageType == 'SpecialDamage') && (SpecialDamageString != "") )
-		{
-			BroadcastMessage( ParseKillMessage(
-					Killer.PlayerReplicationInfo.PlayerName,
-					Other.PlayerReplicationInfo.PlayerName,
-					Killer.Weapon.ItemName,
-					SpecialDamageString
-					),
-				false, 'DeathMessage');
-			bSpecialDamage = True;
-		}
-		Other.PlayerReplicationInfo.Deaths += 1;
-		if ( (Killer == Other) || (Killer == None) )
-		{
-			// Suicide
-			if (damageType == '')
-			{
-				if ( LocalLog != None )
-					LocalLog.LogSuicide(Other, 'Unknown', Killer);
-				if ( WorldLog != None )
-					WorldLog.LogSuicide(Other, 'Unknown', Killer);
-			} else {
-				if ( LocalLog != None )
-					LocalLog.LogSuicide(Other, damageType, Killer);
-				if ( WorldLog != None )
-					WorldLog.LogSuicide(Other, damageType, Killer);
+	if(Other.bIsPlayer) {
+	    if(Killer != None) {
+			if(!Killer.bIsPlayer) {
+				Message = Killer.KillMessage(damageType, Other);
+				BroadcastMessage( Message, false, 'DeathMessage');
+
+				if (LocalLog != None){
+					LocalLog.LogSuicide(Other, DamageType, None);
+				}
+
+				if (WorldLog != None){
+					WorldLog.LogSuicide(Other, DamageType, None);
+				}
+
+				return;
 			}
-			if (!bSpecialDamage)
-			{
+
+			if( (DamageType == 'SpecialDamage') && (SpecialDamageString != "") ){
+				BroadcastMessage( ParseKillMessage(
+						Killer.PlayerReplicationInfo.PlayerName,
+						Other.PlayerReplicationInfo.PlayerName,
+						Killer.Weapon.ItemName,
+						SpecialDamageString
+						),
+					false, 'DeathMessage');
+				bSpecialDamage = True;
+			}
+		}
+
+		Other.PlayerReplicationInfo.Deaths += 1;
+
+        if ((Killer == None) || (Killer == Other)) {
+			// Suicide
+			if (damageType == '') {
+				if (LocalLog != None){
+					LocalLog.LogSuicide(Other, 'Unknown', Killer);
+				}
+
+                if (WorldLog != None){
+					WorldLog.LogSuicide(Other, 'Unknown', Killer);
+				}
+			} else {
+				if (LocalLog != None){
+					LocalLog.LogSuicide(Other, damageType, Killer);
+				}
+
+				if (WorldLog != None){
+					WorldLog.LogSuicide(Other, damageType, Killer);
+				}
+			}
+
+			if (!bSpecialDamage) {
 				if ( damageType == 'Fell' )
 					BroadcastLocalizedMessage(DeathMessageClass, 2, Other.PlayerReplicationInfo, None);
 				else if ( damageType == 'Eradicated' )
@@ -229,20 +243,22 @@ function Killed(pawn killer, pawn Other, name damageType) {
 				else
 					BroadcastLocalizedMessage(DeathMessageClass, 1, Other.PlayerReplicationInfo, None);
 			}
-		}
-		else
-		{
-			if ( Killer.bIsPlayer )
-			{
+		} else {
+			if (Killer.bIsPlayer) {
 				KillerWeapon = "None";
-				if (Killer.Weapon != None)
+
+				if (Killer.Weapon != None){
 					KillerWeapon = Killer.Weapon.ItemName;
+				}
+
 				OtherWeapon = "None";
-				if (Other.Weapon != None)
+
+				if (Other.Weapon != None) {
 					OtherWeapon = Other.Weapon.ItemName;
-				if ( Killer.PlayerReplicationInfo.Team == Other.PlayerReplicationInfo.Team )
-				{
-					if ( LocalLog != None )
+				}
+
+				if (Killer.PlayerReplicationInfo.Team == Other.PlayerReplicationInfo.Team) {
+					if (LocalLog != None) {
 						LocalLog.LogTeamKill(
 							Killer.PlayerReplicationInfo.PlayerID,
 							Other.PlayerReplicationInfo.PlayerID,
@@ -250,7 +266,8 @@ function Killed(pawn killer, pawn Other, name damageType) {
 							OtherWeapon,
 							damageType
 						);
-					if ( WorldLog != None )
+					}
+					if (WorldLog != None){
 						WorldLog.LogTeamKill(
 							Killer.PlayerReplicationInfo.PlayerID,
 							Other.PlayerReplicationInfo.PlayerID,
@@ -258,8 +275,9 @@ function Killed(pawn killer, pawn Other, name damageType) {
 							OtherWeapon,
 							damageType
 						);
+					}
 				} else {
-					if ( LocalLog != None )
+					if (LocalLog != None){
 						LocalLog.LogKill(
 							Killer.PlayerReplicationInfo.PlayerID,
 							Other.PlayerReplicationInfo.PlayerID,
@@ -267,7 +285,9 @@ function Killed(pawn killer, pawn Other, name damageType) {
 							OtherWeapon,
 							damageType
 						);
-					if ( WorldLog != None )
+					}
+
+					if(WorldLog != None) {
 						WorldLog.LogKill(
 							Killer.PlayerReplicationInfo.PlayerID,
 							Other.PlayerReplicationInfo.PlayerID,
@@ -275,9 +295,10 @@ function Killed(pawn killer, pawn Other, name damageType) {
 							OtherWeapon,
 							damageType
 						);
+					}
 				}
-				if (!bSpecialDamage && (Other != None))
-				{
+
+				if (!bSpecialDamage && (Other != None)) {
 					BroadcastRegularDeathMessage(Killer, Other, damageType);
 				}
 			}
@@ -287,25 +308,30 @@ function Killed(pawn killer, pawn Other, name damageType) {
 
 	// ---------------------------------------------------------------------- END of GameInfo.Killed ---------------------------------------------------------------------- //
 
-	if ( Other.Spree > 4 )
+	if (Other.Spree > 4) {
 		EndSpree(Killer, Other);
+	}
+
 	Other.Spree = 0;
 
     //handle spree-based messages
-	if ( !bFirstBlood )
-		if ( Killer.bIsPlayer && (Killer != Other) )
-			if (!Self.IsA('TrainingDM'))
-			{
+	if (!bFirstBlood) {
+		if ((Killer != None) || (Killer != Other) && Killer.bIsPlayer) {
+			if (!Self.IsA('TrainingDM')) {
 				bFirstBlood = True;
-				BroadcastLocalizedMessage( class'FirstBloodMessage', 0, Killer.PlayerReplicationInfo );
+				BroadcastLocalizedMessage(class'FirstBloodMessage', 0, Killer.PlayerReplicationInfo);
 			}
+		}
+	}
 
-	if ( BotConfig.bAdjustSkill && (killer.IsA('PlayerPawn') || Other.IsA('PlayerPawn')) )
-	{
-		if ( killer.IsA('Bot') )
-			BotConfig.AdjustSkill(Bot(killer),true);
-		if ( Other.IsA('Bot') )
+	if ( BotConfig.bAdjustSkill && (((Killer != None) && Killer.IsA('PlayerPawn')) || Other.IsA('PlayerPawn')) ) {
+		if ( killer.IsA('Bot') ) {
+			BotConfig.AdjustSkill(Bot(Killer),true);
+		}
+
+		if ( Other.IsA('Bot') ){
 			BotConfig.AdjustSkill(Bot(Other),false);
+		}
 	}
 
 	if ( Other.bIsPlayer && (Killer != None) && Killer.bIsPlayer && (Killer != Other)
@@ -316,8 +342,9 @@ function Killed(pawn killer, pawn Other, name damageType) {
 			NotifySpree(Killer, Killer.Spree);
 	}
 
-	bAutoTaunt = ((TournamentPlayer(Killer) != None) && TournamentPlayer(Killer).bAutoTaunt);
-	if ( ((Bot(Killer) != None) || bAutoTaunt)
+	bAutoTaunt = (Killer != None) && ((TournamentPlayer(Killer) != None) && TournamentPlayer(Killer).bAutoTaunt);
+
+	if ((Killer != None) && ((Bot(Killer) != None) || bAutoTaunt)
 		&& (Killer != Other) && (DamageType != 'gibbed') && (Killer.Health > 0)
 		&& (Level.TimeSeconds - LastTauntTime > 3) )
 	{
@@ -333,8 +360,10 @@ function Killed(pawn killer, pawn Other, name damageType) {
 		LastTaunt[3] = NextTaunt;
  		killer.SendGlobalMessage(None, 'AUTOTAUNT', NextTaunt, 5);
 	}
-	if ( bRatedGame )
+
+	if (bRatedGame) {
 		RateVs(Other, Killer);
+	}
 }
 
 function Timer() {
@@ -549,11 +578,6 @@ function AdvanceSkullCollectCountdown() {
 			if (pp.IsA('PlayerPawn')) {
 				//PlayerPawn(pp).ClientPlaySound(SkullCollectedSound,,true);
 				PlayerPawn(pp).PlaySound(SkullCollectedSound, SLOT_None, 32, true);
-				if(SkullCollectedSound != None){
-				    Log("Headhunter - AdvanceSkullCollectCountdown - SkullCollectedSound is NOT none.");
-				} else {
-				    Log("Headhunter - AdvanceSkullCollectCountdown - SkullCollectedSound IS none.");
-				}
 			}
 		}
 
@@ -587,7 +611,6 @@ function ScoreSkulls(){
         }
     }
 
-	//bEndOverTime = PointsScored > 0;//end if points were scored
     bEndOverTime = true;
 
 	//check for clear winner now
@@ -656,14 +679,13 @@ function AddPlayerIndicator(Pawn player){
     settings.UseCustomColor = true;
     settings.IndicatorColor = class'ColorHelper'.default.RedColor;
     settings.ShowIndicatorAboveTarget = true;
-    settings.ShowIndicatorsThatAreObscured = true;
     settings.ScaleIndicatorSizeToTarget = false;
-    settings.StaticIndicatorPercentOfMinScreenDimension = 0.05;
 
-    settings.IndicatorOffsetFromTarget = Vect(0,0,550);
     settings.TextureVariations = class'IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
+    settings.TextureVariations.BehindViewTex = None;
     settings.ShowTargetDistanceLabels = false;
     settings.MaxViewDistance = 0;
+    settings.ShowIndicatorWhenOffScreen = true;
 
     le.IndicatorSettings = settings;
     le.IndicatorSettingsModifier = indicatorMod;
@@ -695,16 +717,16 @@ function AddSkullItemIndicator(SkullItem skull){
     settings.UseCustomColor = true;
     settings.IndicatorColor = class'ColorHelper'.default.RedColor;
     settings.ShowIndicatorAboveTarget = true;
-    settings.ShowIndicatorsThatAreObscured = true;
     settings.ShowTargetDistanceLabels = false;
     settings.ScaleIndicatorSizeToTarget = false;
-    settings.BuiltinIndicatorTexture = 73;//HudIndicator_Skull
-    settings.StaticIndicatorPercentOfMinScreenDimension = 0.05;
-    settings.IndicatorOffsetFromTarget = Vect(0,0,350);
+    //settings.BuiltinIndicatorTexture = 73;//HudIndicator_Skull
     settings.MaxViewDistance = 0;
-    settings.TextureVariations = class'IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
+    settings.ShowIndicatorWhenOffScreen = true;
 
-    texVars = class'IndicatorHud'.static.GetTexturesForBuiltInOption(73);
+    settings.TextureVariations = class'IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
+    settings.TextureVariations.BehindViewTex = None;
+
+    texVars = class'IndicatorHud'.static.GetTexturesForBuiltInOption(73);//HudIndicator_Skull
     settings.TextureVariations.InViewTex = texVars.InViewTex;
 
     le.IndicatorSettings = settings;
@@ -733,16 +755,16 @@ function AddSkullItemProjIndicator(SkullItemProj skullProj){
     settings.UseCustomColor = true;
     settings.IndicatorColor = class'ColorHelper'.default.RedColor;
     settings.ShowIndicatorAboveTarget = true;
-    settings.ShowIndicatorsThatAreObscured = true;
     settings.ShowTargetDistanceLabels = false;
     settings.ScaleIndicatorSizeToTarget = false;
-    settings.BuiltinIndicatorTexture = 73;//HudIndicator_Skull
-    settings.StaticIndicatorPercentOfMinScreenDimension = 0.05;
-    settings.IndicatorOffsetFromTarget = Vect(0,0,350);
+    //settings.BuiltinIndicatorTexture = 73;//HudIndicator_Skull
     settings.MaxViewDistance = 0;
-    settings.TextureVariations = class'IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
+    settings.ShowIndicatorWhenOffScreen = true;
 
-    texVars = class'IndicatorHud'.static.GetTexturesForBuiltInOption(73);
+    settings.TextureVariations = class'IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
+    settings.TextureVariations.BehindViewTex = None;
+
+    texVars = class'IndicatorHud'.static.GetTexturesForBuiltInOption(73);//HudIndicator_Skull
     settings.TextureVariations.InViewTex = texVars.InViewTex;
 
     le.IndicatorSettings = settings;
@@ -793,7 +815,7 @@ function string GetRules() {
 	ResultSet = Super.GetRules();
 
 	ResultSet = ResultSet$"\\timelimit\\"$TimeLimit;
-	ResultSet = ResultSet$"\\fraglimit\\"$FragLimit;
+	//ResultSet = ResultSet$"\\fraglimit\\"$FragLimit;//NOT APPLICABLE
 	Resultset = ResultSet$"\\minplayers\\"$MinPlayers;
 	Resultset = ResultSet$"\\changelevels\\"$bChangeLevels;
 	Resultset = ResultSet$"\\tournament\\"$bTournament;

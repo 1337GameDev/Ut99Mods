@@ -46,28 +46,33 @@ static function float getXY(Canvas C, vector location, out int screenX, out int 
     return returnVal;
 }
 
-static function float getActorSizeOnHudFromCollider(Canvas C, Actor target, bool showColliderDebugIndicators) {
+static function float getActorSizeOnHudFromCollider(Canvas C, Actor target, optional bool showColliderDebugIndicators) {
     local Vector topOfActor, bottomOfActor, amountToOffset;
-    local int topX,topY, bottomX,bottomY;
+    local int topX,topY, bottomX,bottomY, middleOfActorX,middleOfActorY;
     local float size;
 
-    topOfActor = vect(0,0,0);
-    bottomOfActor = vect(0,0,0);
+    topOfActor = target.Location;
+    bottomOfActor = target.Location;
 
-    if((target != None) || (C != None)){
-        amountToOffset = vect(0,0,1)*target.CollisionHeight;
+    if((target != None) && (C != None)){
+        amountToOffset = Vect(0,0,1)*target.CollisionHeight;
+		topOfActor += amountToOffset;
+        bottomOfActor -= amountToOffset;
 
-        //factor in rotation of collider?
-        class'HUDHelper'.static.getXY(C, target.ColLocation+amountToOffset, topX, topY);
-        class'HUDHelper'.static.getXY(C, target.ColLocation-amountToOffset, bottomX, bottomY);
+        class'HUDHelper'.static.getXY(C, topOfActor, topX, topY);
+        class'HUDHelper'.static.getXY(C, bottomOfActor, bottomX, bottomY);
         topX = Clamp(topX, 0, C.ClipX);
         topY = Clamp(topY, 0, C.ClipY);
         bottomX = Clamp(bottomX, 0, C.ClipX);
         bottomY = Clamp(bottomY, 0, C.ClipY);
 
         if(showColliderDebugIndicators) {
+		    class'HUDHelper'.static.getXY(C, target.Location, middleOfActorX, middleOfActorY);
+
             C.SetPos(topX, topY);
-            C.DrawText("(X)", True);
+            C.DrawText("(^)", True);
+            C.SetPos(middleOfActorX, middleOfActorY);
+            C.DrawText("(-)", True);
             C.SetPos(bottomX, bottomY);
             C.DrawText("(X)", True);
         }
@@ -84,39 +89,44 @@ static function float getActorSizeOnHudFromCollider(Canvas C, Actor target, bool
     return size;
 }
 
-static function float getActorSizeOnHudFromColliderWithPoints(Canvas C, Actor target, out Vector topOfActor, out Vector bottomOfActor, bool showColliderDebugIndicators) {
-    local Vector amountToOffset;
-    local int topX,topY, bottomX,bottomY;
+static function float getActorSizeOnHudFromColliderWithPoints(Canvas C, Actor target, out Vector topOfActor, out Vector bottomOfActor, optional bool showColliderDebugIndicators) {
+    local Vector amountToOffset, topScreenPos, bottomScreenPos;
+    local int topX,topY, bottomX,bottomY, middleOfActorX,middleOfActorY;
     local float size;
 
-    topOfActor = vect(0,0,0);
-    bottomOfActor = vect(0,0,0);
+    topOfActor = target.Location;
+    bottomOfActor = target.Location;
 
-    if((target != None) || (C != None)){
-        amountToOffset = vect(0,0,1)*(target.CollisionRadius/2.0);
+    if((target != None) && (C != None)){
+        amountToOffset = Vect(0,0,1)*target.CollisionHeight;
+		topOfActor += amountToOffset;
+        bottomOfActor -= amountToOffset;
 
-        //factor in rotation of collider?
-        class'HUDHelper'.static.getXY(C, target.ColLocation+amountToOffset, topX, topY);
-        class'HUDHelper'.static.getXY(C, target.ColLocation-amountToOffset, bottomX, bottomY);
+        class'HUDHelper'.static.getXY(C, topOfActor, topX, topY);
+        class'HUDHelper'.static.getXY(C, bottomOfActor, bottomX, bottomY);
         topX = Clamp(topX, 0, C.ClipX);
         topY = Clamp(topY, 0, C.ClipY);
         bottomX = Clamp(bottomX, 0, C.ClipX);
         bottomY = Clamp(bottomY, 0, C.ClipY);
 
         if(showColliderDebugIndicators) {
+            class'HUDHelper'.static.getXY(C, target.Location, middleOfActorX, middleOfActorY);
+
             C.SetPos(topX, topY);
-            C.DrawText("(X)", True);
+            C.DrawText("(^)", True);
+            C.SetPos(middleOfActorX, middleOfActorY);
+            C.DrawText("(-)", True);
             C.SetPos(bottomX, bottomY);
             C.DrawText("(X)", True);
         }
 
-        topOfActor.x = topX;
-        topOfActor.y = topY;
+        topScreenPos.x = topX;
+        topScreenPos.y = topY;
 
-        bottomOfActor.x = bottomX;
-        bottomOfActor.y = bottomY;
+        bottomScreenPos.x = bottomX;
+        bottomScreenPos.y = bottomY;
 
-        size = VSize(topOfActor-bottomOfActor);
+        size = VSize(topScreenPos-bottomScreenPos);
     }
 
     return size;
@@ -321,7 +331,8 @@ static simulated function DrawTextureCenteredAboveAtXY(Canvas canvas, Texture te
       }
 
       screenX -= xOffset;//shift icon position left half the size of the texture
-      screenY -= (yOffset * 2);//shift icon position up the vertical size of the texture
+	  //screenY -= (yOffset * 2);//shift icon position up the vertical size of the texture
+      screenY -= (yOffset);
 
       canvas.SetPos(screenX, screenY);
       canvas.DrawIcon(Tex, texScale);

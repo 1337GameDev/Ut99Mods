@@ -28,17 +28,17 @@ function IndicatorSettings ModifierFunc(IndicatorHudTargetListElement indicatorL
            if(!indicatorListElement.IndicatorSettings.DisableIndicator){
                 //if player has more than 0 skulls
                 if(numSkulls > 0){
-                    texVars = class'IndicatorHud'.static.GetTexturesForBuiltInOption(73);
+                    texVars = class'IndicatorHud'.static.GetTexturesForBuiltInOption(73, 64);//HudIndicator_Skull
+                    texVars.BehindViewTex = None;
 
-                    indicatorListElement.IndicatorSettings.BuiltinIndicatorTexture = 73;//HudIndicator_Skull
-                    indicatorListElement.IndicatorSettings.TextureVariations.InViewTex = texVars.InViewTex;
+                    indicatorListElement.IndicatorSettings.TextureVariations = texVars;
                     indicatorListElement.IndicatorSettings.ShowIndicatorLabel = true;
                     indicatorListElement.IndicatorSettings.IndicatorLabel = string(numSkulls);
                 } else {
-                    texVars = class'IndicatorHud'.static.GetTexturesForBuiltInOption(64);
+                    texVars = class'IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
+                    texVars.BehindViewTex = None;
 
-                    indicatorListElement.IndicatorSettings.BuiltinIndicatorTexture = 64;//HudIndicator_DownTriangle_Solid
-                    indicatorListElement.IndicatorSettings.TextureVariations.InViewTex = texVars.InViewTex;
+                    indicatorListElement.IndicatorSettings.TextureVariations = texVars;
                     indicatorListElement.IndicatorSettings.ShowIndicatorLabel = false;
                     indicatorListElement.IndicatorSettings.IndicatorLabel = "";
                 }

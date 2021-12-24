@@ -389,11 +389,40 @@ function GiveTo(Pawn Other) {
     }
 }
 
+function GiveAmmo(Pawn Other) {
+	if(AmmoName == None) {
+		return;
+	}
+
+	AmmoType = Ammo(Other.FindInventoryType(AmmoName));
+
+	if(AmmoType != None) {
+		AmmoType.AddAmmo(PickUpAmmoCount);
+	} else {
+		AmmoType = Spawn(AmmoName);	// Create ammo type required
+		Other.AddInventory(AmmoType);		// and add to player's inventory
+		AmmoType.BecomeItem();
+		AmmoType.AmmoAmount = PickUpAmmoCount;
+		AmmoType.GotoState('Idle2');
+	}
+}
+
 function float RateSelf(out int bUseAltMode) {
 	return -2;//give max negative rating so bots don't pick this up
 }
 event float BotDesireability(Pawn Bot){
     return -1;//bots don't want this weapon
+}
+
+// Return the switch priority of the weapon (normally AutoSwitchPriority, but may be
+// modified by environment (or by other factors for bots)
+// COPIED from: Weapon.uc
+function float SwitchPriority() {
+    if(Owner == None) {
+        return AutoSwitchPriority;
+    } else {
+        return Super.SwitchPriority();
+    }
 }
 
 defaultproperties {

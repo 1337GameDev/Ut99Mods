@@ -6,7 +6,6 @@ function PlayerSpawnedCallback(){
     local IndicatorHudTargetListElement listElement;
     local IndicatorSettings indicatorSettings;
 
-    Log("Player Spawned - Attaching Indicator HUD");
     indicatorHud = class'IndicatorHud'.static.SpawnAndRegister(Context);
 
     indicatorHud.PlayerIndicatorTargets = class'ActorHelper'.static.FindAllActorsByTag(Context, 'HudTarget1');
@@ -37,7 +36,5 @@ function PlayerSpawnedCallback(){
     );
 }
 
-DefaultProperties
-{
-
+DefaultProperties {
 }

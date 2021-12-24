@@ -229,6 +229,9 @@ var IndicatorHudGlobalTargets GlobalIndicatorTargets;
 
 var float StaticIndicatorPercentOfMinScreenDimension;//if 'ScaleIndicatorSizeToTarget' is false, then use the static size value, which is a % of the screen width / height (whichever is smallest)
 
+//this is purely for displaying when the target is behind the player, regardless of 'ScaleIndicatorSizeToTarget'
+var float StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen;
+
 var bool ScaleIndicatorSizeToTarget;
 var() bool UseHudColorForIndicators;
 var bool UseTextOnlyIndicators;
@@ -508,7 +511,7 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
           GetAxes(CamRot, camX, camY, camZ);
 
           PlayerHUDScale = PlayerHUD.Scale;
-
+          IndicatorLabelMargin *= PlayerHUDScale;
           screenMiddleX = C.ClipX / 2.0;
           screenMiddleY = C.ClipY / 2.0;
           screenSmallestDimension = Min(C.ClipX, C.ClipY);
@@ -516,6 +519,9 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
 
           While(element!=None && element.Value != None) {
               ShowIndicator = true;
+              targetBottomPos = Vect(0,0,0);
+              targetTopPos = Vect(0,0,0);
+              target = Actor(element.Value);
 
               BehindViewTexture = default.BehindViewTexture;
               OffTopLeftViewTexture = default.OffTopLeftViewTexture;
@@ -536,6 +542,7 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
               ShowIndicatorAboveTarget = default.ShowIndicatorAboveTarget;
               ScaleIndicatorSizeToTarget = default.ScaleIndicatorSizeToTarget;
               StaticIndicatorPercentOfMinScreenDimension = default.StaticIndicatorPercentOfMinScreenDimension;
+              StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen = default.StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen;
               IndicatorOffsetFromTarget = default.IndicatorOffsetFromTarget;
               ShowIndicatorWhenOffScreen = default.ShowIndicatorWhenOffScreen;
               ShowIndicatorIfTargetHidden = default.ShowIndicatorIfTargetHidden;
@@ -555,6 +562,10 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
                   indicatorSettings = IndicatorListElement.IndicatorSettings;
                   ShowIndicator = !indicatorSettings.DisableIndicator;
 
+                  if(bLogToGameLogfile){
+                      Log("IndicatorHud ----------------------- target is:"@target.Name);
+                  }
+
                   if(ShowIndicator){
 					  MaxTargetIndicatorViewDistance = indicatorSettings.MaxViewDistance;
 					  ShowTargetDistanceLabels = indicatorSettings.ShowTargetDistanceLabels;
@@ -563,7 +574,8 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
 					  UseTargetNameForLabel = indicatorSettings.UseTargetNameForLabel;
 					  ScaleIndicatorSizeToTarget = indicatorSettings.ScaleIndicatorSizeToTarget;
 					  StaticIndicatorPercentOfMinScreenDimension = indicatorSettings.StaticIndicatorPercentOfMinScreenDimension;
-					  ShowIndicatorWhenOffScreen = indicatorSettings.ShowIndicatorWhenOffScreen;
+					  StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen = indicatorSettings.StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen;
+                      ShowIndicatorWhenOffScreen = indicatorSettings.ShowIndicatorWhenOffScreen;
 					  ShowIndicatorIfTargetHidden = indicatorSettings.ShowIndicatorIfTargetHidden;
 					  ShowIndicatorIfInventoryHeld = indicatorSettings.ShowIndicatorIfInventoryHeld;
 					  ShowIndicatorIfInventoryNotHeld = indicatorSettings.ShowIndicatorIfInventoryNotHeld;
@@ -571,14 +583,20 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
 
                       ShowIndicatorsThatAreObscured = indicatorSettings.ShowIndicatorsThatAreObscured;
 					  ShowIndicatorAboveTarget = indicatorSettings.ShowIndicatorAboveTarget;
+					  IndicatorLabelsAboveIndicator = indicatorSettings.IndicatorLabelsAboveIndicator;
 					  BlinkIndicator = indicatorSettings.BlinkIndicator;
 					  BaseAlphaValue = indicatorSettings.BaseAlphaValue;
 
-					  if(indicatorSettings.BuiltinIndicatorTexture != HUDIndicator_Texture_BuiltIn.Empty) {
-						  indicatorSettings.TextureVariations = GetTexturesForBuiltInOption(indicatorSettings.BuiltinIndicatorTexture);
+					  //if we havent provided our own texture variations, AND the built-in texture isn't empty
+					  //then load the default texture variations
+                      if((indicatorSettings.TextureVariations == None) && (indicatorSettings.BuiltinIndicatorTexture != HUDIndicator_Texture_BuiltIn.Empty)) {
+						 if(bLogToGameLogfile) {
+						     Log("IndicatorHud - Show indicator - setting texture variations - setting defaults for target:"$target.Name);
+						 }
+						 indicatorSettings.TextureVariations = GetTexturesForBuiltInOption(indicatorSettings.BuiltinIndicatorTexture);
 					  }
 
-					  if(indicatorSettings.TextureVariations != None) {
+					  if(indicatorSettings.TextureVariations != None) {//if texture variations were provided / found (either by default, or we provided none)
 						  indicatorSettings.TextureVariations.SetTextures(
 							  OffTopLeftViewTexture,
 							  OffLeftViewTexture,
@@ -592,6 +610,34 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
 							  IndicatorTexture,
 							  ShowIndicatorWhenOffScreen
 						  );
+
+						  if(indicatorSettings.TextureVariations != None){
+						       if(bLogToGameLogfile){
+						           Log("IndicatorHud - tex variations not empty");
+                               }
+
+					           if(indicatorSettings.TextureVariations.InViewTex != None){
+					                if(bLogToGameLogfile){
+                                        Log("IndicatorHud - indicatorSettings.TextureVariations.InViewTex:"$indicatorSettings.TextureVariations.InViewTex.Name);
+                                        Log("IndicatorHud - IndicatorTexture:"$IndicatorTexture.Name);
+                                    }
+						       } else {
+						            if(bLogToGameLogfile){
+						                Log("IndicatorHud - indicatorSettings.TextureVariations.InViewTex is NONE");
+						            }
+						       }
+
+						       if(indicatorSettings.TextureVariations.BehindViewTex != None){
+						            if(bLogToGameLogfile){
+                                        Log("IndicatorHud - indicatorSettings.TextureVariations.BehindViewTex:"$indicatorSettings.TextureVariations.BehindViewTex.Name);
+                                        Log("IndicatorHud - BehindViewTexture:"$BehindViewTexture.Name);
+						            }
+                               } else {
+                                    if(bLogToGameLogfile){
+						                Log("IndicatorHud - indicatorSettings.TextureVariations.BehindViewTex is NONE");
+						            }
+                               }
+						  }
 					  }
 
 					  if(indicatorSettings.UseCustomColor) {
@@ -601,6 +647,14 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
 					  } else {
 						  ColorForIndicator = IndicatorColor;
 					  }
+                  } else {
+                      if(bLogToGameLogfile){
+                          Log("IndicatorHud - skipping target as indicator hud isn't to be shown from settings");
+                      }
+
+                      //the target is obscured by world geometry, so ignore this target
+                      element = element.Next;
+                      continue;
                   }
               } else {//use standard logic, as dictated by this mutator
                 if(UseHudColorForIndicators) {
@@ -610,11 +664,9 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
                 }
               }
 
-              target = Actor(element.Value);
-
               if(bLogToGameLogfile){
-                  Log("target is:"@target.Name);
-                  Log("Show indicator?"$ShowIndicator);
+                  Log("IndicatorHud - target is: "@target.Name);
+                  Log("IndicatorHud - Show indicator? "$ShowIndicator);
               }
 
               ShowIndicator = ShowIndicator && (ShowIndicatorsThatAreObscured || FastTrace(PlayerOwner.Location, target.Location));
@@ -634,6 +686,9 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
               }
 
               if(!ShowIndicator){
+                  if(bLogToGameLogfile){
+                      Log("IndicatorHud - skipping target as indicator hud isn't to be shown");
+                  }
                   //the target is obscured by world geometry, so ignore this target
                   element = element.Next;
                   continue;
@@ -650,17 +705,21 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
 
               //conditionally set the position if we wnat the indictaor above
               if(ShowIndicatorAboveTarget) {
-                  class'HUDHelper'.static.getActorSizeOnHudFromColliderWithPoints(C, target, targetTopPos, targetBottomPos, false);
+			      class'HUDHelper'.static.getActorSizeOnHudFromColliderWithPoints(C, target, targetTopPos, targetBottomPos);
                   targetPos = targetTopPos;
-              }
-              targetPos = target.Location + IndicatorOffsetFromTarget;
+              } else {
+			      targetPos = target.Location;
+			  }
+
+			  targetPos += IndicatorOffsetFromTarget;
 
               CurrentTargetDistance = VSize(targetPos - CamLoc);
 
               if(((MaxTargetIndicatorViewDistance > 0) && (CurrentTargetDistance > MaxTargetIndicatorViewDistance)) || (PlayerOwner == target)) {
                   element = element.Next;
+
                   if(bLogToGameLogfile){
-                      Log("skipping target");
+                      Log("IndicatorHud - skipping target due to distance");
                   }
 
                   continue;
@@ -669,6 +728,7 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
               class'HUDHelper'.static.getXY(C, targetPos, targetScreenXPos, targetScreenYPos);
 
               C.Font = MyFonts.GetMediumFont(C.ClipX);
+
               if((C.Font == None) && (C.LargeFont != None)){
                   C.Font = C.LargeFont;
               }
@@ -698,8 +758,15 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
               ShowIndicator = (!isOffScreen && !targetIsBehind) || ShowIndicatorWhenOffScreen;
 
               if(bLogToGameLogfile){
-                  Log("target indicator ShowIndicator:"@ShowIndicator);
-                  Log("target indicator isOffScreen:"@isOffScreen@" - targetIsBehind:"@targetIsBehind@" - ShowIndicatorWhenOffScreen:"@ShowIndicatorWhenOffScreen);
+                  Log("IndicatorHud - target indicator ShowIndicator:"@ShowIndicator);
+                  Log("IndicatorHud - target indicator isOffScreen:"@isOffScreen@" - targetIsBehind:"@targetIsBehind@" - ShowIndicatorWhenOffScreen:"@ShowIndicatorWhenOffScreen);
+                  Log("IndicatorHud - indicator off screen vars: offLeft_int-"$offLeft_int$" - offRight_int-"$offRight_int$" - offTop_int-"$offTop_int$" - offBottom_int-"$offBottom_int);
+
+                  if(BehindViewTexture != None){
+                      Log("IndicatorHud - BehindViewTexture:"$BehindViewTexture);
+                  } else {
+                      Log("IndicatorHud - BehindViewTexture: None");
+                  }
               }
 
               offLeft = offLeft_int == 1;
@@ -848,11 +915,11 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
                   IndicatorHeight = IndicatorTextureToDisplay.VSize;
               }
 
-              if(targetIsBehind) {
-                  if(ScaleIndicatorSizeToTarget || !ShowIndicator) {
-                      finalIndicatorScale = 1;
+              if(targetIsBehind || isOffScreen) {
+                  if(!ShowIndicator || (StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen <= 0)) {
+                      finalIndicatorScale = 0;
                   } else {
-                      finalIndicatorScale = class'HUDHelper'.static.getScaleForTextureFromMaxDimension(IndicatorTextureToDisplay, StaticIndicatorPercentOfMinScreenDimension * screenSmallestDimension);
+                      finalIndicatorScale = class'HUDHelper'.static.getScaleForTextureFromMaxDimension(IndicatorTextureToDisplay, StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen * screenSmallestDimension);
                   }
               } else {//then normal scaling
                   if(ScaleIndicatorSizeToTarget){
@@ -862,11 +929,7 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
                       //limit that it can't be more less than 10% the smallest screen dimension, and no more than 25% o the screen dimension
                       targetHudSize = Clamp(targetHudSize, screenLargestDimension * 0.05, screenLargestDimension * 0.25);
 
-                      if(isOffScreen) {
-                          finalIndicatorScale = 1;
-                      } else {
-                          finalIndicatorScale = class'HUDHelper'.static.getScaleForTextureFromMaxDimension(IndicatorTextureToDisplay, targetHudSize);
-                      }
+                      finalIndicatorScale = class'HUDHelper'.static.getScaleForTextureFromMaxDimension(IndicatorTextureToDisplay, targetHudSize);
                   } else {//if we arent scaling indicator based on the target, then use the static scale value
                       finalIndicatorScale = class'HUDHelper'.static.getScaleForTextureFromMaxDimension(IndicatorTextureToDisplay, StaticIndicatorPercentOfMinScreenDimension * screenSmallestDimension);
                   }
@@ -882,6 +945,10 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
 
               //if the target is behind, then apply special rules to "glue" the indicator to the side of the screen
               if(targetIsBehind) {
+			    if(BehindViewTexture == None){
+				    ShowIndicator = false;
+				}
+
                 if(ShowIndicator) {
                     if(UseTriangleQuadrantsForOffScreen){//if this is true, the triangle quadrant booleans have been set prior
                         drawAtScreenX = Clamp(targetScreenXPos, IndicatorXLimitMargin, C.ClipX-IndicatorXLimitMargin);
@@ -924,13 +991,15 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
                       drawAtScreenY = Clamp(targetScreenYPos, IndicatorYLimitMargin, C.ClipY-IndicatorYLimitMargin);
                   }
 
-                  OffsetFromIndicatorPos.X = drawAtScreenX;//zero offset from the indicator
+				  //zero offset from the indicator
+                  OffsetFromIndicatorPos.X = drawAtScreenX;
 
-                  if(IndicatorLabelsAboveIndicator) {
-                      OffsetFromIndicatorPos.Y = drawAtScreenY - IndicatorYLimitMargin;
-                  } else {
-                      OffsetFromIndicatorPos.Y = drawAtScreenY + IndicatorYLimitMargin;
-                  }
+				  //move the offset up / down so we are at the "true" edge of the rendered indicator (it's drawn CENTERED on the x/y coords)
+				  if(IndicatorLabelsAboveIndicator) {
+					  OffsetFromIndicatorPos.Y = drawAtScreenY - IndicatorYLimitMargin;
+				  } else {
+					  OffsetFromIndicatorPos.Y = drawAtScreenY + IndicatorYLimitMargin;
+				  }
 
                   //target is in front, so adjust distance positions
                   if(ShowTargetDistanceLabels){
@@ -951,14 +1020,14 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
                   if(ShowIndicatorLabel){
                       //center label
                       IndicatorLabelXPos = OffsetFromIndicatorPos.X - (IndicatorLabelSizeX / 2.0);
-
+                      //IndicatorLabelSizeY
                       //position above/below previous label/indicator
                       if(IndicatorLabelsAboveIndicator) {
-                          IndicatorLabelYPos = OffsetFromIndicatorPos.Y - IndicatorLabelMargin - IndicatorLabelSizeY;
+                          IndicatorLabelYPos = OffsetFromIndicatorPos.Y - IndicatorLabelSizeY - IndicatorYLimitMargin;
                           OffsetFromIndicatorPos.Y = IndicatorLabelYPos;
                       } else {
-                          IndicatorLabelYPos = OffsetFromIndicatorPos.Y + IndicatorLabelMargin;
-                          OffsetFromIndicatorPos.Y = IndicatorLabelYPos + IndicatorLabelSizeY;
+                          IndicatorLabelYPos = OffsetFromIndicatorPos.Y;
+                          OffsetFromIndicatorPos.Y = IndicatorLabelYPos + IndicatorLabelSizeY + IndicatorYLimitMargin;
                       }
                   }
               }
@@ -969,7 +1038,7 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
                       C.DrawColor = class'ColorHelper'.static.GetWhiteColor();
                       C.SetPos(drawAtScreenX, drawAtScreenY);
                       C.DrawTextClipped(textIndicator);
-                  } else {
+                  } else if(finalIndicatorScale > 0){
                       if(BlinkIndicator){
                           //blend the blink alpha value with the current indicator color (due to the STY_Translucent render mode, BLACK will be transparent, and white will take the color of the indicator)
                           C.DrawColor = C.DrawColor*BlinkAlphaValue;
@@ -978,12 +1047,13 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
                       }
 
                       C.Style = ERenderStyle.STY_Translucent;
+
                       if(bLogToGameLogfile){
                           Log("target indicator rendering with params drawAtScreenX:"@drawAtScreenX@" - drawAtScreenY:"@drawAtScreenY@" - finalIndicatorScale:"@finalIndicatorScale@" - PlayerHUDScale:"@PlayerHUDScale@" - IndicatorTextureToDisplay is None? - "@(IndicatorTextureToDisplay == None)@" - C.Color(R,G,B): ("@C.DrawColor.R@","@C.DrawColor.G@","@C.DrawColor.B@")");
                       }
 
                       if(ShowIndicatorAboveTarget){
-                          class'HUDHelper'.static.DrawTextureCenteredAboveAtXY(C, IndicatorTextureToDisplay, drawAtScreenX, drawAtScreenY, finalIndicatorScale, PlayerHUDScale);
+                          class'HUDHelper'.static.DrawTextureCenteredAboveAtXY(C, IndicatorTextureToDisplay, drawAtScreenX, drawAtScreenY, finalIndicatorScale, PlayerHUDScale, true);
                       } else {
                           class'HUDHelper'.static.DrawTextureAtXY(C, IndicatorTextureToDisplay, drawAtScreenX, drawAtScreenY, finalIndicatorScale, PlayerHUDScale, True);
                       }
@@ -1001,12 +1071,16 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
                   C.Style = ERenderStyle.STY_Normal;
                   C.DrawColor = class'ColorHelper'.static.GetWhiteColor();
 
+				  //handle any unique cases
+				  if(ShowIndicatorAboveTarget){
+				      //IndicatorLabelYPos -= (IndicatorTextureToDisplay.VSize * finalIndicatorScale);
+				  }
+
                   C.SetPos(IndicatorLabelXPos, IndicatorLabelYPos);
                   C.DrawTextClipped(IndicatorLabel);
               }
 
               element = element.Next;
-              bLogToGameLogfile = false;
           }
       }
 }
@@ -1039,12 +1113,19 @@ static function IndicatorHud GetCurrentPlayerIndicatorHudInstance(Actor context)
 }
 
 static function IndicatorHud SpawnAndRegister(Actor context){
+    local Mutator hudMut;
     local IndicatorHud hud;
 
-    hud = context.Spawn(class'IndicatorHud');
-    hud.PlayerIndicatorTargets = new class'LinkedList';
-    hud.GlobalIndicatorTargets = class'IndicatorHudGlobalTargets'.static.GetRef(context);
-    hud.RegisterThisHUDMutator();
+    hudMut = class'HUDMutator'.static.GetHUDMutatorFromAnyPlayerPawnByClass(context, class'IndicatorHud');
+
+    if(hudMut == None){
+        hud = context.Spawn(class'IndicatorHud');
+        hud.PlayerIndicatorTargets = new class'LinkedList';
+        hud.GlobalIndicatorTargets = class'IndicatorHudGlobalTargets'.static.GetRef(context);
+        hud.RegisterThisHUDMutator();
+    } else {
+        hud = IndicatorHud(hudMut);
+    }
 
     return hud;
 }
@@ -1085,174 +1166,179 @@ function VerifyTargets(){
    }
 }
 
-static function IndicatorTextureVariations GetTexturesForBuiltInOption(byte wantedBuiltinTex){//HUDIndicator_Texture_BuiltIn - wantedBuiltinTex
-    local IndicatorTextureVariations texVariation;
+static function IndicatorTextureVariations GetTexturesForBuiltInOption(byte wantedBuiltinTex, optional byte offScreenTexDesired){//HUDIndicator_Texture_BuiltIn - wantedBuiltinTex
+    local IndicatorTextureVariations texVariation, offScreenTexVariation;
     texVariation = new class'IndicatorTextureVariations';
 
+    if(offScreenTexDesired != HUDIndicator_Texture_BuiltIn.Empty){
+        offScreenTexVariation = class'IndicatorHud'.static.GetTexturesForBuiltInOption(offScreenTexDesired);
+    }
+
     switch(wantedBuiltinTex){
-        case HUDIndicator_Texture_BuiltIn.Empty:
+        /*0*/case HUDIndicator_Texture_BuiltIn.Empty:
             texVariation = None;
         break;
         //Icons
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Bolt:
+        /*1*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Bolt:
             texVariation.InViewTex = Texture'HudIndicator_Bolt';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Bomb:
+        /*2*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Bomb:
             texVariation.InViewTex = Texture'HudIndicator_Bomb';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Bullets:
+        /*3*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Bullets:
             texVariation.InViewTex = Texture'HudIndicator_Bullets';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Lever:
+        /*4*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Lever:
             texVariation.InViewTex = Texture'HudIndicator_Lever';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Explosion:
+        /*5*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Explosion:
             texVariation.InViewTex = Texture'HudIndicator_Explosion';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Gun:
+        /*6*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Gun:
             texVariation.InViewTex = Texture'HudIndicator_Gun';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Poison:
+        /*7*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Poison:
             texVariation.InViewTex = Texture'HudIndicator_Poison';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Rocket:
+        /*8*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Rocket:
             texVariation.InViewTex = Texture'HudIndicator_Rocket';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Watch:
+        /*9*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Watch:
             texVariation.InViewTex = Texture'HudIndicator_Watch';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Enforcer:
+        /*10*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Enforcer:
             texVariation.InViewTex = Texture'HudIndicator_Enforcer';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_CircleX_Closed:
+        /*11*/case HUDIndicator_Texture_BuiltIn.HudIndicator_CircleX_Closed:
             texVariation.InViewTex = Texture'HudIndicator_CircleX_Closed';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_CircleX_Open:
+        /*12*/case HUDIndicator_Texture_BuiltIn.HudIndicator_CircleX_Open:
             texVariation.InViewTex = Texture'HudIndicator_CircleX_Open';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Diamond_Closed:
+        /*13*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Diamond_Closed:
             texVariation.InViewTex = Texture'HudIndicator_Diamond_Closed';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Diamond_Open:
+        /*14*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Diamond_Open:
             texVariation.InViewTex = Texture'HudIndicator_Diamond_Open';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Door1:
+        /*15*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Door1:
             texVariation.InViewTex = Texture'HudIndicator_Door1';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Door2:
+        /*16*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Door2:
             texVariation.InViewTex = Texture'HudIndicator_Door2';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Dot:
+        /*17*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Dot:
             texVariation.InViewTex = Texture'HudIndicator_Dot';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Exclaim_Circle_Closed:
+        /*18*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Exclaim_Circle_Closed:
             texVariation.InViewTex = Texture'HudIndicator_Exclaim_Circle_Closed';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Exclaim_Circle_Open:
+        /*19*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Exclaim_Circle_Open:
             texVariation.InViewTex = Texture'HudIndicator_Exclaim_Circle_Open';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Exclaim_Triangle_Closed:
+        /*21*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Exclaim_Triangle_Closed:
             texVariation.InViewTex = Texture'HudIndicator_Exclaim_Triangle_Closed';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Exclaim_Triangle_Open:
+        /*20*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Exclaim_Triangle_Open:
             texVariation.InViewTex = Texture'HudIndicator_Exclaim_Triangle_Open';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Fire:
+        /*22*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Fire:
             texVariation.InViewTex = Texture'HudIndicator_Fire';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Flag:
+        /*23*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Flag:
             texVariation.InViewTex = Texture'HudIndicator_Flag';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Flag2:
+        /*24*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Flag2:
             texVariation.InViewTex = Texture'HudIndicator_Flag2';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Flag3:
+        /*25*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Flag3:
             texVariation.InViewTex = Texture'HudIndicator_Flag3';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Forward_Closed:
+        /*26*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Forward_Closed:
             texVariation.InViewTex = Texture'HudIndicator_Forward_Closed';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Forward_Open:
+        /*27*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Forward_Open:
             texVariation.InViewTex = Texture'HudIndicator_Forward_Open';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Gear:
+        /*28*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Gear:
             texVariation.InViewTex = Texture'HudIndicator_Gear';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Hammer:
+        /*29*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Hammer:
             texVariation.InViewTex = Texture'HudIndicator_Hammer';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Hand:
+        /*30*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Hand:
             texVariation.InViewTex = Texture'HudIndicator_Hand';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Home:
+        /*31*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Home:
             texVariation.InViewTex = Texture'HudIndicator_Home';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Key:
+        /*32*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Key:
             texVariation.InViewTex = Texture'HudIndicator_Key';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Lock:
+        /*33*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Lock:
             texVariation.InViewTex = Texture'HudIndicator_Lock';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Play:
+        /*34*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Play:
             texVariation.InViewTex = Texture'HudIndicator_Play';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Question_Solid:
+        /*36*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Question_Solid:
             texVariation.InViewTex = Texture'HudIndicator_Question_Solid';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Question_Open:
+        /*35*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Question_Open:
             texVariation.InViewTex = Texture'HudIndicator_Question_Open';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Reticle:
+        /*37*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Reticle:
             texVariation.InViewTex = Texture'HudIndicator_Reticle';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Shield:
+        /*38*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Shield:
             texVariation.InViewTex = Texture'HudIndicator_Shield';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Speech:
+        /*39*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Speech:
             texVariation.InViewTex = Texture'HudIndicator_Speech';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Target:
+        /*40*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Target:
             texVariation.InViewTex = Texture'HudIndicator_Target';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Water:
+        /*41*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Water:
             texVariation.InViewTex = Texture'HudIndicator_Water';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Waypoint:
+        /*42*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Waypoint:
             texVariation.InViewTex = Texture'HudIndicator_Waypoint';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Waypoint2:
+        /*43*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Waypoint2:
             texVariation.InViewTex = Texture'HudIndicator_Waypoint2';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Waypoint3:
+        /*44*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Waypoint3:
             texVariation.InViewTex = Texture'HudIndicator_Waypoint3';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Wrench:
+        /*45*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Wrench:
             texVariation.InViewTex = Texture'HudIndicator_Wrench';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_WrenchCircle:
+        /*46*/case HUDIndicator_Texture_BuiltIn.HudIndicator_WrenchCircle:
             texVariation.InViewTex = Texture'HudIndicator_WrenchCircle';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Wrenches:
+        /*47*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Wrenches:
             texVariation.InViewTex = Texture'HudIndicator_Wrenches';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_X:
+        /*48*/case HUDIndicator_Texture_BuiltIn.HudIndicator_X:
             texVariation.InViewTex = Texture'HudIndicator_X';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Knight:
+        /*49*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Knight:
             texVariation.InViewTex = Texture'HudIndicator_Knight';
         break;
 
         //Indicators
-        case HUDIndicator_Texture_BuiltIn.HudElement_Ring:
-            texVariation.InViewTex = Texture'HudIndicator_X';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_X';
+        /*56*/case HUDIndicator_Texture_BuiltIn.HudElement_Ring:
+            texVariation.InViewTex = Texture'HudElement_Ring';
+            texVariation.BehindViewTex = Texture'HudElement_Ring';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudElement_Ring_B:
+        /*57*/case HUDIndicator_Texture_BuiltIn.HudElement_Ring_B:
             texVariation.InViewTex = Texture'HudElement_Ring_B';
-            texVariation.OffBottomViewTex = Texture'HudElement_Ring_B';
+            texVariation.BehindViewTex = Texture'HudElement_Ring_B';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_DownArrow_Open:
+        /*58*/case HUDIndicator_Texture_BuiltIn.HudIndicator_DownArrow_Open:
             texVariation.InViewTex = Texture'HudIndicator_DownArrow_Open';
+            texVariation.BehindViewTex = Texture'HudIndicator_DownArrow_Open';
 
             texVariation.OffBottomLeftViewTex = Texture'HudIndicator_DownArrow_Open_BL';
             texVariation.OffBottomRightViewTex = Texture'HudIndicator_DownArrow_Open_BR';
@@ -1263,9 +1349,9 @@ static function IndicatorTextureVariations GetTexturesForBuiltInOption(byte want
             texVariation.OffTopViewTex = Texture'HudIndicator_DownArrow_Open_U';
             texVariation.OffBottomViewTex = Texture'HudIndicator_DownArrow_Open';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_DownArrow_Solid:
+        /*59*/case HUDIndicator_Texture_BuiltIn.HudIndicator_DownArrow_Solid:
             texVariation.InViewTex = Texture'HudIndicator_DownArrow_Solid';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_DownArrow_Solid';
+            texVariation.BehindViewTex = Texture'HudIndicator_DownArrow_Solid';
 
             texVariation.OffBottomLeftViewTex = Texture'HudIndicator_DownArrow_Solid_BL';
             texVariation.OffBottomRightViewTex = Texture'HudIndicator_DownArrow_Solid_BR';
@@ -1276,9 +1362,9 @@ static function IndicatorTextureVariations GetTexturesForBuiltInOption(byte want
             texVariation.OffTopViewTex = Texture'HudIndicator_DownArrow_Solid_U';
             texVariation.OffBottomViewTex = Texture'HudIndicator_DownArrow_Solid';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_DownClassicArrow_Solid:
+        /*60*/case HUDIndicator_Texture_BuiltIn.HudIndicator_DownClassicArrow_Solid:
             texVariation.InViewTex = Texture'HudIndicator_DownClassicArrow_Solid';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_DownClassicArrow_Solid';
+            texVariation.BehindViewTex = Texture'HudIndicator_DownClassicArrow_Solid';
 
             texVariation.OffBottomLeftViewTex = Texture'HudIndicator_DownClassicArrow_Solid_BL';
             texVariation.OffBottomRightViewTex = Texture'HudIndicator_DownClassicArrow_Solid_BR';
@@ -1289,9 +1375,9 @@ static function IndicatorTextureVariations GetTexturesForBuiltInOption(byte want
             texVariation.OffTopViewTex = Texture'HudIndicator_DownClassicArrow_Solid_U';
             texVariation.OffBottomViewTex = Texture'HudIndicator_DownClassicArrow_Solid';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_DownTab_Closed:
+        /*61*/case HUDIndicator_Texture_BuiltIn.HudIndicator_DownTab_Closed:
             texVariation.InViewTex = Texture'HudIndicator_DownTab_Closed';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_DownTab_Closed';
+            texVariation.BehindViewTex = Texture'HudIndicator_DownTab_Closed';
 
             texVariation.OffBottomLeftViewTex = Texture'HudIndicator_DownTab_Closed_BL';
             texVariation.OffBottomRightViewTex = Texture'HudIndicator_DownTab_Closed_BR';
@@ -1302,9 +1388,9 @@ static function IndicatorTextureVariations GetTexturesForBuiltInOption(byte want
             texVariation.OffTopViewTex = Texture'HudIndicator_DownTab_Closed_U';
             texVariation.OffBottomViewTex = Texture'HudIndicator_DownTab_Closed';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_DownTab_Open:
+        /*62*/case HUDIndicator_Texture_BuiltIn.HudIndicator_DownTab_Open:
             texVariation.InViewTex = Texture'HudIndicator_DownTab_Open';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_DownTab_Open';
+            texVariation.BehindViewTex = Texture'HudIndicator_DownTab_Open';
 
             texVariation.OffBottomLeftViewTex = Texture'HudIndicator_DownTab_Open_BL';
             texVariation.OffBottomRightViewTex = Texture'HudIndicator_DownTab_Open_BR';
@@ -1315,9 +1401,9 @@ static function IndicatorTextureVariations GetTexturesForBuiltInOption(byte want
             texVariation.OffTopViewTex = Texture'HudIndicator_DownTab_Open_U';
             texVariation.OffBottomViewTex = Texture'HudIndicator_DownTab_Open';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_DownTriangle_Solid:
+        /*64*/case HUDIndicator_Texture_BuiltIn.HudIndicator_DownTriangle_Solid:
             texVariation.InViewTex = Texture'HudIndicator_DownTriangle_Solid';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_DownTriangle_Solid';
+            texVariation.BehindViewTex = Texture'HudIndicator_DownTriangle_Solid';
 
             texVariation.OffBottomLeftViewTex = Texture'HudIndicator_DownTriangle_Solid_BL';
             texVariation.OffBottomRightViewTex = Texture'HudIndicator_DownTriangle_Solid_BR';
@@ -1328,9 +1414,9 @@ static function IndicatorTextureVariations GetTexturesForBuiltInOption(byte want
             texVariation.OffTopViewTex = Texture'HudIndicator_DownTriangle_Solid_U';
             texVariation.OffBottomViewTex = Texture'HudIndicator_DownTriangle_Solid';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_DownTriangle_Open:
+        /*63*/case HUDIndicator_Texture_BuiltIn.HudIndicator_DownTriangle_Open:
             texVariation.InViewTex = Texture'HudIndicator_DownTriangle_Open';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_DownTriangle_Open';
+            texVariation.BehindViewTex = Texture'HudIndicator_DownTriangle_Open';
 
             texVariation.OffBottomLeftViewTex = Texture'HudIndicator_DownTriangle_Open_BL';
             texVariation.OffBottomRightViewTex = Texture'HudIndicator_DownTriangle_Open_BR';
@@ -1341,9 +1427,9 @@ static function IndicatorTextureVariations GetTexturesForBuiltInOption(byte want
             texVariation.OffTopViewTex = Texture'HudIndicator_DownTriangle_Open_U';
             texVariation.OffBottomViewTex = Texture'HudIndicator_DownTriangle_Open';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_DownWedge:
+        /*65*/case HUDIndicator_Texture_BuiltIn.HudIndicator_DownWedge:
             texVariation.InViewTex = Texture'HudIndicator_DownWedge';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_DownWedge';
+            texVariation.BehindViewTex = Texture'HudIndicator_DownWedge';
 
             texVariation.OffBottomLeftViewTex = Texture'HudIndicator_DownWedge_BL';
             texVariation.OffBottomRightViewTex = Texture'HudIndicator_DownWedge_BR';
@@ -1354,43 +1440,60 @@ static function IndicatorTextureVariations GetTexturesForBuiltInOption(byte want
             texVariation.OffTopViewTex = Texture'HudIndicator_DownWedge_U';
             texVariation.OffBottomViewTex = Texture'HudIndicator_DownWedge';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Nav_Closed:
+        /*66*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Nav_Closed:
             texVariation.InViewTex = Texture'HudIndicator_Nav_Closed';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_Nav_Closed';
+            texVariation.BehindViewTex = Texture'HudIndicator_Nav_Closed';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Nav_Open:
+        /*67*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Nav_Open:
             texVariation.InViewTex = Texture'HudIndicator_Nav_Open';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_Nav_Open';
+            texVariation.BehindViewTex = Texture'HudIndicator_Nav_Open';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_SelectionBox:
+        /*68*/case HUDIndicator_Texture_BuiltIn.HudIndicator_SelectionBox:
             texVariation.InViewTex = Texture'HudIndicator_SelectionBox';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_SelectionBox';
+            texVariation.BehindViewTex = Texture'HudIndicator_SelectionBox';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_SelectionBox2:
+        /*69*/case HUDIndicator_Texture_BuiltIn.HudIndicator_SelectionBox2:
             texVariation.InViewTex = Texture'HudIndicator_SelectionBox2';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_SelectionBox2';
+            texVariation.BehindViewTex = Texture'HudIndicator_SelectionBox2';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Square_Open:
+        /*70*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Square_Open:
             texVariation.InViewTex = Texture'HudIndicator_Square_Open';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_Square_Open';
+            texVariation.BehindViewTex = Texture'HudIndicator_Square_Open';
         break;
 
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_SkullAndBones:
+        /*71*/case HUDIndicator_Texture_BuiltIn.HudIndicator_SkullAndBones:
             texVariation.InViewTex = Texture'HudIndicator_SkullAndBones';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_SkullAndBones';
+            texVariation.BehindViewTex = Texture'HudIndicator_SkullAndBones';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Bones:
+        /*72*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Bones:
             texVariation.InViewTex = Texture'HudIndicator_Bones';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_Bones';
+            texVariation.BehindViewTex = Texture'HudIndicator_Bones';
         break;
-        case HUDIndicator_Texture_BuiltIn.HudIndicator_Skull:
+        /*73*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Skull:
             texVariation.InViewTex = Texture'HudIndicator_Skull';
-            texVariation.OffBottomViewTex = Texture'HudIndicator_Skull';
+            texVariation.BehindViewTex = Texture'HudIndicator_Skull';
         break;
 
         default:
             texVariation.InViewTex = Texture'HudElement_Ring_B';
-            texVariation.OffBottomViewTex = Texture'HudElement_Ring_B';
+            texVariation.BehindViewTex = Texture'HudElement_Ring_B';
+    }
+
+    if(offScreenTexVariation != None){
+         //add these textures as the "off screen" textures
+         if(texVariation == None){//in case no texture selected / found
+              texVariation = offScreenTexVariation;
+              texVariation.InViewTex = None;
+         } else {
+             texVariation.OffBottomLeftViewTex = offScreenTexVariation.OffBottomLeftViewTex;
+             texVariation.OffBottomRightViewTex = offScreenTexVariation.OffBottomRightViewTex;
+             texVariation.OffLeftViewTex = offScreenTexVariation.OffLeftViewTex;
+             texVariation.OffRightViewTex = offScreenTexVariation.OffRightViewTex;
+             texVariation.OffTopLeftViewTex = offScreenTexVariation.OffTopLeftViewTex;
+             texVariation.OffTopRightViewTex = offScreenTexVariation.OffTopRightViewTex;
+             texVariation.OffTopViewTex = offScreenTexVariation.OffTopViewTex;
+             texVariation.OffBottomViewTex = offScreenTexVariation.OffBottomViewTex;
+         }
     }
 
     return texVariation;
@@ -1405,6 +1508,7 @@ function Tick(float DeltaTime) {
 defaultproperties {
    bLogToGameLogfile=false,
    StaticIndicatorPercentOfMinScreenDimension=0.05,
+   StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen=0.05,
    ShowIndicatorIfTargetHidden=true,
    ShowIndicatorWhenOffScreen=false,
    ShowIndicatorsThatAreObscured=true,
