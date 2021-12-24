@@ -1,12 +1,12 @@
 # Ut99Mods
-A collection of my hand-made mods for one of my my favorite games - Unreal Tournament '99! 
+A collection of my hand-made mods for one of my my favorite games - Unreal Tournament '99!
 
 # Setup
 To compile, navigate to the ut99 directory with UCC.exe and run `ucc make`.
 
-**Alternatively** 
+**Alternatively**
 
-You can set up "doskey" to have macro commands in CMD. 
+You can set up "doskey" to have macro commands in CMD.
 Modify macros.doskey to point to your ut99 directories.
 
 Copy macros.doskey file to a location on C:
@@ -25,7 +25,7 @@ Verify in CMD using:
 
 Add the relevant packages to your **UnrealTournament.ini** in the Ut99/System folder.
 
-Look for the `[Editor.EditorEngine]` section, and the EditPackages entries. 
+Look for the `[Editor.EditorEngine]` section, and the EditPackages entries.
 
 Add the following to the end of them (order matters):
 
@@ -33,11 +33,12 @@ Add the following to the end of them (order matters):
     EditPackages=Gibber
     EditPackages=ItemSpawnerWeapon
     EditPackages=C4
+    EditPackages=Juggernaut
 
 # Useage
 
-To merely use the pre-compiled packages, look in the System folder, and copy the **.u** and **.int** files to your Ut99/System directory. 
+To merely use the pre-compiled packages, look in the System folder, and copy the **.u** and **.int** files to your Ut99/System directory.
 
-Then load up the game, and look at the relevant test map, as well as the included mutators. 
+Then load up the game, and look at the relevant test map, as well as the included mutators.
 
 To use them in your own custom maps, they need to be in **EditPackages** or loaded manually in the editor (or embedded into the map using MyLevel).
