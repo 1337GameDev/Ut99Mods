@@ -34,6 +34,9 @@ Add the following to the end of them (order matters):
     EditPackages=ItemSpawnerWeapon
     EditPackages=C4
     EditPackages=Juggernaut
+    EditPackages=EnergySword
+    EditPackages=Infection
+    EditPackages=GuidedEnergyLance
 
 # Useage
 
