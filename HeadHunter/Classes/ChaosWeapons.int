@@ -1,0 +1,14 @@
+[Public]
+; the ChaosUT weapons
+Object=(Name=ChaosUT.ch_WarHeadLauncher,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="Chaos Redeemer")
+Object=(Name=ChaosUT.Crossbow,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="Crossbow")
+Object=(Name=ChaosUT.poisoncrossbow,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="Poison Crossbow")
+Object=(Name=ChaosUT.explosivecrossbow,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="Explosive Crossbow")
+Object=(Name=ChaosUT.Sniper2,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="Chaos Sniper Rifle")
+Object=(Name=ChaosUT.sniper_rpb,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="Chaos RPB Sniper Rifle")
+Object=(Name=ChaosUT.Flak2,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="The Claw")
+Object=(Name=ChaosUT.ProxyArm,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="Proxy Mine")
+Object=(Name=ChaosUT.Sword,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="Bastard Sword")
+Object=(Name=ChaosUT.TurretLauncher,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="Turret Launcher")
+Object=(Name=ChaosUT.VortexArm,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="Chaos Vortex")
+

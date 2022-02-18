@@ -48,3 +48,8 @@ function IndicatorSettings ModifierFunc(IndicatorHudTargetListElement indicatorL
    }
    return indicatorListElement.IndicatorSettings;
 }
+
+defaultproperties
+{
+      Player=None
+}

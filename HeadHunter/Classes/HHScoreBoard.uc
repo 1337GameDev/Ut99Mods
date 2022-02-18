@@ -303,23 +303,13 @@ function ShowScores(Canvas Canvas) {
 	Canvas.Font = CanvasFont;
 }
 
-defaultproperties {
-     GreenColor=(G=255)
-     WhiteColor=(R=255,G=255,B=255)
-     GoldColor=(R=255,G=255)
-     BlueColor=(B=255)
-     LightCyanColor=(R=128,G=255,B=255)
-     SilverColor=(R=138,G=164,B=166)
-     BronzeColor=(R=203,G=147,B=52)
-     CyanColor=(G=128,B=255)
-     RedColor=(R=255)
-     LightGreenColor=(G=136)
-     DarkGreenColor=(G=255,B=128)
-
-     Restart="You have been killed.  Hit [Fire] to resapwn!"
-     Continue="Hit [Fire] to begin the next match!"
-     Ended="The game has ended."
-     PlayerString="Player"
-     FragsString="Skulls Collected"
-     SkullTex=Texture'UnrealShare.Icons.ICONSKULL',
+defaultproperties
+{
+      LightGreenColor=(R=0,G=136,B=0,A=0)
+      DarkGreenColor=(R=0,G=255,B=128,A=0)
+      SkullTex=Texture'UnrealShare.Icons.IconSkull'
+      Restart="You have been killed.  Hit [Fire] to resapwn!"
+      Continue="Hit [Fire] to begin the next match!"
+      Ended="The game has ended."
+      FragsString="Skulls Collected"
 }

@@ -615,94 +615,92 @@ function bool HandlePickupQuery(inventory Item) {
     return Inventory.HandlePickupQuery(Item);
 }
 
-defaultproperties {
-     BossGibDamageMultiplier=1.5,
-     SmallGibDamageMultiplier=0.8,
-     BaseGibDamage=10,
-     BaseGibHealMultiplier=0.1,
-     DistanceThresholdToAddExtraDamage=300,
-     ExtraDamageMultiplier=10.0,
-
-     DownSound=Sound'Botpack.PulseGun.PulseDown'
-     WeaponDescription="Classification: Gib Rifle\n\nPrimary Fire: Shoot a chunk of your body (which hurts you) and deal some damage. Pick it up to heal some of the lost health. \n\nSecondary Fire: A deadly shotgun blast -- at a steep cost. \n\nTechniques: Lead and bounce gibs around to hit enemies, or close the gap for a devestating slaughter!"
-     InstFlash=-0.150000
-     InstFog=(X=139.000000,Y=218.000000,Z=72.000000)
-     AmmoName=None,
-     PickupAmmoCount=100
-     bRapidFire=True
-     FireOffset=(X=15.000000,Y=-15.000000,Z=2.000000)
-     ProjectileClass=None
-     AltProjectileClass=None
-     shakemag=50.000000
-     shakevert=5.000000
-     AIRating=0.750000
-     RefireRate=0.950000
-     AltRefireRate=0.990000
-     FireSound=Sound'Botpack.Male.MLand3'
-     AltFireSound=Sound'UnrealShare.Gibs.Gib4'
-     SelectSound=Sound'Botpack.PulseGun.PulsePickup'
-     MessageNoAmmo=" has no gibs."
-     DeathMessage="%o ate %k's bloody gibby death."
-     NameColor=(R=128,B=128)
-     FlashLength=0.020000
-     AutoSwitchPriority=5
-     InventoryGroup=5
-     PickupMessage="You got the Gibber."
-     GibHealMessage="You picked up one of your gibs:"
-     ItemName="Gibber"
-     PlayerViewOffset=(X=1.500000,Z=-2.000000)
-     PlayerViewMesh=LodMesh'Botpack.PulseGunR'
-     PickupViewMesh=LodMesh'Botpack.PulsePickup'
-     ThirdPersonMesh=LodMesh'Botpack.PulseGun3rd'
-     ThirdPersonScale=0.400000
-     StatusIcon=Texture'Botpack.Icons.UsePulse'
-     bMuzzleFlashParticles=True
-     MuzzleFlashStyle=STY_Translucent
-     MuzzleFlashMesh=LodMesh'Botpack.muzzPF3'
-     MuzzleFlashScale=0.400000
-     MuzzleFlashTexture=Texture'Botpack.Skins.TPEFFECT'
-     PickupSound=Sound'UnrealShare.Pickups.WeaponPickup'
-     Icon=Texture'Botpack.Icons.UsePulse'
-     Mesh=LodMesh'Botpack.PulsePickup'
-     bNoSmooth=False
-     SoundRadius=64
-     SoundVolume=255
-     CollisionRadius=32.000000
-     PrimaryFireProjSpeed=1800
-
-     DoesFiringHurtOwner=true
-     PrimaryFireHealthCost=2
-     AltFireProjSpeed=1450
-     AltFireHealthCost=12
-     ProjectileLifetime=240
-
-     AltFireTriggerHoldTime=0.25,
-     AltFireDelay=1.0,
-     TimeWhenLastAltFire=0,
-
-     Skin=Texture'Gibber.Gibber_JPulseGun_02'
-     Multiskins(1)=Texture'Gibber.Gibber_JPulseGun_02',
-
-     WielderDamageType='shredded'
-
-     BossChunksToFire(0)=Class'Gibber.UT_MaleFoot_Proj'
-     BossChunksToFire(1)=Class'Gibber.UT_bosshead_Proj'
-     BossChunksToFire(2)=Class'Gibber.UT_Liver_Proj'
-     BossChunksToFire(3)=Class'Gibber.UT_bossarm_Proj'
-     BossChunksToFire(4)=Class'Gibber.UT_Stomach_Proj'
-     BossChunksToFire(5)=Class'Gibber.UT_bossthigh_Proj'
-     BossChunksToFire(6)=Class'Gibber.UT_Heart_Proj'
-
-     ChunksToFire(0)=Class'Gibber.UT_Heart_Proj'
-     ChunksToFire(1)=Class'Gibber.UT_Liver_Proj'
-     ChunksToFire(2)=Class'Gibber.UT_Stomach_Proj'
-     ChunksToFire(3)=Class'Gibber.UT_FemaleArm_Proj'
-     ChunksToFire(4)=Class'Gibber.UT_FemaleFoot_Proj'
-     ChunksToFire(5)=Class'Gibber.UT_FemaleTorso_Proj'
-     ChunksToFire(6)=Class'Gibber.UT_MaleArm_Proj'
-     ChunksToFire(7)=Class'Gibber.UT_MaleFoot_Proj'
-     ChunksToFire(8)=Class'Gibber.UT_MaleTorso_Proj'
-     ChunksToFire(9)=Class'Gibber.UT_Thigh_Proj'
-     ChunksToFire(10)=Class'Gibber.UT_HeadFemale_Proj'
-     ChunksToFire(11)=Class'Gibber.UT_HeadMale_Proj'
+defaultproperties
+{
+      Angle=0.000000
+      Count=0.000000
+      TimeWhenLastAltFire=0.000000
+      AltFireDelay=1.000000
+      AltFireTriggerHoldTime=0.250000
+      DownSound=Sound'Botpack.PulseGun.PulseDown'
+      ChunksToFire(0)=Class'Gibber.UT_Heart_Proj'
+      ChunksToFire(1)=Class'Gibber.UT_Liver_Proj'
+      ChunksToFire(2)=Class'Gibber.UT_Stomach_Proj'
+      ChunksToFire(3)=Class'Gibber.UT_FemaleArm_Proj'
+      ChunksToFire(4)=Class'Gibber.UT_FemaleFoot_Proj'
+      ChunksToFire(5)=Class'Gibber.UT_FemaleTorso_Proj'
+      ChunksToFire(6)=Class'Gibber.UT_MaleArm_Proj'
+      ChunksToFire(7)=Class'Gibber.UT_MaleFoot_Proj'
+      ChunksToFire(8)=Class'Gibber.UT_MaleTorso_Proj'
+      ChunksToFire(9)=Class'Gibber.UT_Thigh_Proj'
+      ChunksToFire(10)=Class'Gibber.UT_HeadFemale_Proj'
+      ChunksToFire(11)=Class'Gibber.UT_HeadMale_Proj'
+      ChunksToFire(12)=None
+      ChunksToFire(13)=None
+      ChunksToFire(14)=None
+      ChunksToFire(15)=None
+      BossChunksToFire(0)=Class'Gibber.UT_MaleFoot_Proj'
+      BossChunksToFire(1)=Class'Gibber.UT_bosshead_Proj'
+      BossChunksToFire(2)=Class'Gibber.UT_Liver_Proj'
+      BossChunksToFire(3)=Class'Gibber.UT_bossarm_Proj'
+      BossChunksToFire(4)=Class'Gibber.UT_Stomach_Proj'
+      BossChunksToFire(5)=Class'Gibber.UT_bossthigh_Proj'
+      BossChunksToFire(6)=Class'Gibber.UT_Heart_Proj'
+      BossChunksToFire(7)=None
+      CurrentChunkIdx=0
+      DoesFiringHurtOwner=True
+      PrimaryFireProjSpeed=1800.000000
+      PrimaryFireHealthCost=2
+      AltFireProjSpeed=1450.000000
+      AltFireHealthCost=12
+      GibHealMessage="You picked up one of your gibs:"
+      ProjectileLifetime=240
+      WielderDamageType="None"
+      BossGibDamageMultiplier=1.500000
+      SmallGibDamageMultiplier=0.800000
+      BaseGibDamage=10.000000
+      BaseGibHealMultiplier=0.100000
+      DistanceThresholdToAddExtraDamage=300.000000
+      ExtraDamageMultiplier=10.000000
+      WeaponDescription="Classification: Gib RiflenPrimary Fire: Shoot a chunk of your body (which hurts you) and deal some damage. Pick it up to heal some of the lost health. nSecondary Fire: A deadly shotgun blast -- at a steep cost. nTechniques: Lead and bounce gibs around to hit enemies, or close the gap for a devestating slaughter!"
+      InstFlash=-0.150000
+      InstFog=(X=139.000000,Y=218.000000,Z=72.000000)
+      PickupAmmoCount=100
+      bRapidFire=True
+      FireOffset=(X=15.000000,Y=-15.000000,Z=2.000000)
+      shakemag=50.000000
+      AIRating=0.750000
+      RefireRate=0.950000
+      AltRefireRate=0.990000
+      FireSound=Sound'Botpack.Male.MLand3'
+      AltFireSound=Sound'UnrealShare.Gibs.Gib4'
+      SelectSound=Sound'Botpack.PulseGun.PulsePickup'
+      MessageNoAmmo=" has no gibs."
+      DeathMessage="%o ate %k's bloody gibby death."
+      NameColor=(R=128,B=128)
+      FlashLength=0.020000
+      AutoSwitchPriority=5
+      InventoryGroup=5
+      PickupMessage="You got the Gibber."
+      ItemName="Gibber"
+      PlayerViewOffset=(X=1.500000,Z=-2.000000)
+      PlayerViewMesh=LodMesh'Botpack.PulseGunR'
+      PickupViewMesh=LodMesh'Botpack.PulsePickup'
+      ThirdPersonMesh=LodMesh'Botpack.PulseGun3rd'
+      ThirdPersonScale=0.400000
+      StatusIcon=Texture'Botpack.Icons.UsePulse'
+      bMuzzleFlashParticles=True
+      MuzzleFlashStyle=STY_Translucent
+      MuzzleFlashMesh=LodMesh'Botpack.muzzPF3'
+      MuzzleFlashScale=0.400000
+      MuzzleFlashTexture=Texture'Botpack.Skins.TPEffect'
+      PickupSound=Sound'UnrealShare.Pickups.WeaponPickup'
+      Icon=Texture'Botpack.Icons.UsePulse'
+      Skin=Texture'Gibber.Skins.Gibber_JPulseGun_02'
+      Mesh=LodMesh'Botpack.PulsePickup'
+      bNoSmooth=False
+      MultiSkins(1)=Texture'Gibber.Skins.Gibber_JPulseGun_02'
+      SoundRadius=64
+      SoundVolume=255
+      CollisionRadius=32.000000
 }

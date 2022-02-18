@@ -54,10 +54,24 @@ function bool PreBeginPlayTests() {
          Level.Game.BaseMutator.AddMutator(deathLocMut);
 
          AllTestsPass = testLinkedList();
-     } else {
+         if(!AllTestsPass){
+             Log("TEST FAILED: testLinkedList");
+         } else {
+             Log("TEST PASSED: testLinkedList");
+         }
+
+         AllTestsPass = testIntClassLoading();
+         if(!AllTestsPass){
+             Log("TEST FAILED: testIntClassLoading");
+         } else {
+             Log("TEST PASSED: testIntClassLoading");
+         }
+
+	 } else {
           Log("Base Tester [PreBeginPlayTests] failed. Skipping subclass: "@self.class);
           AllTestsPass = false;
      }
+
 
      Log("Test1 - PreBeginPlayTests - Started Timer");
      SetTimer(1, true);
@@ -199,10 +213,34 @@ function bool testLinkedList() {
      Log("InsertAt(Str3, 1) - Count: "$ll2.Count);
      ll2.InOrderLog();
 
+     Log("------ string - LinkedList Test 3 (ContainsValue [Str3]) ------");
+     if(ll2.ContainsValue(so)){
+          Log("LinkedList Test 3 - ContainsValue Should Be True: True");
+     } else {
+          Log("LinkedList Test 3 - ContainsValue Should Be True: False");
+     }
+
+     Log("------ string - LinkedList Test 4 (ContainsValue [Str30]) ------");
+     Log("Before ContainsValue()");
+     ll2.InOrderLog();
+     so = new class'StringObj';
+     so.Value = "Str30";
+     if(ll2.ContainsValue(so)){
+          Log("LinkedList Test 4 - ContainsValue Should Be False: True");
+     } else {
+          Log("LinkedList Test 4 - ContainsValue Should Be False: False");
+     }
+     Log("After ContainsValue()");
+     ll2.InOrderLog();
+
+     Log("------ string - LinkedList Test 5 (InsertAt(Str4, 0)) ------");
+     Log("Before InsertAt()");
+     ll2.InOrderLog();
+
      so = new class'StringObj';
      so.Value = "Str4";
      ll2.InsertAt(so, 0);
-     Log("InsertAt(Str4, 0) - Count: "$ll2.Count);
+     Log("After InsertAt(Str4, 0) - Count: "$ll2.Count);
      ll2.InOrderLog();
 
      so = new class'StringObj';
@@ -211,7 +249,14 @@ function bool testLinkedList() {
      Log("InsertAt(Str5, 4) - Count: "$ll2.Count);
      ll2.InOrderLog();
 
-     Log("------ string - LinkedList Test 4 (RemoveAt) ------");
+     Log("------ string - LinkedList Test 6 (ContainsValue [Str5]) ------");
+     if(ll2.ContainsValue(so)){
+          Log("LinkedList Test 6 - ContainsValue Should Be True: True");
+     } else {
+          Log("LinkedList Test 6 - ContainsValue Should Be True: False");
+     }
+
+     Log("------ string - LinkedList Test 7 (RemoveAt) ------");
      Log("Current List");
      ll2.InOrderLog();
      ll2.RemoveAt(0);//should remove Str4
@@ -233,6 +278,49 @@ function bool testLinkedList() {
      return true;
 }
 
+function bool testIntClassLoading() {
+    local bool TestPassed, Success;
+    local LinkedList AllWeapons;
+
+    Success = true;
+
+    AllWeapons = class'ServerHelper'.static.GetClassesLoadedFromIntFiles(self, "Engine.Weapon");
+	TestPassed = AllWeapons.Count == 10;
+	if(!TestPassed){
+		Success = false;
+		Log("TEST FAILED: ServerHelper.GetClassesLoadedFromIntFiles - Engine.Weapon");
+	} else {
+		Log("TEST PASSED: ServerHelper.GetClassesLoadedFromIntFiles - Engine.Weapon");
+	}
+
+	AllWeapons = class'ServerHelper'.static.GetAllWeaponClasses(self, true, true);
+	TestPassed = AllWeapons.Count == 26;
+	if(!TestPassed){
+		Success = false;
+		Log("TEST FAILED: ServerHelper.GetAllWeaponClasses - OnlyIncludeBaseWeapons - Exclude ChaosUT");
+	} else {
+		Log("TEST PASSED: ServerHelper.GetAllWeaponClasses - OnlyIncludeBaseWeapons - Exclude ChaosUT");
+	}
+
+	AllWeapons = class'ServerHelper'.static.GetAllWeaponClasses(self, true, false);
+	TestPassed = AllWeapons.Count == 37;
+	if(!TestPassed){
+		Success = false;
+		Log("TEST FAILED: ServerHelper.GetAllWeaponClasses - OnlyIncludeBaseWeapons - INCLUDE ChaosUT");
+	} else {
+		Log("TEST PASSED: ServerHelper.GetAllWeaponClasses - OnlyIncludeBaseWeapons - INCLUDE ChaosUT");
+	}
+
+	AllWeapons = class'ServerHelper'.static.GetAllWeaponClasses(self, false, false, true);
+	Log("Tester1 - PreBeginPlayTests - All weapons in INT files:");
+	AllWeapons.InOrderLog();
+
+	return Success;
+}
+
 simulated function Timer(){
 
+}
+
+defaultproperties {
 }

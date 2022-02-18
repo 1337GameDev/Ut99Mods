@@ -100,15 +100,13 @@ function bool CanActivateTrigger() {
     return true;
 }
 
-defaultproperties {
-     PlayActivationSound=True,
-     bInitiallyActive=True,
-     CanBeTriggeredExternally=True,
-     InitialState=NormalTrigger,
-     Message="Trigger activated.",
-     RetriggerCooldownMessage="Trigger Cooldown",
-     CannotReactivateMessage="Cannot reactivate",
-     ActivatedOnceBefore=false,
-     bTriggerOnceOnly=false,
-     ActivationNoise=Sound'HeadHunter.ManualTrigger.ActivateTrigger',
+defaultproperties
+{
+      ActivatedOnceBefore=False
+      RetriggerCooldownMessage="Trigger Cooldown"
+      CannotReactivateMessage="Cannot reactivate"
+      CanBeTriggeredExternally=True
+      PlayActivationSound=True
+      ActivationNoise=Sound'HeadHunter.ManualTrigger.ActivateTrigger'
+      Message="Trigger activated."
 }

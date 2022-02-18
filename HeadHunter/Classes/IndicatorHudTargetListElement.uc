@@ -12,3 +12,9 @@ function ApplyModifierFunction(IndicatorHud hud){
          IndicatorSettings = IndicatorSettingsModifier.ModifierFunc(self, hud);
     }
 }
+
+defaultproperties
+{
+      IndicatorSettings=None
+      IndicatorSettingsModifier=None
+}

@@ -127,16 +127,9 @@ simulated function SpawnEffects() {
 	 W.RemoteRole = ROLE_None;
 }
 
-defaultproperties {
-     ShockwaveMaxSize=13,
-     MaxDamage=1000,
-     MaxMomentum=1100,
-     bAlwaysRelevant=True
-     RemoteRole=ROLE_SimulatedProxy
-     LifeSpan=1.500000
-     DrawType=DT_Mesh
-     Style=STY_Translucent
-     Mesh=LodMesh'Botpack.ShockWavem'
-     AmbientGlow=255
-     bUnlit=True
+defaultproperties
+{
+      ShockwaveMaxSize=13.000000
+      MaxDamage=1000.000000
+      MaxMomentum=1100.000000
 }

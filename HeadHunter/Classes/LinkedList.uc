@@ -107,6 +107,18 @@ function ListElement GetElementAt(int idx) {
     return le;
 }
 
+function ListElement GetRandomElement() {
+    if(Self.Count > 0){
+        return Self.GetElementAt(Rand(Self.Count));
+    }
+
+    return None;
+}
+
+function bool ContainsValue(object val) {
+    return (val != None) && (GetElementByValue(val) != None);
+}
+
 function ListElement GetElementByValue(object val) {
     local ListElement le;
     local int counter;
@@ -120,7 +132,8 @@ function ListElement GetElementByValue(object val) {
          foundElement = false;
 
          While(le != None) {
-             if(le.Value == val) {
+             //if(le.Value == val) {
+             if(le.ElementValueEquals(val)) {
                  foundElement = true;
                  break;
              }
@@ -150,7 +163,8 @@ function int GetElementIdxByValue(object val) {
          foundElement = false;
 
          While(le != None) {
-             if(le.Value == val) {
+             //if(le.Value == val) {
+             if(le.ElementValueEquals(val)) {
                  foundElement = true;
                  break;
              }
@@ -299,6 +313,21 @@ function ListElement InsertAt(object value, int idx) {
     return newElement;
 }
 
+function Concat(LinkedList otherList){
+    local ListElement el, newEl;
+
+    if((otherList != None) && (otherList.Count > 0)) {
+        el = OtherList.Head;
+
+        while(el != None) {
+            newEl = el.Clone();
+            Self.Enqueue(newEl);
+
+            el = el.Next;
+        }
+    }
+}
+
 //inorder traversal and log
 function InOrderLog(){
     local ListElement le;
@@ -312,4 +341,11 @@ function InOrderLog(){
     }
 
     Log("]");
+}
+
+defaultproperties
+{
+      Head=None
+      Tail=None
+      Count=0
 }

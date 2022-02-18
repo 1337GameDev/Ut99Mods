@@ -151,38 +151,38 @@ function IndicatorSettings ConvertToIndicatorSettingsObj(){
     return settings;
 }
 
-DefaultProperties {
-    GlobalIndicator=true,
-    ShowIndicatorToHudOwnerTeamNum=true,
-    IndicatorVisibleToTeamNum=255,//represents "No Team"
-
-    //these will be ANDED together to find targets (if not empty -- which means that Actors with these fields as empty cannot be 'looked' for)
-    TargetsWithGroup='',
-    TargetsWithTag='',
-    TargetsWithName='',
-    TargetsOfClassType=class'Actor',
-
-    MaxViewDistance=0.0,
-    IndicatorLabelsAboveIndicator=true,
-    IndicatorOffsetFromTarget=Vect(0,0,0),
-    UseHUDColorForIndicator=false,
-    UseCustomColor=false,
-    ShowTargetDistanceLabels=false,
-    IndicatorColor=(R=255),//red
-    IndicatorLabel="",
-    ShowIndicatorLabel=false,
-    ShowIndicatorAboveTarget=false,
-    UseTargetNameForLabel=false,
-    ScaleIndicatorSizeToTarget=true,
-    StaticIndicatorPercentOfMinScreenDimension=0.05,
-    StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen=0.05,
-    ShowIndicatorWhenOffScreen=true,
-    ShowIndicatorIfTargetHidden=true,
-    ShowIndicatorIfInventoryHeld=false,
-    ShowIndicatorIfInventoryNotHeld=true,
-    ShowIndicatorIfInventoryDropped=true,
-    ShowIndicatorsThatAreObscured=true,
-    BlinkIndicator=false,
-    BaseAlphaValue=1.0,
-    BuiltinIndicatorTexture=Empty
+defaultproperties
+{
+      TargetForIndicator=None
+      TargetActors=None
+      ShowIndicatorToHudOwnerTeamNum=True
+      IndicatorVisibleToTeamNum=255
+      TargetsWithGroup="None"
+      TargetsWithTag="None"
+      TargetsWithName="None"
+      TargetsOfClassType=Class'Engine.Actor'
+      GlobalIndicator=True
+      BuiltinIndicatorTexture=0
+      MaxViewDistance=0.000000
+      IndicatorOffsetFromTarget=(X=0.000000,Y=0.000000,Z=0.000000)
+      UseHudColorForIndicator=False
+      UseCustomColor=False
+      IndicatorColor=(R=255,G=0,B=0,A=0)
+      ShowTargetDistanceLabels=False
+      IndicatorLabel=""
+      ShowIndicatorLabel=False
+      UseTargetNameForLabel=False
+      ScaleIndicatorSizeToTarget=True
+      StaticIndicatorPercentOfMinScreenDimension=0.050000
+      StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen=0.050000
+      ShowIndicatorWhenOffScreen=True
+      ShowIndicatorIfTargetHidden=True
+      ShowIndicatorIfInventoryHeld=False
+      ShowIndicatorIfInventoryNotHeld=True
+      ShowIndicatorIfInventoryDropped=True
+      ShowIndicatorsThatAreObscured=True
+      BlinkIndicator=False
+      BaseAlphaValue=1.000000
+      ShowIndicatorAboveTarget=False
+      IndicatorLabelsAboveIndicator=True
 }

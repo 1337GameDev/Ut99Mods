@@ -320,44 +320,69 @@ state OnSurface {
 	}
 }
 
-defaultproperties {
-     DamageTypesToDisarm(0)=impact,//impact hammer
-	 DamageTypesToDisarm(1)=claw,//ChaosUT claw
-	 DamageTypesToDisarm(2)=cut,//ChaosUT claw / Bastard Sword
-	 DamageTypesToDisarm(3)=SpecialDamage,//ChaosUT GrappleHook-Kamikaze / PressureZone / VacuumZone
-	 DamageTypesToDisarm(4)=slashed,//Chainsaw
-	 DamageTypesToDisarm(5)=Decapitated,
-	 DamageTypesToDisarm(6)=Corroded,//acid/biogel
-	 DamageTypesToDisarm(7)=Burned,//lava
-	 DamageTypesToDisarm(8)=shredded,//Chunk.uc -- flak cannon/etc
-
-     speed=900.000000
-     MaxSpeed=1800.000000
-     Damage=5.000000//normal projectile damage
-     MomentumTransfer=200
-
-     BigExplosionDamage=400.00,
-	 BigExplosionRadius=7.000000,
-	 BigExplosionMomentum=400.000000,
-	 SmallExplosionDamage=25.000000,
-	 SmallExplosionRadius=2.000000,
-	 SmallExplosionMomentum=500.000000,
-
-     MyDamageType=RocketDeath
-     ImpactSound=None,
-     bNetTemporary=False
-     Physics=PHYS_None
-     LifeSpan=0.000000
-     Mesh=Mesh'C4.C4'
-     DrawScale=1.000000
-     bUnlit=false
-     CollisionRadius=14.000000
-     CollisionHeight=7.500000
-     bProjTarget=True
-     bBounce=False
-     Buoyancy=170.000000
-
-	 SoundLanded=Sound'UnrealI.flak.Click',
-	 TickSound=Sound'UMenu.LittleSelect',
-	 DisarmSound=Sound'Botpack.Translocator.TDisrupt',
+defaultproperties
+{
+      SmallExplosionDamage=25.000000
+      SmallExplosionRadius=2.000000
+      SmallExplosionMomentum=500.000000
+      BigExplosionDamage=400.000000
+      BigExplosionRadius=7.000000
+      BigExplosionMomentum=400.000000
+      SurfaceNormal=(X=0.000000,Y=0.000000,Z=0.000000)
+      bOnGround=False
+      BaseOffset=0.000000
+      MyFear=None
+      Glow=None
+      CountDown=0
+      StartingCountdown=0
+      CurrentTimeInterval=0.000000
+      DamageTypesToDisarm(0)="impact"
+      DamageTypesToDisarm(1)="claw"
+      DamageTypesToDisarm(2)="cut"
+      DamageTypesToDisarm(3)="SpecialDamage"
+      DamageTypesToDisarm(4)="slashed"
+      DamageTypesToDisarm(5)="Decapitated"
+      DamageTypesToDisarm(6)="Corroded"
+      DamageTypesToDisarm(7)="Burned"
+      DamageTypesToDisarm(8)="shredded"
+      DamageTypesToDisarm(9)="None"
+      DamageTypesToDisarm(10)="None"
+      DamageTypesToDisarm(11)="None"
+      DamageTypesToDisarm(12)="None"
+      DamageTypesToDisarm(13)="None"
+      DamageTypesToDisarm(14)="None"
+      DamageTypesToDisarm(15)="None"
+      DamageTypesToDisarm(16)="None"
+      DamageTypesToDisarm(17)="None"
+      DamageTypesToDisarm(18)="None"
+      DamageTypesToDisarm(19)="None"
+      DamageTypesToDisarm(20)="None"
+      DamageTypesToDisarm(21)="None"
+      DamageTypesToDisarm(22)="None"
+      DamageTypesToDisarm(23)="None"
+      DamageTypesToDisarm(24)="None"
+      DamageTypesToDisarm(25)="None"
+      DamageTypesToDisarm(26)="None"
+      DamageTypesToDisarm(27)="None"
+      DamageTypesToDisarm(28)="None"
+      DamageTypesToDisarm(29)="None"
+      DamageTypesToDisarm(30)="None"
+      DamageTypesToDisarm(31)="None"
+      SoundLanded=Sound'UnrealI.flak.Click'
+      TickSound=Sound'UMenu.LittleSelect'
+      DisarmSound=Sound'Botpack.Translocator.TDisrupt'
+      IsDisarmed=False
+      speed=900.000000
+      MaxSpeed=1800.000000
+      Damage=5.000000
+      MomentumTransfer=200
+      MyDamageType="RocketDeath"
+      bNetTemporary=False
+      Physics=PHYS_None
+      LifeSpan=0.000000
+      Mesh=SkeletalMesh'C4.C4'
+      CollisionRadius=14.000000
+      CollisionHeight=7.500000
+      bProjTarget=True
+      Buoyancy=170.000000
 }

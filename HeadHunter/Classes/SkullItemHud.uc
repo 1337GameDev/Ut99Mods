@@ -70,9 +70,12 @@ simulated function PostRender(canvas C) {
     }
 }
 
-defaultproperties {
-   bLogToGameLogfile=false
-   ShowMaxAmount=false
-   UseHudColorForSkullCount=false
-   SkullCountColor=(R=255,G=186,B=3)
+defaultproperties
+{
+      ShowMaxAmount=False
+      UseHudColorForSkullCount=False
+      SkullCountColor=(R=255,G=186,B=3,A=0)
+      MySkullItem=None
+      LastChecked=0.000000
+      MyFonts=None
 }

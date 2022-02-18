@@ -1,0 +1,4 @@
+[Public]
+; the Infection gametype weapons
+Object=(Name=Infection.HeadShotEnforcer,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="Headshot Enforcer")
+Object=(Name=Infection.PrimaryShotOnlyFlakCannon,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="UT Flak Cannon (Primary-Fire Only)")

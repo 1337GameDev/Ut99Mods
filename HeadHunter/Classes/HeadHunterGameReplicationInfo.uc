@@ -29,13 +29,15 @@ simulated function PostBeginPlay() {
 
 }
 
-defaultproperties {
-     HumanString="*Human*"
-     CommanderString="*Commander*"
-     SupportString="supporting"
-     DefendString="defending"
-     AttackString="attacking"
-     HoldString="holding"
-     FreelanceString="freelancing"
-     SkullCollectGoal=10
+defaultproperties
+{
+      SkullCollectGoal=10
+      SkullCarryLimit=0
+      SkullCollectTimeInterval=0
+      SkullsCollectedCountdown=0
+      ShowDroppedSkullIndicators=False
+      ShowPlayersWithSkullThreshold=False
+      SkullThresholdToShowPlayers=0
+      bHasInitAnyHUDMutators=False
+      bHasPlayedIntro=False
 }

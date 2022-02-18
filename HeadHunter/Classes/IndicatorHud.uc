@@ -78,7 +78,9 @@ enum HUDIndicator_Texture_BuiltIn {
     //extra icons added later
     /*71*/ HudIndicator_SkullAndBones,
     /*72*/ HudIndicator_Bones,
-    /*73*/ HudIndicator_Skull
+    /*73*/ HudIndicator_Skull,
+	
+	/*74*/ HudIndicator_Crown
 };
 
 //Indicators
@@ -222,6 +224,7 @@ enum HUDIndicator_Texture_BuiltIn {
 #exec texture IMPORT NAME=HudIndicator_SkullAndBones FILE=Textures\Icons\HudIndicator_SkullAndBones.bmp FLAGS=2 MIPS=OFF
 #exec texture IMPORT NAME=HudIndicator_Bones FILE=Textures\Icons\HudIndicator_Bones.bmp FLAGS=2 MIPS=OFF
 #exec texture IMPORT NAME=HudIndicator_Skull FILE=Textures\Icons\HudIndicator_Skull.bmp FLAGS=2 MIPS=OFF
+#exec texture IMPORT NAME=HudIndicator_Crown FILE=Textures\Icons\HudIndicator_Crown.bmp FLAGS=2 MIPS=OFF
 
 
 var LinkedList PlayerIndicatorTargets;
@@ -343,7 +346,6 @@ simulated function PostRender(Canvas C) {
            GlobalIndicatorTargets = class'IndicatorHudGlobalTargets'.static.GetRef(self);
         }
 
-        //Log("IndicatorHud - PostRender - draw global indicators with length ["$self.GlobalIndicatorTargets.GlobalIndicatorTargets.Count$"]");
         DrawIndicatorLocations(C, PlayerOwner, self.GlobalIndicatorTargets.GlobalIndicatorTargets);
     } else if(PlayerOwner == None){
           Destroy();
@@ -522,6 +524,12 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
               targetBottomPos = Vect(0,0,0);
               targetTopPos = Vect(0,0,0);
               target = Actor(element.Value);
+			  
+			  if(target == Player) {
+			      //the target is the same as the Player who owns this IndicatorHud
+			      element = element.Next;
+			      continue;
+			  }
 
               BehindViewTexture = default.BehindViewTexture;
               OffTopLeftViewTexture = default.OffTopLeftViewTexture;
@@ -1473,6 +1481,10 @@ static function IndicatorTextureVariations GetTexturesForBuiltInOption(byte want
             texVariation.InViewTex = Texture'HudIndicator_Skull';
             texVariation.BehindViewTex = Texture'HudIndicator_Skull';
         break;
+		/*74*/case HUDIndicator_Texture_BuiltIn.HudIndicator_Crown:
+            texVariation.InViewTex = Texture'HudIndicator_Crown';
+            texVariation.BehindViewTex = Texture'HudIndicator_Crown';
+        break;
 
         default:
             texVariation.InViewTex = Texture'HudElement_Ring_B';
@@ -1505,43 +1517,48 @@ function Tick(float DeltaTime) {
     }
 }
 
-defaultproperties {
-   bLogToGameLogfile=false,
-   StaticIndicatorPercentOfMinScreenDimension=0.05,
-   StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen=0.05,
-   ShowIndicatorIfTargetHidden=true,
-   ShowIndicatorWhenOffScreen=false,
-   ShowIndicatorsThatAreObscured=true,
-   ScaleIndicatorSizeToTarget=true,
-   UseHudColorForIndicators=true,
-   IndicatorColor=(R=255,G=186,B=3),
-   IndicatorLabel="",
-   ShowIndicatorLabel=true,
-   UseTargetNameForLabel=false,
-   IndicatorLabelsAboveIndicator=true,
-   IndicatorLabelMargin=10,
-   IndicatorOffsetFromTarget=Vect(0,0,0),
-   UseTextOnlyIndicators=false,
-   ShowTargetDistanceLabels=false,
-   UseTriangleQuadrantsForOffScreen=true,
-   MaxTargetIndicatorViewDistance=2000.0,
-   ShowIndicatorAboveTarget=false,
-   IndicatorTexture=Texture'HudElement_Ring_B',
-
-   CurrentBlinkTime=0.0,
-   BlinkingIsFadingIn=true,
-   BlinkRate=0.5,
-   BlinkIndicator=true,
-   BaseAlphaValue=1.0,
-   LastDeltaTime=0.0,
-
-   BehindViewTexture=Texture'HudElement_Ring_B',
-   OffTopLeftViewTexture=Texture'HudElement_Ring_B',
-   OffLeftViewTexture=Texture'HudElement_Ring_B',
-   OffBottomLeftViewTexture=Texture'HudElement_Ring_B',
-   OffBottomViewTexture=Texture'HudElement_Ring_B',
-   OffBottomRightViewTexture=Texture'HudElement_Ring_B',
-   OffRightViewTexture=Texture'HudElement_Ring_B',
-   OffTopRightViewTexture=Texture'HudElement_Ring_B',
-   OffTopViewTexture=Texture'HudElement_Ring_B'
+defaultproperties
+{
+      PlayerIndicatorTargets=None
+      GlobalIndicatorTargets=None
+      StaticIndicatorPercentOfMinScreenDimension=0.050000
+      StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen=0.050000
+      ScaleIndicatorSizeToTarget=True
+      UseHudColorForIndicators=True
+      UseTextOnlyIndicators=False
+      ShowTargetDistanceLabels=False
+      ShowIndicatorWhenOffScreen=False
+      ShowIndicatorIfTargetHidden=True
+      ShowIndicatorIfInventoryHeld=False
+      ShowIndicatorIfInventoryNotHeld=False
+      ShowIndicatorIfInventoryDropped=False
+      ShowIndicatorsThatAreObscured=True
+      MyFonts=None
+      MaxTargetIndicatorViewDistance=2000.000000
+      IndicatorLabelMargin=10
+      IndicatorLabelsAboveIndicator=True
+      IndicatorOffsetFromTarget=(X=0.000000,Y=0.000000,Z=0.000000)
+      IndicatorColor=(R=255,G=186,B=3,A=0)
+      IndicatorLabel=""
+      ShowIndicatorLabel=True
+      UseTargetNameForLabel=False
+      ShowIndicatorAboveTarget=False
+      IndicatorTexture=Texture'HeadHunter.HudElement_Ring_B'
+      BehindViewTexture=Texture'HeadHunter.HudElement_Ring_B'
+      UseTriangleQuadrantsForOffScreen=True
+      OffTopLeftViewTexture=Texture'HeadHunter.HudElement_Ring_B'
+      OffLeftViewTexture=Texture'HeadHunter.HudElement_Ring_B'
+      OffBottomLeftViewTexture=Texture'HeadHunter.HudElement_Ring_B'
+      OffBottomViewTexture=Texture'HeadHunter.HudElement_Ring_B'
+      OffBottomRightViewTexture=Texture'HeadHunter.HudElement_Ring_B'
+      OffRightViewTexture=Texture'HeadHunter.HudElement_Ring_B'
+      OffTopRightViewTexture=Texture'HeadHunter.HudElement_Ring_B'
+      OffTopViewTexture=Texture'HeadHunter.HudElement_Ring_B'
+      BlinkIndicator=True
+      BaseAlphaValue=1.000000
+      CurrentBlinkTime=0.000000
+      BlinkingIsFadingIn=True
+      BlinkRate=0.500000
+      LastDeltaTime=0.000000
+      BlinkAlphaValue=0.000000
 }

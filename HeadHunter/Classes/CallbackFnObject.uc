@@ -10,3 +10,9 @@ function CallbackFunc() {
         NextCallback.CallbackFunc();
     }
 }
+
+defaultproperties
+{
+      Context=None
+      NextCallback=None
+}

@@ -73,3 +73,43 @@ function string ToString() {
 
     return str;
 }
+
+function bool ElementValueEquals(object objVal) {
+    local ValueContainer selfValContainer, valContainerToCompareTo;
+
+    if(ClassIsChildOf(self.Value.class, class'ValueContainer')) {
+        if((objVal != None) && ClassIsChildOf(objVal.class, class'ValueContainer')) {
+            selfValContainer = ValueContainer(self.Value);
+            valContainerToCompareTo = ValueContainer(objVal);
+
+            return selfValContainer.Equals(valContainerToCompareTo);
+        } else {
+            return false;
+        }
+    } else {
+        return self.Value == objVal;
+    }
+}
+
+function ListElement Clone() {
+    local ListElement el;
+    local ValueContainer valContainer;
+
+    el = new class'ListElement';
+
+    if((Self.Value != None) && ClassIsChildOf(Self.Value.class, class'ValueContainer') ) {
+        valContainer = ValueContainer(Self.Value);
+        el.Value = valContainer.Clone();
+    } else {
+        el.Value = Self.Value;
+    }
+
+    return el;
+}
+
+defaultproperties {
+      Value=None
+      Next=None
+      Prev=None
+      ListOwner=None
+}

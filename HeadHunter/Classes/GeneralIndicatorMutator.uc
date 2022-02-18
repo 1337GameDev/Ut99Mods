@@ -579,24 +579,26 @@ function AddConfiguredTargets() {
         }
 }
 
-defaultproperties {
-   bLogToGameLogfile=false,
-   ShowIndicatorsForTeammates=true,
-   ShowIndicatorsForEnemies=true,
-   ShowIndicatorsForObjectives=true,
-   OnlyShowObjectivesWithHighestPriority=true,
-   ShowIndicatorsForPowerWeapons=true,
-   ShowIndicatorsForAllWeapons=true,
-   ShowIndicatorsForAllWeaponsWhenHeld=true,
-   ShowIndicatorsForAllWeaponsWhenDropped=true,
-   ShowIndicatorsForPowerups=true,
-   ShowIndicatorsForHumansOnly=false,
-   TimeIntervalToCheck=0.25,
-   LastTimeChecked=0.0,
-   ShowTeamateLabels=true,
-   ShowEnemyLabels=true,
-   ShowObjectiveLabels=true,
-   ShowWeaponLabels=true,
-   ShowPowerupLabels=true,
-   ShowPowerupsWhenPickedUp=false
+defaultproperties
+{
+      InitiatedPreviously=False
+      LastTimeChecked=0.000000
+      TimeIntervalToCheck=0.250000
+      ShowIndicatorsForTeammates=True
+      ShowIndicatorsForEnemies=True
+      ShowIndicatorsForObjectives=True
+      OnlyShowObjectivesWithHighestPriority=True
+      ShowIndicatorsForPowerWeapons=True
+      ShowIndicatorsForAllWeapons=True
+      ShowIndicatorsForAllWeaponsWhenHeld=True
+      ShowIndicatorsForAllWeaponsWhenDropped=True
+      ShowIndicatorsForPowerups=True
+      ShowIndicatorsForHumansOnly=False
+      ShowTeamateLabels=True
+      ShowEnemyLabels=True
+      ShowObjectiveLabels=True
+      ShowWeaponLabels=True
+      ShowPowerupLabels=True
+      ShowPowerupsWhenPickedUp=False
+      IndicatorHudInstance=None
 }

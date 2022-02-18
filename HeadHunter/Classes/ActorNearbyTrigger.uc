@@ -112,9 +112,41 @@ function CheckRequiredActors(){
     }
 }
 
-DefaultProperties {
-   ActorsNeeded(0)=(ActorClass=class'Engine.Mover',ActorTag="TriggerMover1",NumberNeeded=1,QuantityComparison=ANT_EQUALS),
-   Texture=Texture'ActorNearbyTrigger',
-   Message="You have triggered this due to nearby actors.",
-   bLogToGameLogfile=false
+defaultproperties
+{
+      bLogToGameLogfile=False
+      ActorsNeeded(0)=(ActorClass=Class'Engine.Mover',ActorTag="TriggerMover1",NumberNeeded=1,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(1)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(2)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(3)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(4)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(5)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(6)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(7)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(8)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(9)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(10)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(11)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(12)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(13)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(14)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(15)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(16)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(17)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(18)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(19)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(20)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(21)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(22)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(23)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(24)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(25)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(26)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(27)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(28)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(29)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(30)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      ActorsNeeded(31)=(ActorClass=None,ActorTag="None",NumberNeeded=0,QuantityComparison=ANT_EQUALS)
+      Message="You have triggered this due to nearby actors."
+      Texture=Texture'HeadHunter.ActorNearbyTrigger'
 }

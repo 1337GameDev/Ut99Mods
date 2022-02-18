@@ -14,6 +14,6 @@ static function int DeleteProjectilesOfClass(Actor context, name projClass) {
     return countDeleted;
 }
 
-defaultproperties {
-
+defaultproperties
+{
 }

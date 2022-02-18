@@ -72,19 +72,14 @@ simulated function Tick(float DeltaTime) {
     }
 }
 
-defaultproperties {
-    LastTimeChecked=0.0,
-    KeepForSecondsAfterRespawn=10.0;
-    bHidden=false,
-    DrawType=DT_Sprite,
-    Style=STY_Normal,
-    Physics=PHYS_None,
-    bCollideActors=false,
-    RemoteRole=ROLE_SimulatedProxy,
-    DrawType=DT_Mesh,
-    Texture=Texture'DeathLocation',
-
-    PawnType='Pawn',
-    PawnTeam=-1,
-    bLogToGameLogfile=false
+defaultproperties
+{
+      bLogToGameLogfile=False
+      KeepForSecondsAfterRespawn=10.000000
+      LastTimeChecked=0.000000
+      PawnTeam=-1
+      PawnType="'"
+      RemoteRole=ROLE_SimulatedProxy
+      DrawType=DT_Mesh
+      Texture=Texture'HeadHunter.DeathLocation'
 }

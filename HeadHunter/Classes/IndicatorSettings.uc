@@ -80,29 +80,31 @@ var bool ShowIndicatorAboveTarget;
 //whether to position the text label of the indicator, or the distance label above or below the indicator
 var bool IndicatorLabelsAboveIndicator;
 
-DefaultProperties {
-    DisableIndicator=false,
-    MaxViewDistance=1000.0,
-    IndicatorLabelsAboveIndicator=false,
-    IndicatorOffsetFromTarget=Vect(0,0,0),
-    UseHUDColorForIndicator=false,
-    UseCustomColor=false,
-    ShowTargetDistanceLabels=false,
-    IndicatorColor=(R=255),//red
-    IndicatorLabel="",
-    ShowIndicatorLabel=false,
-    ShowIndicatorAboveTarget=false,
-    UseTargetNameForLabel=false,
-    ScaleIndicatorSizeToTarget=true,
-    StaticIndicatorPercentOfMinScreenDimension=0.05,
-    StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen=0.05,
-    ShowIndicatorWhenOffScreen=false,
-    ShowIndicatorIfTargetHidden=true,
-    ShowIndicatorIfInventoryHeld=false,
-    ShowIndicatorIfInventoryNotHeld=true,
-    ShowIndicatorIfInventoryDropped=true,
-    ShowIndicatorsThatAreObscured=true,
-    BlinkIndicator=false,
-    BaseAlphaValue=1.0,
-    BuiltinIndicatorTexture=Empty
+defaultproperties
+{
+      TextureVariations=None
+      BuiltinIndicatorTexture=0
+      DisableIndicator=False
+      MaxViewDistance=1000.000000
+      IndicatorOffsetFromTarget=(X=0.000000,Y=0.000000,Z=0.000000)
+      UseHudColorForIndicator=False
+      UseCustomColor=False
+      IndicatorColor=(R=255,G=0,B=0,A=0)
+      ShowTargetDistanceLabels=False
+      IndicatorLabel=""
+      ShowIndicatorLabel=False
+      UseTargetNameForLabel=False
+      ScaleIndicatorSizeToTarget=True
+      StaticIndicatorPercentOfMinScreenDimension=0.050000
+      StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen=0.050000
+      ShowIndicatorWhenOffScreen=False
+      ShowIndicatorIfTargetHidden=True
+      ShowIndicatorIfInventoryHeld=False
+      ShowIndicatorIfInventoryNotHeld=True
+      ShowIndicatorIfInventoryDropped=True
+      ShowIndicatorsThatAreObscured=True
+      BlinkIndicator=False
+      BaseAlphaValue=1.000000
+      ShowIndicatorAboveTarget=False
+      IndicatorLabelsAboveIndicator=False
 }

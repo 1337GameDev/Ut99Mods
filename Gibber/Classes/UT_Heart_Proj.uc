@@ -109,15 +109,16 @@ singular event BaseChange() {
     Self.Instigator = PrevInstigator;
 }
 
-defaultproperties {
-    Damage=0
-    HealAmount=0
-    HealSound=Sound'UnrealShare.Pickups.Health2'
-    MomentumTransfer=10000
-    MyDamageType=shredded
-    RemoteRole=ROLE_SimulatedProxy
-    Role=ROLE_Authority
-    bOnlyOwnerSee=false
-    bCollideActors=true
-    LifeSpan=240
+defaultproperties
+{
+      Damage=0.000000
+      HealAmount=0
+      HealSound=Sound'UnrealShare.Pickups.Health2'
+      MomentumTransfer=10000
+      MyDamageType="shredded"
+      HasLanded=False
+      SpawnedTime=0.000000
+      RemoteRole=ROLE_SimulatedProxy
+      LifeSpan=240.000000
+      bCollideActors=True
 }

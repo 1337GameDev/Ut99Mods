@@ -64,22 +64,21 @@ function SetInMotion(){
 	}
 }
 
-defaultproperties {
-    BaseGibSpeed=1.0,
-    BossGibDamageMultiplier=1.0,
-    SmallGibDamageMultiplier=1.0,
-    BaseGibDamage=0,
-    BaseGibHealMultiplier=1.0,
-    LifetimeThresholdToAddExtraDamage=0.2,
-    DistanceThresholdToAddExtraDamage=0,
-    ExtraDamageMultiplier=1.0,
-    WasFromShotgunBlast=false,
-    bActivatable=false
-    bDisplayableInv=false
-    RespawnTime=0
-    bIsAnArmor=false
-    bHidden=true
-    bCarriedItem=false
-	Physics=PHYS_Trailer
-	AmbientGlow=0
+defaultproperties
+{
+      BaseGibSpeed=1.000000
+      DoesFiringHurtOwner=False
+      BossGibDamageMultiplier=1.000000
+      SmallGibDamageMultiplier=1.000000
+      BaseGibDamage=0.000000
+      BaseGibHealMultiplier=1.000000
+      LifetimeThresholdToAddExtraDamage=0.200000
+      DistanceThresholdToAddExtraDamage=0.000000
+      ExtraDamageMultiplier=1.000000
+      WasFromShotgunBlast=False
+      SourcePawn=None
+      ChunkOwner=None
+      bHidden=True
+      Physics=PHYS_Trailer
+      AmbientGlow=0
 }

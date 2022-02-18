@@ -215,7 +215,9 @@ function Mutate(string MutateString, PlayerPawn Sender) {
     }
 }
 
-defaultproperties {
-   bLogToGameLogfile=false,
-   WaitTime=0.0
+defaultproperties
+{
+      MyFonts=None
+      TriggerActor=None
+      WaitTime=0.000000
 }

@@ -13,6 +13,7 @@ function CallbackFunc() {
     Super.CallbackFunc();
 }
 
-defaultProperties {
-
+defaultproperties
+{
+      HUDMutator=None
 }

@@ -50,15 +50,16 @@ function IndicatorSettings ModifierFunc(IndicatorHudTargetListElement indicatorL
     return settings;
 }
 
-DefaultProperties {
-  ShowAllyIndicators=true,
-  ShowEnemyIndicators=true,
-
-  NeutralColor=(R=255,G=255,B=255),
-  EnemyColor=(R=255),
-  AllyColor=(G=255),
-
-  NeutralTexture=17,//IndicatorHud.HUDIndicator_Texture_BuiltIn.HudIndicator_Dot
-  EnemyTexture=48,//IndicatorHud.HUDIndicator_Texture_BuiltIn.HudIndicator_X
-  AllyTexture=48,//IndicatorHud.HUDIndicator_Texture_BuiltIn.HudIndicator_X
+defaultproperties
+{
+      TargetPRI=None
+      ShowAllyIndicators=True
+      ShowEnemyIndicators=True
+      ShowNeutralIndicators=False
+      NeutralColor=(R=255,G=255,B=255,A=0)
+      NeutralTexture=17
+      EnemyColor=(R=255,G=0,B=0,A=0)
+      EnemyTexture=48
+      AllyColor=(R=0,G=255,B=0,A=0)
+      AllyTexture=48
 }

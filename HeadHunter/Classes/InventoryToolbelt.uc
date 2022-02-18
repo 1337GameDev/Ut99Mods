@@ -162,10 +162,12 @@ function bool RemoveInventoryFromToolbelt(object inv){
     return false;
 }
 
-defaultproperties {
-   bLogToGameLogfile=false,
-   DefaultIcon=Texture'Engine.S_INVENTORY',
-   ToolbeltSlotTexture=Texture'HeadHunter.Background.ToolbeltSlotBackground',
-   ToolbeltGUIRootPos=Vect(0,-128,0),
-   DrawVertically=false
+defaultproperties
+{
+      MyFonts=None
+      InventoryItemsInBelt=None
+      DefaultIcon=Texture'Engine.S_Inventory'
+      ToolbeltSlotTexture=Texture'HeadHunter.Background.ToolbeltSlotBackground'
+      ToolbeltGUIRootPos=(X=0.000000,Y=0.000000,Z=0.000000)
+      DrawVertically=False
 }

@@ -15,3 +15,10 @@ function SetRelationFromDotResult(float DotResult){
     IsLeftRightOf = DotResult == 0;
     InBehindOf = DotResult < 0;
 }
+
+defaultproperties
+{
+      InFrontOf=False
+      IsLeftRightOf=False
+      InBehindOf=False
+}

@@ -16,20 +16,17 @@ function PickupFunction(Pawn Other) {
     BroadCastMessage("Key: PickupFunction");
 }
 
-defaultproperties {
-     bCanHaveMultipleCopies=true,
-     PickupMessage="You picked up a key!",
-     RespawnTime=0,
-     PickupViewMesh=Mesh'HeadHunter.Key',
-     ItemName="Key",
-     PickupSound=Sound'HeadHunter.Key.KeyPickup',
-     RemoteRole=ROLE_SimulatedProxy,
-     Mesh=LodMesh'HeadHunter.Key',
-     Skin=Texture'HeadHunter.Skins.Key',
-     Icon=Texture'UnrealShare.Icons.ICONSKULL',
-     SoundRadius=16,
-     CollisionRadius=18.000000,
-     CollisionHeight=15.000000,
-     Mass=5.000000
+defaultproperties
+{
+      bCanHaveMultipleCopies=True
+      PickupMessage="You picked up a key!"
+      ItemName="Key"
+      PickupViewMesh=LodMesh'HeadHunter.Key'
+      PickupSound=Sound'HeadHunter.Key.KeyPickup'
+      Icon=Texture'UnrealShare.Icons.IconSkull'
+      Mesh=LodMesh'HeadHunter.Key'
+      SoundRadius=16
+      CollisionRadius=18.000000
+      CollisionHeight=15.000000
+      Mass=5.000000
 }
-

@@ -8,6 +8,6 @@ static final function int GetDetailMode(LevelInfo Level) {
 			- (int(Level.bDropDetail) + int(Level.bAggressiveLOD));
 }
 
-defaultproperties {
-
+defaultproperties
+{
 }

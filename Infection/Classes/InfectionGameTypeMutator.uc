@@ -4,11 +4,11 @@
 
 class InfectionGameTypeMutator expands Mutator;
 
-var Infection MyGame;
+var InfectionGameInfo MyGame;
 
 function PostBeginPlay()
 {
-	MyGame = Infection(Level.Game);
+	MyGame = InfectionGameInfo(Level.Game);
 	Super.PostBeginPlay();
 }
 
@@ -244,6 +244,5 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 	return true;
 }
 
-defaultproperties
-{
+defaultproperties {
 }

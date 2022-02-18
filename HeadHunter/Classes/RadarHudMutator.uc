@@ -88,7 +88,7 @@ simulated function PostRender(Canvas C) {
     PlayerHUD = ChallengeHUD(PlayerOwner.myHUD);
     PlayerOwnerTeam = -1;
     if(PlayerOwner.PlayerReplicationInfo != None){
-        PlayerOwnerTeam = PlayerOwner.PlayerReplicationInfo.TeamID;
+        PlayerOwnerTeam = PlayerOwner.PlayerReplicationInfo.Team;
     }
 
     PlayerHUDScale = PlayerHUD.Scale;
@@ -140,14 +140,14 @@ simulated function PostRender(Canvas C) {
                     TargetCrouching = tournamentPlayer.bIsCrouching;
                     TargetVelocity = tournamentPlayer.Velocity;
                     if(tournamentPlayer.PlayerReplicationInfo != None){
-                        IsEnemy = PlayerOwnerTeam != tournamentPlayer.PlayerReplicationInfo.TeamID;
+                        IsEnemy = (PlayerOwnerTeam != tournamentPlayer.PlayerReplicationInfo.Team) || (tournamentPlayer.PlayerReplicationInfo.Team == 255);
                     }
                 } else if(Target.IsA('Bot')){
                     bot = Bot(Target);
                     TargetCrouching = bot.bIsCrouching;
                     TargetVelocity = bot.Velocity;
                     if(bot.PlayerReplicationInfo != None){
-                        IsEnemy = PlayerOwnerTeam != bot.PlayerReplicationInfo.TeamID;
+                        IsEnemy = (PlayerOwnerTeam != bot.PlayerReplicationInfo.Team) || (bot.PlayerReplicationInfo.Team == 255);
                     }
                 } else {
                     TargetCrouching = false;
@@ -256,30 +256,30 @@ function GetTargets() {
     }
 }
 
-defaultproperties {
-   bLogToGameLogfile=false,
-   TimeIntervalToCheck=0.25,
-   LastTimeChecked=0.0,
-   RadarDistanceMeters=30,
-   RadarAlpha=0.4,
-   RadarCenterDotColor=Color(B=255);
-   RadarBlipSize=15,
-   ShowAlliesAndEnemiesAsDifferentColors=true,
-   IndicateTargetOnDifferentLevel=false,
-
-   InitiallyPositionAbovePlayerHUDOnLowerLeft=true,
-   RadarHUDOffsetX=0,
-   RadarHUDOffsetY=0,
-   RadarBackgroundTex=Texture'RadarHudBackground',
-   Indicator_SameLevel=Texture'RadarIcon_SameLevel',
-   Indicator_DiffLevel=Texture'RadarIcon_DiffLevel',
-
-   RadarHudGuiWidth=150,
-   RadarGUICircleRadius=110,
-   RadarGUICircleOffsetX=0,
-   RadarGUICircleOffsetY=0,
-   RadarVelocityThreshold=200,
-   ShowTargetsIfBelowVelocityThreshold=false,
-   ShowTargetsIfCrouching=false,
-   RadarSameLevelThreshold=83//a minimum recommended height for ceilings
+defaultproperties
+{
+      InitiatedPreviously=False
+      LastTimeChecked=0.000000
+      TimeIntervalToCheck=0.250000
+      RadarDistanceMeters=30.000000
+      RadarAlpha=0.400000
+      RadarCenterDotColor=(R=0,G=0,B=0,A=0)
+      RadarGUICircleRadius=110.000000
+      RadarGUICircleOffsetX=0
+      RadarGUICircleOffsetY=0
+      RadarBlipSize=15
+      ShowAlliesAndEnemiesAsDifferentColors=True
+      RadarHudGuiWidth=150
+      RadarTargets=None
+      InitiallyPositionAbovePlayerHUDOnLowerLeft=True
+      RadarHUDOffsetX=0.000000
+      RadarHudOffsetY=0.000000
+      RadarBackgroundTex=Texture'HeadHunter.RadarHudBackground'
+      Indicator_SameLevel=Texture'HeadHunter.RadarIcon_SameLevel'
+      Indicator_DiffLevel=Texture'HeadHunter.RadarIcon_DiffLevel'
+      RadarVelocityThreshold=200.000000
+      RadarSameLevelThreshold=83.000000
+      ShowTargetsIfBelowVelocityThreshold=False
+      ShowTargetsIfCrouching=False
+      IndicateTargetOnDifferentLevel=False
 }

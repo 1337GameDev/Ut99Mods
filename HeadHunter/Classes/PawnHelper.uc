@@ -138,3 +138,85 @@ static function int PredictDamageToPawn(Pawn Target,
 
     return ActualDamage;
 }
+
+static function Pawn GetPawnFromPlayerID(Actor context, int PlayerID) {
+    local Pawn p;
+
+	if(PlayerID > -1) {
+	    foreach context.AllActors(class'Pawn', p) {
+		    if(p.PlayerReplicationInfo != None){
+				if(p.PlayerReplicationInfo.PlayerID == PlayerID) {
+					return p;
+				}
+			}
+		}
+	}
+
+	return p;
+}
+
+static function Pawn GetRandomPlayerPawnOrBot(Actor context, optional LinkedList PlayerIDsToExclude) {
+    local int NumChosen;
+	local Bot b;
+	local PlayerPawn pp;
+	local ListElement le;
+	local Pawn PawnChosen;
+	local LinkedList allPlayersAndBots;
+	local bool excludeSomePlayerIDs;
+	local IntObj playerIDToCheckInExcludeList;
+
+    excludeSomePlayerIDs = (PlayerIDsToExclude != None) && (PlayerIDsToExclude.Count > 0);
+	allPlayersAndBots = new class'LinkedList';
+    playerIDToCheckInExcludeList = new class'IntObj';
+
+	foreach context.AllActors(class'PlayerPawn', pp) {
+	    if(excludeSomePlayerIDs){
+            if(pp.PlayerReplicationInfo != None) {
+                playerIDToCheckInExcludeList.Value = pp.PlayerReplicationInfo.PlayerID;
+
+                if(!PlayerIDsToExclude.ContainsValue(playerIDToCheckInExcludeList) ) {
+	                allPlayersAndBots.Push(pp);
+	            }
+	        }
+		} else {
+		    allPlayersAndBots.Push(pp);
+		}
+	}
+
+	foreach context.AllActors(class'Bot', b) {
+	    if(excludeSomePlayerIDs){
+            if(b.PlayerReplicationInfo != None) {
+                playerIDToCheckInExcludeList.Value = b.PlayerReplicationInfo.PlayerID;
+
+				if(!PlayerIDsToExclude.ContainsValue(playerIDToCheckInExcludeList) ) {
+	                allPlayersAndBots.Push(b);
+	            }
+	        }
+		} else {
+		    allPlayersAndBots.Push(b);
+		}
+	}
+
+    if(allPlayersAndBots.Count > 0) {
+	    NumChosen = Rand(allPlayersAndBots.Count);
+
+	    le = allPlayersAndBots.GetElementAt(NumChosen);
+	    if(le != None) {
+	        PawnChosen = Pawn(le.Value);
+	    }
+	}
+
+	return PawnChosen;
+}
+
+static function bool IsPawnDead(Pawn p) {
+    if(p == None) {
+        return false;
+    } else {
+        return (p.bIsPlayer && p.bHidden && (p.Health <= 0) && p.IsInState('Dying') );
+    }
+}
+
+defaultproperties
+{
+}

@@ -148,19 +148,26 @@ function FragChanged() {
 	Class<HeadHunterGameInfo>(BotmatchParent.GameClass).Default.SkullCollectGoal = int(FragEdit.GetValue());
 }
 
-defaultproperties {
-     FragText="Skull Collect Goal",
-     FragHelp="Set the number of skulls that are to be collected to win the match. Set it to 0 for no limit.",
-     ShowDroppedSkullIndicatorsText="Show Dropped Skull Indicators",
-	 ShowDroppedSkullIndicatorsHelp="Whether to show indicators on player HUDs for skulls.",
-	 ShowPlayersWithSkullThresholdText="Show Players With Skulls Over Threshold",
-	 ShowPlayersWithSkullThresholdHelp="Whether to show players that have a certain number of skulls, on other player's HUDs.",
-	 SkullCollectIntervalText="Skull Collect Interval (secs)",
-	 SkullCollectIntervalHelp="The number of seconds between skull collection phases.",
-	 SkullCarryLimitText="Skull Carry Limit",
-	 SkullCarryLimitHelp="The max number of skulls a player is allowed to carry.",
-	 SkullThresholdToShowPlayersText="Skull Threshold To Show Players"
-	 SkullThresholdToShowPlayersHelp="The number of skulls in order to show an indicator on other player's HUds, assuming 'ShowPlayersWithSkullThresholdHelp' is enabled."
-}
 
 //--]]]]----
+
+defaultproperties
+{
+      ShowDroppedSkullIndicatorsCheckbox=None
+      ShowPlayersWithSkullThresholdCheckbox=None
+      SkullCollectIntervalEdit=None
+      SkullCarryLimitEdit=None
+      SkullThresholdToShowPlayersEdit=None
+      ShowDroppedSkullIndicatorsText="Show Dropped Skull Indicators"
+      ShowPlayersWithSkullThresholdText="Show Players With Skulls Over Threshold"
+      SkullCollectIntervalText="Skull Collect Interval (secs)"
+      SkullCarryLimitText="Skull Carry Limit"
+      SkullThresholdToShowPlayersText="Skull Threshold To Show Players"
+      ShowDroppedSkullIndicatorsHelp="Whether to show indicators on player HUDs for skulls."
+      ShowPlayersWithSkullThresholdHelp="Whether to show players that have a certain number of skulls, on other player's HUDs."
+      SkullCollectIntervalHelp="The number of seconds between skull collection phases."
+      SkullCarryLimitHelp="The max number of skulls a player is allowed to carry."
+      SkullThresholdToShowPlayersHelp="The number of skulls in order to show an indicator on other player's HUds, assuming 'ShowPlayersWithSkullThresholdHelp' is enabled."
+      FragText="Skull Collect Goal"
+      FragHelp="Set the number of skulls that are to be collected to win the match. Set it to 0 for no limit."
+}

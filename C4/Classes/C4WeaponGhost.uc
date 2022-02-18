@@ -52,22 +52,20 @@ function ShowGhost(){
     Self.DrawType = DT_Mesh;
 }
 
-defaultproperties {
-     RemoteRole=ROLE_None,
-     bUnlit=true,
-     bNoSmooth=true,
-     bBounce=false,
-     SoundRadius=16,
-     CollisionRadius=1,
-     CollisionHeight=1,
-     bCollideActors=true,
-     bCollideWorld=true,
-     RemoteRole=ROLE_SimulatedProxy
-     Mass=0,
-     Physics=PHYS_None,
-     DrawType=DT_Mesh,
-     Mesh=Mesh'C4.C4',
-
-	 UpdateIntervalSecs=1.0
+defaultproperties
+{
+      C4WeaponOwner=None
+      UpdateIntervalSecs=1.000000
+      CurrentTimeInterval=0.000000
+      RemoteRole=ROLE_SimulatedProxy
+      DrawType=DT_Mesh
+      Mesh=SkeletalMesh'C4.C4'
+      bUnlit=True
+      bNoSmooth=True
+      SoundRadius=16
+      CollisionRadius=1.000000
+      CollisionHeight=1.000000
+      bCollideActors=True
+      bCollideWorld=True
+      Mass=0.000000
 }
-

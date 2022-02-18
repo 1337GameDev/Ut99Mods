@@ -16,14 +16,14 @@ function PreBeginPlay() {
      //class'TestPlayerModifierMutator'.static.SpawnAndRegister(self, self);
 }
 
-defaultproperties {
-    DamageMultiplierFromPlayers=1000.0,
-    DamageMultiplierFromNonPlayers=0.0,
-    DamageMultiplierToPlayers=1.0,
-    DamageMultiplierToNonPlayers=1.0,
-
-    MomentumMultiplierFromPlayers=1000.0,
-    MomentumMultiplierFromNonPlayers=0.0,
-    MomentumMultiplierToPlayers=1.0,
-    MomentumMultiplierToNonPlayers=1.0
+defaultproperties
+{
+      DamageMultiplierFromPlayers=1000.000000
+      DamageMultiplierFromNonPlayers=0.000000
+      DamageMultiplierToPlayers=1.000000
+      DamageMultiplierToNonPlayers=1.000000
+      MomentumMultiplierFromPlayers=1000.000000
+      MomentumMultiplierFromNonPlayers=0.000000
+      MomentumMultiplierToPlayers=1.000000
+      MomentumMultiplierToNonPlayers=1.000000
 }

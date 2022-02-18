@@ -7,7 +7,7 @@ function float TimeFx(float time) {
     return 1 + ((2 * int(time)) - int(2 * time));
 }
 
-DefaultProperties
+defaultproperties
 {
-    MaxFunctionTime=5.0
+      MaxFunctionTime=5.000000
 }

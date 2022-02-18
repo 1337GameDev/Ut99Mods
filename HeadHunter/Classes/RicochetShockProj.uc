@@ -162,35 +162,38 @@ function Explode(vector HitLocation,vector HitNormal) {
 	Destroy();
 }
 
-defaultproperties {
-     ExploSound=Sound'UnrealShare.General.SpecialExpl'
-     speed=1500.000000
-     Damage=35.000000
-     MomentumTransfer=90000
-     MyDamageType=jolted
-     ImpactSound=Sound'UnrealShare.General.Expla02'
-     ExplosionDecal=Class'Botpack.EnergyImpact'
-     bNetTemporary=False
-     RemoteRole=ROLE_SimulatedProxy
-     LifeSpan=5.000000
-     DrawType=DT_Sprite
-     Style=STY_Translucent
-     Texture=Texture'Botpack.ASMDAlt.ASMDAlt_a00'
-     DrawScale=0.400000
-     bUnlit=True
-     CollisionRadius=12.000000
-     CollisionHeight=12.000000
-     bProjTarget=True
-     LightType=LT_Steady
-     LightEffect=LE_NonIncidence
-     LightBrightness=255
-     LightHue=165
-     LightSaturation=72
-     LightRadius=6
-     bFixedRotationDir=True
-     RotationRate=(Pitch=45345,Yaw=33453,Roll=63466)
-     DesiredRotation=(Pitch=23442,Yaw=34234,Roll=34234)
-     bBounce=True
-     MaxWallHits=2
-     bCanHitInstigator=false
+defaultproperties
+{
+      ExploSound=Sound'UnrealShare.General.SpecialExpl'
+      NumWallHits=0
+      MaxWallHits=2
+      bCanHitInstigator=False
+      bHitWater=False
+      speed=1500.000000
+      Damage=35.000000
+      MomentumTransfer=90000
+      MyDamageType="jolted"
+      ImpactSound=Sound'UnrealShare.General.Expla02'
+      ExplosionDecal=Class'Botpack.EnergyImpact'
+      bNetTemporary=False
+      RemoteRole=ROLE_SimulatedProxy
+      LifeSpan=5.000000
+      DrawType=DT_Sprite
+      Style=STY_Translucent
+      Texture=Texture'Botpack.ASMDAlt.ASMDAlt_a00'
+      DrawScale=0.400000
+      bUnlit=True
+      CollisionRadius=12.000000
+      CollisionHeight=12.000000
+      bProjTarget=True
+      LightType=LT_Steady
+      LightEffect=LE_NonIncidence
+      LightBrightness=255
+      LightHue=165
+      LightSaturation=72
+      LightRadius=6
+      bBounce=True
+      bFixedRotationDir=True
+      RotationRate=(Pitch=45345,Yaw=33453,Roll=63466)
+      DesiredRotation=(Pitch=23442,Yaw=34234,Roll=34234)
 }

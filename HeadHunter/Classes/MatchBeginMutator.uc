@@ -30,4 +30,5 @@ static function MatchBeginMutator RegisterToMatchBegin(Actor context, MatchBegin
 
 defaultproperties
 {
+      callback=None
 }

@@ -54,3 +54,17 @@ function SetTextures(out texture topLeft, out texture left, out texture bottomLe
         behind = BehindViewTex;
     }
 }
+
+defaultproperties
+{
+      InViewTex=None
+      BehindViewTex=None
+      OffTopLeftViewTex=None
+      OffLeftViewTex=None
+      OffBottomLeftViewTex=None
+      OffBottomViewTex=None
+      OffBottomRightViewTex=None
+      OffRightViewTex=None
+      OffTopRightViewTex=None
+      OffTopViewTex=None
+}

@@ -24,3 +24,9 @@ static function ToolbeltInvItem GetInstanceForInvItem(Inventory inv){
 
     return toolbeltItem;
 }
+
+defaultproperties
+{
+      ToolbeltIcon=None
+      TexScaleToBe64Pixels=0.000000
+}

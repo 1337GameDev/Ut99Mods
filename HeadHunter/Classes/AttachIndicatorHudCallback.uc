@@ -36,5 +36,6 @@ function PlayerSpawnedCallback(){
     );
 }
 
-DefaultProperties {
+defaultproperties
+{
 }

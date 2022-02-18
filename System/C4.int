@@ -1,0 +1,3 @@
+[Public]
+; the weapon
+Object=(Name=C4.C4Weapon,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="C4 Explosive")

@@ -127,6 +127,8 @@ function Mutator GetThisHUDMutatorFromPlayerPawn(PlayerPawn p){
     return None;
 }
 
-defaultproperties {
-    bLogToGameLogfile=false
+defaultproperties
+{
+      PlayerOwner=None
+      bLogToGameLogfile=False
 }

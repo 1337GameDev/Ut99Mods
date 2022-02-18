@@ -98,5 +98,22 @@ static function rotator rTurn(Rotator rHeading, Rotator rTurnAngle) {
    return(T);
 }
 
+//to rotate DOWN, pass a negative value for "DegreesUp"
+//to rotate LEFT, pass a negative value for "DegreesRight"
+static function RotateActorUpDownLeftRightByDegrees(Actor Target, int DegreesUp, int DegreesRight) {
+    local rotator RotatorToModifyBy;
 
+    if((Target == None) || ((DegreesUp == 0) && (DegreesRight == 0)) ){
+        return;
+    }
 
+    RotatorToModifyBy = Rot(0,0,0);//as we can't init with variables
+    RotatorToModifyBy.Pitch = class'MathHelper'.default.DegToUnrRot * DegreesUp;
+    RotatorToModifyBy.Yaw = class'MathHelper'.default.DegToUnrRot * DegreesRight;
+
+    Target.SetRotation(class'RotatorHelper'.static.rTurn(Target.Rotation, RotatorToModifyBy) );
+}
+
+defaultproperties {
+
+}

@@ -425,70 +425,64 @@ function float SwitchPriority() {
     }
 }
 
-defaultproperties {
-    WeaponDescription="Classification: Timed Bomb\n\nPrimary Fire: Place / Throw C4 \n\nSecondary Fire: Increment the timer.",
-    AIRating=0.0,
-    MaxDesireability=-1
-    PickupMessage="You got the C4.",
-    ItemName="C4",
-    UpdateIntervalSecs=0.1,
-    MaxPlaceDistance=400.0,
-	SoundThrow=Sound'C4.Weapon.C4Throw',
-	SoundPlaced=Sound'UnrealShare.Pickups.VoiceSnd',
-	SoundChangeTimer=Sound'UnrealI.flak.Click',
-    TimerSeconds=3,
-    MinTimerSeconds=3,
-    MaxTimerSeconds=90,
-    TimerIncrementAmount=10,
-
-    AmmoName=Class'C4.C4Ammo'
-    PickupAmmoCount=1,
-
-    FiringSpeed=1.000000,
-    FireOffset=(X=15.000000,Y=-13.000000,Z=-7.000000),
-    FireSound=None,
-    AltFireSound=None,
-    DeathMessage="%k blew up %o!",
-    AutoSwitchPriority=0,
-    RespawnTime=0.000000,
-    PlayerViewMesh=LodMesh'C4.C4',
-    PlayerViewOffset=(X=2.000000,Y=0.000000,Z=-1.000000),
-    PlayerViewScale=0.020000
-    StatusIcon=Texture'C4.Icons.C4HUDIcon',
-    Icon=Texture'C4.Icons.C4HUDIcon',
-    bRotatingPickup=false
-    bUnlit=false
-
-    PickupViewMesh=LodMesh'C4.C4Pickup',
-    PickupSound=Sound'UnrealShare.Pickups.GenPickSnd',
-    ThirdPersonMesh=LodMesh'C4.C4',
-    Mesh=LodMesh'C4.C4',
-    bNoSmooth=true,
-    CollisionRadius=10.000000,
-    CollisionHeight=7.000000,
-    Mass=10.000000,
-
-    //Timer Digit Textures
-    TimerDigitTextures(0)=Texture'C4.Digits.C4Timer_Digit0'
-    TimerDigitTextures(1)=Texture'C4.Digits.C4Timer_Digit1'
-    TimerDigitTextures(2)=Texture'C4.Digits.C4Timer_Digit2'
-    TimerDigitTextures(3)=Texture'C4.Digits.C4Timer_Digit3'
-    TimerDigitTextures(4)=Texture'C4.Digits.C4Timer_Digit4'
-    TimerDigitTextures(5)=Texture'C4.Digits.C4Timer_Digit5'
-    TimerDigitTextures(6)=Texture'C4.Digits.C4Timer_Digit6'
-    TimerDigitTextures(7)=Texture'C4.Digits.C4Timer_Digit7'
-    TimerDigitTextures(8)=Texture'C4.Digits.C4Timer_Digit8'
-    TimerDigitTextures(9)=Texture'C4.Digits.C4Timer_Digit9'
-    TimerDigitTextures(10)=Texture'C4.Digits.C4Timer_Digit_Blank'
-
-    GreyTimerDigitTextures(0)=Texture'C4.Digits.C4Timer_Digit0_Grey'
-    GreyTimerDigitTextures(1)=Texture'C4.Digits.C4Timer_Digit1_Grey'
-    GreyTimerDigitTextures(2)=Texture'C4.Digits.C4Timer_Digit2_Grey'
-    GreyTimerDigitTextures(3)=Texture'C4.Digits.C4Timer_Digit3_Grey'
-    GreyTimerDigitTextures(4)=Texture'C4.Digits.C4Timer_Digit4_Grey'
-    GreyTimerDigitTextures(5)=Texture'C4.Digits.C4Timer_Digit5_Grey'
-    GreyTimerDigitTextures(6)=Texture'C4.Digits.C4Timer_Digit6_Grey'
-    GreyTimerDigitTextures(7)=Texture'C4.Digits.C4Timer_Digit7_Grey'
-    GreyTimerDigitTextures(8)=Texture'C4.Digits.C4Timer_Digit8_Grey'
-    GreyTimerDigitTextures(9)=Texture'C4.Digits.C4Timer_Digit9_Grey'
+defaultproperties
+{
+      UpdateIntervalSecs=0
+      CurrentTimeInterval=0.000000
+      MaxPlaceDistance=400.000000
+      PlaceC4Ghost=None
+      timerSeconds=3
+      TimerIncrementAmount=10
+      MaxTimerSeconds=90
+      MinTimerSeconds=3
+      TimerDigitTextures(0)=Texture'C4.digits.C4Timer_Digit0'
+      TimerDigitTextures(1)=Texture'C4.digits.C4Timer_Digit1'
+      TimerDigitTextures(2)=Texture'C4.digits.C4Timer_Digit2'
+      TimerDigitTextures(3)=Texture'C4.digits.C4Timer_Digit3'
+      TimerDigitTextures(4)=Texture'C4.digits.C4Timer_Digit4'
+      TimerDigitTextures(5)=Texture'C4.digits.C4Timer_Digit5'
+      TimerDigitTextures(6)=Texture'C4.digits.C4Timer_Digit6'
+      TimerDigitTextures(7)=Texture'C4.digits.C4Timer_Digit7'
+      TimerDigitTextures(8)=Texture'C4.digits.C4Timer_Digit8'
+      TimerDigitTextures(9)=Texture'C4.digits.C4Timer_Digit9'
+      TimerDigitTextures(10)=Texture'C4.digits.C4Timer_Digit_Blank'
+      GreyTimerDigitTextures(0)=Texture'C4.digits.C4Timer_Digit0_Grey'
+      GreyTimerDigitTextures(1)=Texture'C4.digits.C4Timer_Digit1_Grey'
+      GreyTimerDigitTextures(2)=Texture'C4.digits.C4Timer_Digit2_Grey'
+      GreyTimerDigitTextures(3)=Texture'C4.digits.C4Timer_Digit3_Grey'
+      GreyTimerDigitTextures(4)=Texture'C4.digits.C4Timer_Digit4_Grey'
+      GreyTimerDigitTextures(5)=Texture'C4.digits.C4Timer_Digit5_Grey'
+      GreyTimerDigitTextures(6)=Texture'C4.digits.C4Timer_Digit6_Grey'
+      GreyTimerDigitTextures(7)=Texture'C4.digits.C4Timer_Digit7_Grey'
+      GreyTimerDigitTextures(8)=Texture'C4.digits.C4Timer_Digit8_Grey'
+      GreyTimerDigitTextures(9)=Texture'C4.digits.C4Timer_Digit9_Grey'
+      GreyTimerDigitTextures(10)=None
+      SoundThrow=Sound'C4.Weapon.C4Throw'
+      SoundPlaced=Sound'UnrealShare.Pickups.VoiceSnd'
+      SoundChangeTimer=Sound'UnrealI.flak.Click'
+      WeaponDescription="Classification: Timed BombnPrimary Fire: Place / Throw C4 nSecondary Fire: Increment the timer."
+      AmmoName=Class'C4.C4Ammo'
+      PickupAmmoCount=1
+      FiringSpeed=1.000000
+      FireOffset=(X=15.000000,Y=-13.000000,Z=-7.000000)
+      AIRating=0.000000
+      DeathMessage="%k blew up %o!"
+      AutoSwitchPriority=0
+      bRotatingPickup=False
+      PickupMessage="You got the C4."
+      ItemName="C4"
+      RespawnTime=0.000000
+      PlayerViewOffset=(X=2.000000,Z=-1.000000)
+      PlayerViewMesh=SkeletalMesh'C4.C4'
+      PlayerViewScale=0.020000
+      PickupViewMesh=SkeletalMesh'C4.C4Pickup'
+      ThirdPersonMesh=SkeletalMesh'C4.C4'
+      StatusIcon=Texture'C4.Icons.C4HUDIcon'
+      MaxDesireability=-1.000000
+      PickupSound=Sound'UnrealShare.Pickups.GenPickSnd'
+      Icon=Texture'C4.Icons.C4HUDIcon'
+      Mesh=SkeletalMesh'C4.C4'
+      CollisionRadius=10.000000
+      CollisionHeight=7.000000
+      Mass=10.000000
 }

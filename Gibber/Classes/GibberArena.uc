@@ -21,10 +21,9 @@ function bool AlwaysKeep(Actor Other) {
     return false;
 }
 
-defaultproperties {
-     WeaponName=Gibber,
-	 AmmoName=None,
-     WeaponString="Gibber.Gibber",
-	 AmmoString=""
-     DefaultWeapon=Class'Gibber.Gibber'
+defaultproperties
+{
+      WeaponName="Gibber"
+      WeaponString="Gibber.Gibber"
+      DefaultWeapon=Class'Gibber.Gibber'
 }

@@ -33,24 +33,23 @@ simulated function Tick(float DeltaTime) {
 	}
 }
 
-defaultproperties {
-     RemoteRole=ROLE_None,
-     Mesh=LodMesh'Botpack.BioGelm',
-     Skin=Texture'ItemSpawnerWeapon.Skins.GhostTextureChecker',
-     Multiskins(1)=Texture'ItemSpawnerWeapon.Skins.GhostTextureChecker',
-     bUnlit=true,
-     bNoSmooth=true,
-     bBounce=false,
-     SoundRadius=16,
-     CollisionRadius=1,
-     CollisionHeight=1,
-     bCollideActors=true,
-     bCollideWorld=true,
-
-     Mass=1,
-     Physics=PHYS_None,
-     DrawType=DT_Mesh,
-     Style=STY_Translucent,
-	 UpdateIntervalSecs=0.1
+defaultproperties
+{
+      SpawnerWeapon=None
+      UpdateIntervalSecs=0.100000
+      CurrentTimeInterval=0.000000
+      RemoteRole=ROLE_None
+      DrawType=DT_Mesh
+      Style=STY_Translucent
+      Skin=Texture'ItemSpawnerWeapon.Skins.GhostTextureChecker'
+      Mesh=LodMesh'Botpack.BioGelm'
+      bUnlit=True
+      bNoSmooth=True
+      MultiSkins(1)=Texture'ItemSpawnerWeapon.Skins.GhostTextureChecker'
+      SoundRadius=16
+      CollisionRadius=1.000000
+      CollisionHeight=1.000000
+      bCollideActors=True
+      bCollideWorld=True
+      Mass=1.000000
 }
-

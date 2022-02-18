@@ -1,4 +1,4 @@
-                    //=============================================================================
+//=============================================================================
 // Trigger: senses things happening in its proximity and generates
 // sends Trigger/UnTrigger to actors whose names match 'EventName'.
 //=============================================================================
@@ -99,39 +99,28 @@ function UnTouch(Actor Other) {
     }
 }
 
-defaultproperties {
-     ScaleIndicatorSizeToTarget=True,
-     StaticIndicatorPercentOfMinScreenDimension=10.0,
-     UseHudColorForIndicator=False,
-     ShowIndicatorWhenObscured=True,
-     IndicatorOffsetFromTriggerActor=Vect(0,0,0),
-     IndicatorColor=(R=255,G=186,B=3),
-     ShowLookMessage=True,
-     BaseAlphaValue=1.00,
-     Texture=Texture'LookTrigger',
-     Message="Activated!",
-     LookMessage="Look At To Activate",
-     //the message to show based on the Trigger's RetriggerDelay
-     RetriggerCooldownMessage="Wait To Reactivate...",
-
-     LookTimeToTrigger=2.0,
-     TargetLookCircleWidth=60.0,
-     ShowTargetLookCircle=True,
-     //Whether to show the time elapsed when looking at the trigger
-     ShowTimeLookedAt=True,
-     //whether to show the time remaining, when showing the time looked at
-     ShowTimeRemaining=True,
-     //whether to show the time remaining to trigger, if showing the time looked at
-     ShowTimeCountingDown=True,
-
-     //whether to show a message when waiting for the RetriggerDelay
-     ShowMessagesAfterActivated=True,
-     //whether to show text stating the player has to wait to retrigger
-     ShowRetriggerCooldownMessage=True,
-     //whether to show the time for the RetriggerDelay - counting up
-     ShowCooldownTime=True,
-     //whether to show the time for the RetriggerDelay - counting down
-     ShowCooldownTimeRemaining=True
-
+defaultproperties
+{
+      ScaleIndicatorSizeToTarget=True
+      StaticIndicatorPercentOfMinScreenDimension=10.000000
+      UseHudColorForIndicator=False
+      ShowIndicatorWhenObscured=True
+      IndicatorOffsetFromTriggerActor=(X=0.000000,Y=0.000000,Z=0.000000)
+      IndicatorColor=(R=255,G=186,B=3,A=0)
+      ShowLookMessage=True
+      LookMessage="Look At To Activate"
+      ShowTargetLookCircle=True
+      ShowTimeLookedAt=True
+      ShowTimeRemaining=True
+      ShowTimeCountingDown=True
+      ShowMessagesAfterActivated=True
+      ShowRetriggerCooldownMessage=True
+      ShowCooldownTime=True
+      ShowCooldownTimeRemaining=True
+      LookTimeToTrigger=2.000000
+      TargetLookCircleWidth=60.000000
+      BaseAlphaValue=1.000000
+      RetriggerCooldownMessage="Wait To Reactivate..."
+      Message="Activated!"
+      Texture=Texture'HeadHunter.LookTrigger'
 }
-

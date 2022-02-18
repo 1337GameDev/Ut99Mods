@@ -35,30 +35,20 @@ simulated function Timer() {
      }
 }
 
-defaultproperties {
-     UpdateIntervalSecs=0.001,
-     MaxSpeedToTrailFlame=230,//in unreal units
-
-     bStatic=False,
-     bHidden=False,
-     AnimRate=2.00000,
-     DrawType=DT_Mesh,
-     Mesh=LodMesh'UnrealShare.FlameM',
-     bUnlit=True,
-     LightEffect=LE_FireWaver,
-     LightBrightness=40,
-     LightRadius=32,
-	 bCollideWorld=false,
-	 bNoSmooth=true,
-	 bCollideActors=false,
-	 bMovable=true,
-	 bNoDelete=false,
-	 CollisionRadius=0,
-	 CollisionHeight=0,
-	 DrawScale=0.15,
-	 Physics=PHYS_None
-
-	 bTrailerPrePivot=false
-	 bTrailerSameRotation=false
+defaultproperties
+{
+      MaxSpeedToTrailFlame=230.000000
+      CurrentTimeInterval=0.000000
+      UpdateIntervalSecs=0.001000
+      AnimRate=2.000000
+      DrawType=DT_Mesh
+      Mesh=LodMesh'UnrealShare.FlameM'
+      DrawScale=0.150000
+      bUnlit=True
+      bNoSmooth=True
+      CollisionRadius=0.000000
+      CollisionHeight=0.000000
+      LightEffect=LE_FireWaver
+      LightBrightness=40
+      LightRadius=32
 }
-

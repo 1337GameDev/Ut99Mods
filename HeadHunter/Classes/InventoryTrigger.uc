@@ -139,12 +139,42 @@ function Touch(Actor Other) {
     }
 }
 
-DefaultProperties {
-   InventoryObjectsNeeded(0)=(InvClass=class'Botpack.UT_FlakCannon',NumberNeeded=1,RemoveUponTrigger=True),
-   InventoryObjectsNeeded(1)=(InvClass=class'Botpack.PulseGun',NumberNeeded=1,RemoveUponTrigger=False),
-
-   InsufficientCountMessage="You do not have the required items.",
-   Texture=Texture'InventoryTrigger',
-   Message="You have the required items.",
-   bLogToGameLogfile=false
+defaultproperties
+{
+      bLogToGameLogfile=False
+      InventoryObjectsNeeded(0)=(InvClass=Class'Botpack.UT_FlakCannon',NumberNeeded=1,RemoveUponTrigger=True,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(1)=(InvClass=Class'Botpack.PulseGun',NumberNeeded=1,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(2)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(3)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(4)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(5)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(6)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(7)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(8)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(9)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(10)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(11)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(12)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(13)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(14)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(15)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(16)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(17)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(18)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(19)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(20)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(21)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(22)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(23)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(24)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(25)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(26)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(27)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(28)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(29)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(30)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InventoryObjectsNeeded(31)=(InvClass=None,NumberNeeded=0,RemoveUponTrigger=False,CompareAmmoInstead=False,QuantityComparison=IT_EQUALS)
+      InsufficientCountMessage="You do not have the required items."
+      Message="You have the required items."
+      Texture=Texture'HeadHunter.InventoryTrigger'
 }

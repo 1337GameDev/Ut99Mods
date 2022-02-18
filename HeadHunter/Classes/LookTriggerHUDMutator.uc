@@ -327,9 +327,11 @@ function Mutate(string MutateString, PlayerPawn Sender) {
     }
 }
 
-defaultproperties {
-   bLogToGameLogfile=false,
-   IndicatorTexture=Texture'SelectionBox',
-   IsLookingAtTarget=false,
-   LookTime=0.0
+defaultproperties
+{
+      MyFonts=None
+      TriggerActor=None
+      IndicatorTexture=Texture'HeadHunter.SelectionBox'
+      IsLookingAtTarget=False
+      LookTime=0.000000
 }

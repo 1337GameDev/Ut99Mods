@@ -23,5 +23,6 @@ function PlayerSpawnedCallback(){
 
 defaultproperties
 {
-
+      SpawnedPlayer=None
+      IsLogin=False
 }

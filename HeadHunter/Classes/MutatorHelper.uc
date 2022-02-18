@@ -58,3 +58,24 @@ static function Mutator GetGameMessageMutatorByClass(Actor context, class<Mutato
 
     return m;
 }
+
+static function Mutator GetMutatorBeforeMutatorInChain(Mutator mut){
+    local Mutator m;
+    if(mut != None) {
+        m = mut.Level.Game.BaseMutator;
+
+        while(m != None){
+            if(m.NextMutator == mut){
+                break;
+            } else {
+                m = m.NextMutator;
+            }
+        }
+    }
+
+    return m;
+}
+
+defaultproperties
+{
+}

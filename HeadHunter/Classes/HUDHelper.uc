@@ -403,6 +403,24 @@ static simulated function bool GetScreenTrianglesPointIsIn(Canvas canvas, int po
      return (inTop_int + inBottom_int + inLeft_int + inRight_int) > 0;
 }
 
+static function bool GetScreenPointOutsideCenterCircle(Canvas canvas, int pointX, int pointY, int centerCircleRadius) {
+     local int middleX, middleY, DistanceLimitFromCenterSqrd;//we square this to avoid a sqr root
+     local float yDiff, xDiff;
+
+     middleX = canvas.ClipX / 2;
+     middleY = canvas.ClipY / 2;
+
+     if(centerCircleRadius <= 0) {
+          centerCircleRadius = 10;
+     }
+
+     DistanceLimitFromCenterSqrd = centerCircleRadius*centerCircleRadius;
+     xDiff = middleX - pointX;
+     yDiff = middleY - pointY;
+
+     return ((xDiff*xDiff) + (yDiff*yDiff)) > DistanceLimitFromCenterSqrd;
+}
+
 //given a texture (and based on it's current width), and a desired width, this returns a scale to use for the texture to get the desired width
 static simulated function float getScaleForTextureToGetDesiredWidth(Texture tex, float wantedWidth) {
      local float currentTextureWidth, resultingScale;

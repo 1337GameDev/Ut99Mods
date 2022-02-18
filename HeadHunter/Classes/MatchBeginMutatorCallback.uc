@@ -10,5 +10,5 @@ function CallbackFunc() {
 
 defaultproperties
 {
-
+      GameInfo=None
 }

@@ -152,27 +152,16 @@ function bool WeaponEligibleToBeStolen(Weapon wep){
     return CanBeStolen;
 }
 
-defaultproperties {
-     hitdamage=40
-     WeaponDescription="Classification: Energy Rifle\n\nPrimary Fire: Instant hit laser beam that steals the targets weapon.\n\nSecondary Fire: Large, slow moving plasma balls, that ricochet off walls.\n\nTechniques: Hitting the secondary fire plasma balls with the regular fire's laser beam will cause an immensely powerful explosion. You can even aim the plasma balls around corners or bounce them in hallways to block a path."
-     AmmoName=Class'Botpack.ShockCore'
-     PickupAmmoCount=20
-     FiringSpeed=2.000000
-     AutoSwitchPriority=4
-     InventoryGroup=4
-     AltProjectileClass=Class'HeadHunter.RicochetShockProj'
-     MyDamageType=jolted
-     AIRating=0.630000
-     AltRefireRate=0.700000
-     PickupMessage="You got the ASMD THIEF Shock Rifle."
-     ItemName="THIEF Shock Rifle"
-     StatusIcon=Texture'Botpack.Icons.UseASMD'
-     Icon=Texture'Botpack.Icons.UseASMD'
-
-     AllowStealingLastWeapon=false
-     AllowStealingImpactHammer=false
-     AllowStealingChainsaw=false
-     AllowStealingSword=false
-     AllowStealingRedeemer=true
-     AllowStealingTranslocator=false
+defaultproperties
+{
+      AllowStealingLastWeapon=False
+      AllowStealingImpactHammer=False
+      AllowStealingChainsaw=False
+      AllowStealingSword=False
+      AllowStealingRedeemer=True
+      AllowStealingTranslocator=False
+      WeaponDescription="Classification: Energy Rifle\nPrimary Fire: Instant hit laser beam that steals the targets weapon.\nSecondary Fire: Large, slow moving plasma balls, that ricochet off walls.\nTechniques: Hitting the secondary fire plasma balls with the regular fire's laser beam will cause an immensely powerful explosion. You can even aim the plasma balls around corners or bounce them in hallways to block a path."
+      AltProjectileClass=Class'HeadHunter.RicochetShockProj'
+      PickupMessage="You got the ASMD THIEF Shock Rifle."
+      ItemName="THIEF Shock Rifle"
 }

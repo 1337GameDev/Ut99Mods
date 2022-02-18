@@ -8,6 +8,6 @@ function bool PreventDeath(Pawn Killed, Pawn Killer, name damageType, vector Hit
     return Super.PreventDeath(Killed, Killer, damageType, HitLocation);
 }
 
-defaultproperties {
-
+defaultproperties
+{
 }

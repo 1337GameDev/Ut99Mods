@@ -174,34 +174,38 @@ function Destroyed() {
 	Super.Destroyed();
 }
 
-defaultproperties {
-     speed=700.000000,
-     MaxSpeed=700.000000,
-     Damage=0.000000,
-     Mass=3.000000,
-     MomentumTransfer=50,
-     MyDamageType=None,
-     SoundRadius=16,
-     ImpactSound=Sound'HeadHunter.SkullItem.SkullBounce',
-     Physics=PHYS_Falling,
-     RemoteRole=ROLE_SimulatedProxy,
-     Mesh=LodMesh'Headhunter.Skull'
-     AmbientGlow=64,
-     bUnlit=True,
-     LightEffect=LE_NonIncidence,
-     LightBrightness=255,
-     LightHue=170,
-     LightSaturation=255,
-     LightRadius=2,
-     LightPeriod=64,
-     LightPhase=255,
-     bBounce=True,
-     CollisionRadius=25.000000,
-     CollisionHeight=25.000000,
-     bAlwaysRelevant=True,
-     LODBias=8.0,
-     LifeSpan=0,
-     PickupSound=Sound'HeadHunter.SkullItem.SkullPickup',
-     AngleForSteepSurface=45,
-     MaxBouncesOnSteepSurface=8
+defaultproperties
+{
+      bHitWater=False
+      Count=0.000000
+      PickupSound=Sound'HeadHunter.SkullItem.SkullPickup'
+      FlameActor=None
+      MaxBouncesOnSteepSurface=8
+      AngleForSteepSurface=45.000000
+      NumSteepBounces=0
+      HHGameInfo=None
+      speed=700.000000
+      MaxSpeed=700.000000
+      MomentumTransfer=50
+      ImpactSound=Sound'HeadHunter.SkullItem.SkullBounce'
+      bAlwaysRelevant=True
+      Physics=PHYS_Falling
+      RemoteRole=ROLE_SimulatedProxy
+      LifeSpan=0.000000
+      LODBias=8.000000
+      Mesh=LodMesh'HeadHunter.Skull'
+      AmbientGlow=64
+      bUnlit=True
+      SoundRadius=16
+      CollisionRadius=25.000000
+      CollisionHeight=25.000000
+      LightEffect=LE_NonIncidence
+      LightBrightness=255
+      LightHue=170
+      LightSaturation=255
+      LightRadius=2
+      LightPeriod=64
+      LightPhase=255
+      bBounce=True
+      Mass=3.000000
 }

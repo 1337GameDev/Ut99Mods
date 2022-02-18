@@ -262,7 +262,7 @@ function GiveTo(Pawn Other) {
     PickupFunction(Other);
 }
 
-simulated function PreBeginPlay() {
+function PreBeginPlay() {
     CreateFlame();
     HHGameInfo = HeadHunterGameInfo(Level.Game);
     Self.NumCopies = Max(Self.NumCopies, 1);
@@ -430,48 +430,43 @@ static function int SpawnNumberFromPoint(Actor context, Vector point, int number
    return numberSkullsSpawned;
 }
 
-defaultproperties {
-     bLogToGameLogfile=false,
-     DrawType=DT_Mesh,
-     bBounce=true,
-     bCanHaveMultipleCopies=true,
-     bDisplayableInv=false, //// Item displayed in HUD
-     PickupMessage="You picked up a skull!",
-     RespawnTime=0,
-     UpdateFlameIntervalSecs=0.1,
-     UseInventoryToolbelt=false,
-     PickupViewMesh=Mesh'HeadHunter.Skull',
-     ItemName="SkullItem",
-
-     SkullsDroppedSound=Sound'HeadHunter.SkullItem.SkullPop',
-     PickupSound=Sound'HeadHunter.SkullItem.SkullPickup',
-     BounceSound=Sound'HeadHunter.SkullItem.SkullBounce',
-     RemoteRole=ROLE_SimulatedProxy,
-
-     Mesh=Mesh'HeadHunter.Skull',
-     LODBias=8.0,
-     Icon=Texture'UnrealShare.Icons.ICONSKULL',
-     Physics=PHYS_None,
-     SoundRadius=16,
-     CollisionRadius=25.000000,
-     CollisionHeight=25.000000,
-     bCollideActors=true,
-     bCollideWorld=true,
-     MaxCount=2,
-     bUnlit=true,
-     LightEffect=LE_NonIncidence,
-     LightBrightness=255,
-     LightHue=170,
-     LightSaturation=255,
-     LightRadius=2,
-     LightPeriod=64,
-     LightPhase=255,
-     Mass=3.000000,
-     bBroadCastLog=false,
-     bRotatingPickup=false,
-     bAlwaysRelevant=true,
-
-	 CheckHUDMutIntervalSecs=0.25,
-	 MaxDesireability=5.0
+defaultproperties
+{
+      SkullsDroppedSound=Sound'HeadHunter.SkullItem.SkullPop'
+      BounceSound=Sound'HeadHunter.SkullItem.SkullBounce'
+      MaxCount=2
+      bBroadCastLog=False
+      bLogToGameLogfile=False
+      UseInventoryToolbelt=False
+      FlameActor=None
+      CurrentFlameUpdateTimeInterval=0.000000
+      UpdateFlameIntervalSecs=0.100000
+      CurrentHUDMutTimeInterval=0.000000
+      CheckHUDMutIntervalSecs=0.250000
+      bOnGround=False
+      HHGameInfo=None
+      bCanHaveMultipleCopies=True
+      PickupMessage="You picked up a skull!"
+      ItemName="SkullItem"
+      PickupViewMesh=LodMesh'HeadHunter.Skull'
+      MaxDesireability=5.000000
+      PickupSound=Sound'HeadHunter.SkullItem.SkullPickup'
+      Icon=Texture'UnrealShare.Icons.IconSkull'
+      bAlwaysRelevant=True
+      LODBias=8.000000
+      Mesh=LodMesh'HeadHunter.Skull'
+      bUnlit=True
+      SoundRadius=16
+      CollisionRadius=25.000000
+      CollisionHeight=25.000000
+      bCollideWorld=True
+      LightEffect=LE_NonIncidence
+      LightBrightness=255
+      LightHue=170
+      LightSaturation=255
+      LightRadius=2
+      LightPeriod=64
+      LightPhase=255
+      bBounce=True
+      Mass=3.000000
 }
-

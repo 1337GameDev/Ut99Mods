@@ -38,3 +38,7 @@ static final function Rotator GetRandomRotationWithLimits(optional int maxPitch,
 
 	return RandRot;
 }
+
+defaultproperties
+{
+}

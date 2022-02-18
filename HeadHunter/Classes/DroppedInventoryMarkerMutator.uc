@@ -42,3 +42,7 @@ function bool PreventDeath(Pawn Killed, Pawn Killer, name damageType, vector Hit
 
     return DeathPrevented;
 }
+
+defaultproperties
+{
+}

@@ -7,7 +7,7 @@ function float TimeFx(float time) {
     return (0.5*Sin(time)) + 0.5;
 }
 
-DefaultProperties
+defaultproperties
 {
-    MaxFunctionTime=5.0
+      MaxFunctionTime=5.000000
 }

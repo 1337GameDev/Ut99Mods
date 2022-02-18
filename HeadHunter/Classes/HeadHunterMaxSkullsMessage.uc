@@ -17,13 +17,14 @@ static function string GetString(
     return "You cannot pick up any more skulls.";
 }
 
-defaultproperties {
-     FontSize=1
-     bIsSpecial=True
-     bIsUnique=True
-     bFadeMessage=True
-     YPos=64.000000
-     bCenter=True
-     Lifetime=4
-     DrawColor=(R=255,G=0,B=0)
+defaultproperties
+{
+      FontSize=1
+      bIsSpecial=True
+      bIsUnique=True
+      bFadeMessage=True
+      Lifetime=4
+      DrawColor=(G=0,B=0)
+      YPos=64.000000
+      bCenter=True
 }

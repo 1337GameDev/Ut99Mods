@@ -64,7 +64,7 @@ function array<string> Split(string str, string div, bool bDiv) {
 }
 
 //***********************************
-//Remove initial spaces from a string
+// Remove initial spaces from a string
 // Fetched from: https://github.com/CacoFFF/SiegeIV-UT99/blob/master/Classes/SiegeStatics.uc
 //***********************************
 static final function string ClearSpaces(string Text) {
@@ -77,6 +77,36 @@ static final function string ClearSpaces(string Text) {
 	}
 
 	return Text;
+}
+
+static function string GetPackageNameFromQualifiedClass(string ClassNameStr){
+    local string PackageName;
+    local int PeriodIndex;
+
+    if(ClassNameStr != "") {
+        PeriodIndex = Instr(ClassNameStr, ".");
+
+	    if (PeriodIndex > -1) {
+		    PackageName = Left(ClassNameStr, PeriodIndex);
+	    }
+	}
+
+    return PackageName;
+}
+
+static function string RemovePackageNameFromQualifiedClass(string ClassNameStr){
+    local string ClassName;
+    local int PeriodIndex;
+
+    if(ClassNameStr != "") {
+        PeriodIndex = Instr(ClassNameStr, ".");
+
+	    if (PeriodIndex > -1) {
+		    ClassName = Right(ClassNameStr, Len(ClassNameStr) - (PeriodIndex+1));
+	    }
+    }
+
+    return ClassName;
 }
 
 defaultproperties {

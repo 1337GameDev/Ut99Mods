@@ -164,7 +164,11 @@ simulated final function DrawUseIndicatorLocation(Canvas C, PlayerPawn Player) {
 
         if(AimWithinIndicator){
             wep = GiveOwnerHUDWeapon();
-            wep.SelectWeapon();
+
+            if((PlayerOwner.Weapon != wep) && (PlayerOwner.PendingWeapon != wep)) {
+			    Log("UseTriggerHUDMutator - PawnOwner does NOT have the event weapon selected, so select it");
+                wep.SelectWeapon();
+            }
         } else {
             RemoveHUDWeapon();
         }
@@ -286,7 +290,6 @@ function RemoveHUDWeapon(){
 
         if(inv != None){
             wep = WeaponEventListenerWeapon(inv);
-            wep.RestorePreviousWeapon();
             wep.Destroy();
         }
     }
@@ -298,17 +301,18 @@ function ActivateTrigger(Pawn Other){
     }
 }
 
-defaultproperties {
-   bLogToGameLogfile=false,
-   StaticIndicatorPercentOfMinScreenDimension=0.05,
-   ShowIndicatorWhenObscured=true,
-   ScaleIndicatorSizeToTarget=true,
-   UseHudColorForIndicator=true,
-   IndicatorColor=(R=255,G=186,B=3),
-   UseMessage="",
-   ShowUseMessage=true,
-   IndicatorOffsetFromTriggerActor=Vect(0,0,0),
-   IndicatorTexture=Texture'SelectionBox',
-
-   BaseAlphaValue=1.0
+defaultproperties
+{
+      ScaleIndicatorSizeToTarget=True
+      StaticIndicatorPercentOfMinScreenDimension=0.050000
+      UseHudColorForIndicator=True
+      MyFonts=None
+      TriggerActor=None
+      ShowIndicatorWhenObscured=True
+      IndicatorOffsetFromTriggerActor=(X=0.000000,Y=0.000000,Z=0.000000)
+      IndicatorColor=(R=255,G=186,B=3,A=0)
+      UseMessage=""
+      ShowUseMessage=True
+      IndicatorTexture=Texture'HeadHunter.SelectionBox'
+      BaseAlphaValue=1.000000
 }

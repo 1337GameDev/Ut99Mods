@@ -1,4 +1,4 @@
-                    //=============================================================================
+//=============================================================================
 // Trigger: senses things happening in its proximity and generates
 // sends Trigger/UnTrigger to actors whose names match 'EventName'.
 //=============================================================================
@@ -46,6 +46,7 @@ function Touch(Actor Other) {
 
         if(p != None){
             m = class'HUDHelper'.static.PlayerHasHUDMutator(p, 'UseTriggerHUDMutator');
+
             if(m == None) {
                hud = class'UseTriggerHUDMutator'.static.SpawnAndRegister(self);
             } else {
@@ -84,17 +85,16 @@ function UnTouch(Actor Other) {
 }
 
 defaultproperties {
-     ScaleIndicatorSizeToTarget=false,
-     StaticIndicatorPercentOfMinScreenDimension=5.0,
-     UseHudColorForIndicator=false,
-     ShowIndicatorWhenObscured=True,
-     IndicatorOffsetFromTriggerActor=Vect(0,0,0),
-     IndicatorColor=(R=255,G=186,B=3),
-     UseMessage="Interact to trigger",
-     ShowUseMessage=True,
-     ShowIndicator=True,//the indicator on the HUD to show where this is
-     BaseAlphaValue=0.30,
-     Texture=Texture'UseTrigger',
-     Message="Activated the trigger!"
+      ScaleIndicatorSizeToTarget=False
+      StaticIndicatorPercentOfMinScreenDimension=5.000000
+      UseHudColorForIndicator=False
+      ShowIndicatorWhenObscured=True
+      IndicatorOffsetFromTriggerActor=(X=0.000000,Y=0.000000,Z=0.000000)
+      IndicatorColor=(R=255,G=186,B=3,A=0)
+      ShowUseMessage=True
+      UseMessage="Interact to trigger"
+      ShowIndicator=True
+      BaseAlphaValue=0.300000
+      Message="Activated the trigger!"
+      Texture=Texture'HeadHunter.UseTrigger'
 }
-

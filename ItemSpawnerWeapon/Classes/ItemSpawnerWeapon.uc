@@ -273,46 +273,46 @@ event float BotDesireability(Pawn Bot){
 }
 
 defaultproperties {
-     WeaponDescription="Classification: Spawner\n\nPrimary Fire: Spawn the selected item. \n\nSecondary Fire: Advance the selected item.",
-     AIRating=0.0,
-     PickupMessage="You got the Item Spawner.",
-     ItemName="Item Spawner",
-     UpdateIntervalSecs=0.1,
-     MaxGhostDistance=300.0,
+      UpdateIntervalSecs=0
+      CurrentTimeInterval=0.000000
+      MaxGhostDistance=300.000000
+      SelectedActorGhost=None
+      ItemToSpawnIndex=0
+      ItemToSpawnCollisionRadius=1.000000
+      ItemToSpawnCollisionHeight=1.000000
+      ItemsToSpawn(0)=Class'HeadHunter.PracticeBot'
+      ItemsToSpawn(1)=Class'Botpack.TMale2Bot'
+      ItemsToSpawn(2)=Class'Botpack.TFemale1Bot'
+      ItemsToSpawn(3)=Class'UnrealShare.Chest'
+      ItemsToSpawn(4)=Class'UnrealShare.Candle'
+      ItemsToSpawn(5)=Class'Botpack.Armor2'
+      ItemsToSpawn(6)=Class'Botpack.UT_FlakCannon'
+      ItemsToSpawn(7)=Class'UnrealShare.TorchFlame'
+      ItemsToSpawn(8)=Class'ChaosUT.ch_WarHeadLauncher'
+      ItemsToSpawn(8)=Class'UnrealShare.DispersionPistol'
 
-     ItemToSpawnIndex=0,
-     ItemToSpawnCollisionRadius=1,
-     ItemToSpawnCollisionHeight=1,
-     ItemsToSpawn(0)=Class'UnrealShare.Chest',
-     ItemsToSpawn(1)=Class'UnrealShare.Candle',
-     ItemsToSpawn(2)=Class'Botpack.Armor2',
-     ItemsToSpawn(3)=Class'Botpack.UT_FlakCannon',
-     ItemsToSpawn(4)=Class'Botpack.TMale2Bot',
-     ItemsToSpawn(5)=Class'Botpack.TFemale1Bot',
-     ItemsToSpawn(5)=Class'UnrealShare.TorchFlame',
-
-     /*
-         Copied From Botpack.Translocator
-     */
-     PickupAmmoCount=1,
-     bCanThrow=True,//Translocator disables this
-     bTossedOut=True,//Translocator disables this
-     FiringSpeed=1.000000,
-     FireOffset=(X=15.000000,Y=-13.000000,Z=-7.000000),
-     FireSound=Sound'Botpack.Translocator.ThrowTarget',
-     AltFireSound=Sound'UnrealShare.Menu.Updown3',
-     DeathMessage="%k spawnfragged %o!",
-     AutoSwitchPriority=0,
-     RespawnTime=0.000000,
-     PlayerViewOffset=(X=5.000000,Y=-4.200000,Z=-7.000000),
-     PlayerViewMesh=LodMesh'Botpack.Transloc',
-     PickupViewMesh=LodMesh'Botpack.Trans3loc',
-     ThirdPersonMesh=LodMesh'Botpack.Trans3loc',
-     StatusIcon=Texture'ItemSpawnerWeapon.Icons.UseSpawner',
-     Icon=Texture'ItemSpawnerWeapon.Icons.UseSpawner',
-     Mesh=LodMesh'Botpack.Trans3loc',
-     bNoSmooth=False,
-     CollisionRadius=8.000000,
-     CollisionHeight=3.000000,
-     Mass=10.000000
+      WeaponDescription="Classification: SpawnernPrimary Fire: Spawn the selected item. nSecondary Fire: Advance the selected item."
+      PickupAmmoCount=1
+      FiringSpeed=1.000000
+      FireOffset=(X=15.000000,Y=-13.000000,Z=-7.000000)
+      AIRating=0.000000
+      FireSound=Sound'Botpack.Translocator.ThrowTarget'
+      AltFireSound=Sound'UnrealShare.Menu.Updown3'
+      DeathMessage="%k spawnfragged %o!"
+      AutoSwitchPriority=0
+      bTossedOut=True
+      PickupMessage="You got the Item Spawner."
+      ItemName="Item Spawner"
+      RespawnTime=0.000000
+      PlayerViewOffset=(X=5.000000,Y=-4.200000,Z=-7.000000)
+      PlayerViewMesh=LodMesh'Botpack.Transloc'
+      PickupViewMesh=LodMesh'Botpack.Trans3loc'
+      ThirdPersonMesh=LodMesh'Botpack.Trans3loc'
+      StatusIcon=Texture'ItemSpawnerWeapon.Icons.UseSpawner'
+      Icon=Texture'ItemSpawnerWeapon.Icons.UseSpawner'
+      Mesh=LodMesh'Botpack.Trans3loc'
+      bNoSmooth=False
+      CollisionRadius=8.000000
+      CollisionHeight=3.000000
+      Mass=10.000000
 }

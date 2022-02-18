@@ -143,13 +143,14 @@ static function GetDigitsOfInteger(int TargetInteger, out int DigitsArray[]){
     }
 }
 
-defaultproperties {
-    RadToDeg=57.295779513082321600,// 180 / Pi
-    DegToRad=0.017453292519943296,// Pi / 180
-    UnrRotToRad=0.00009587379924285,// Pi / 32768
-    RadToUnrRot=10430.3783504704527,// 32768 / Pi
-    DegToUnrRot=182.0444,
-    UnrRotToDeg=0.00549316540360483,
-    UnrSizeToMeters=0.01904761904,
-    MetersToUnrSize=52.5
+defaultproperties
+{
+      RadToDeg=57.295780
+      DegToRad=0.017453
+      UnrRotToRad=0.000096
+      RadToUnrRot=10430.377930
+      DegToUnrRot=182.044403
+      UnrRotToDeg=0.005493
+      UnrSizeToMeters=0.019048
+      MetersToUnrSize=52.500000
 }

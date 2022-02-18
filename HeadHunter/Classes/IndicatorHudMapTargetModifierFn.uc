@@ -36,3 +36,9 @@ function IndicatorSettings ModifierFunc(IndicatorHudTargetListElement indicatorL
 
    return settings;
 }
+
+defaultproperties
+{
+      ShowIndicatorToHudOwnerTeamNum=False
+      IndicatorVisibleToTeamNum=0
+}

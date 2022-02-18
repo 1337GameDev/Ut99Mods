@@ -1,55 +1,94 @@
-// A message from: JuggernautMessage.
-// JuggernautMessage is a message indicating a player has become the Juggernaut (or announces who became a Juggernaut)
 //
-class JuggernautMessage extends CriticalEventPlus;
+// Messages common to JuggernautMessage derivatives.
+//
+// Switch 0: OverTime
+//
+// Switch 1: Entered game.
+//	RelatedPRI_1 is the player.
+//
+// Switch 2: Name change.
+//	RelatedPRI_1 is the player.
+//
+// Switch 3: Team change.
+//	RelatedPRI_1 is the player.
+//	OptionalObject is a TeamInfo.
+//
+// Switch 4: Left game.
+//	RelatedPRI_1 is the player.
+//
+// Switch 5: New Juggernaut!
+//	RelatedPRI_1 is the player
+//
+// Switch 6: No Juggernaut! [Error]
+//	
 
-var localized string PlayerBecameJuggernautMessage;
-var localized string YouHaveBecomeAJuggernautMessage;
 
-static function float GetOffset(int Switch, float YL, float ClipY) {
-	return ClipY - YL - (64.0/768)*ClipY;
-}
+class JuggernautMessage expands CriticalEventPlus;
+
+var localized string OvertimeMessage;
+var localized string GlobalNameChange;
+var localized string NewTeamMessage;
+var localized string NewTeamMessageTrailer;
+var localized string NewJuggernautText;
+var localized string NoJuggernautText;
 
 static function string GetString(
 	optional int Switch,
-	optional PlayerReplicationInfo RelatedPRI_1,
+	optional PlayerReplicationInfo RelatedPRI_1, 
 	optional PlayerReplicationInfo RelatedPRI_2,
 	optional Object OptionalObject
 	)
 {
-	if (RelatedPRI_1 == None)
-		return "";
-	if (RelatedPRI_1.PlayerName == "")
-		return "";
-	return RelatedPRI_1.PlayerName@Default.PlayerBecameJuggernautMessage;
+	switch (Switch)
+	{
+		case 0://overtime
+			return Default.OverTimeMessage;
+			break;
+		case 1:
+			if (RelatedPRI_1 == None)
+				return "";
+
+			return RelatedPRI_1.PlayerName$class'GameInfo'.Default.EnteredMessage;
+			break;
+		case 2://entered game
+			if (RelatedPRI_1 == None)
+				return "";
+
+			return RelatedPRI_1.OldName@Default.GlobalNameChange@RelatedPRI_1.PlayerName;
+			break;
+		case 3://team change
+			if (RelatedPRI_1 == None)
+				return "";
+			if (OptionalObject == None)
+				return "";
+
+			return RelatedPRI_1.PlayerName@Default.NewTeamMessage@TeamInfo(OptionalObject).TeamName$Default.NewTeamMessageTrailer;
+			break;
+		case 4://left game
+			if (RelatedPRI_1 == None)
+				return "";
+
+			return RelatedPRI_1.PlayerName$class'GameInfo'.Default.LeftMessage;
+			break;
+		case 5://new juggernaut
+			if (RelatedPRI_1 == None)
+				return "";
+
+			return RelatedPRI_1.PlayerName@Default.NewJuggernautText;
+			break;
+		case 6://NO juggernaut
+			return Default.NoJuggernautText;
+			break;
+	}
+	return "";
 }
 
-static simulated function ClientReceive(
-	PlayerPawn P,
-	optional int Switch,
-	optional PlayerReplicationInfo RelatedPRI_1,
-	optional PlayerReplicationInfo RelatedPRI_2,
-	optional Object OptionalObject
-	)
+defaultproperties
 {
-	Super.ClientReceive(P, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
-
-	if (RelatedPRI_1 != P.PlayerReplicationInfo)
-		return;
-
-	P.ClientMessage(Default.YouHaveBecomeAJuggernautMessage);
-}
-
-defaultproperties {
-     FontSize=1
-     bIsSpecial=True
-     bIsUnique=True
-     bFadeMessage=True
-     YPos=64.000000
-     bCenter=True
-     Lifetime=4
-     DrawColor=(R=255,G=0,B=0)
-	 PlayerBecameJuggernautMessage=" has become a Juggernaut!",
-	 YouHaveBecomeAJuggernautMessage="You have become The Juggernaut!"
-	 bBeep=False
+      OvertimeMessage="Score tied at the end of regulation. Sudden Death Overtime!!!"
+      GlobalNameChange="changed name to"
+      NewTeamMessage="is now on"
+      NewTeamMessageTrailer=""
+      NewJuggernautText="is the new Juggernaut!"
+      NoJuggernautText="No Juggernaut was chosen! Please restart the match!"
 }

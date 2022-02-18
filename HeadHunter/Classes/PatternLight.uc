@@ -102,16 +102,18 @@ static function PatternLight SpawnWithFX(Actor context, TimeFunction fx, optiona
     return light;
 }
 
-defaultproperties {
-    LightBrightness=0,
-    Direction=1,
-    StartAtEnd=false,
-    Loop=true,
-    StartEnabled=true,
-    IsEnabled=true,
-    bStatic=false,
-    bNoDelete=true
-    bHidden=false
-    RemoteRole=ROLE_SimulatedProxy
-    bMovable=true
+defaultproperties
+{
+      Direction=1.000000
+      CurrentTime=0.000000
+      StartAtEnd=False
+      Loop=True
+      StartEnabled=True
+      IsEnabled=True
+      TimeFX=None
+      bStatic=False
+      bHidden=False
+      RemoteRole=ROLE_SimulatedProxy
+      bMovable=True
+      LightBrightness=0
 }

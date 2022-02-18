@@ -11,8 +11,9 @@ var WeaponUseCallback fireCallback;
 var WeaponUseCallback altFireCallback;
 var WeaponUseCallback activateCallback;
 var WeaponUseCallback useCallback;
-function SetCallbackForAllEvents(WeaponUseCallback callback){
-     if(callback != None){
+
+function SetCallbackForAllEvents(WeaponUseCallback callback) {
+     if(callback != None) {
          fireCallback = callback;
          altFireCallback = callback;
          activateCallback = callback;
@@ -20,14 +21,15 @@ function SetCallbackForAllEvents(WeaponUseCallback callback){
      }
 }
 
-simulated function PostBeginPlay() {
-    Super.PostBeginPlay();
-}
+function Destroyed() {
+    Log("WeaponEventListenerWeapon - Destroyed");
 
-simulated function Destroyed() {
-	Super.Destroyed();
+    if(Self.bDeleteMe){
+        return;
+    }
 
 	RestorePreviousWeapon();
+    Super.Destroyed();
 
 	PreviouslySelectedWeapon = None;
 	fireCallback = None;
@@ -73,6 +75,60 @@ function Use(Pawn User){
     }
 }
 
+function SelectWeapon(){
+    local PlayerPawn ppOwner;
+
+    if(Self.bDeleteMe){
+        return;
+    }
+
+	//store weapon of player
+	ppOwner = PlayerPawn(Owner);
+	if((ppOwner != None) && (ppOwner.Weapon != self)){
+        if((ppOwner.Weapon != None) && (ppOwner.Weapon.class == self.Class)){
+            return;
+        }
+
+        PreviouslySelectedWeapon = ppOwner.Weapon;
+        //AutoSwitchPriority = 100;
+	    if(class'WeaponHelper'.static.SwitchPlayerPawnWeapon(ppOwner, self)) {
+	        Log("WeaponEventListenerWeapon - SelectWeapon - WeaponHelper.SwitchPlayerPawnWeapon reported TRUE for switching to THIS weapon");
+        } else {
+            Log("WeaponEventListenerWeapon - SelectWeapon - WeaponHelper.SwitchPlayerPawnWeapon reported FALSE for switching to THIS weapon");
+        }
+	}
+}
+function RestorePreviousWeapon(){
+    local PlayerPawn ppOwner;
+
+    if(Self.bDeleteMe){
+        return;
+    }
+
+	//restore old weapon of player
+	ppOwner = PlayerPawn(Owner);
+	if(ppOwner != None){
+	    if(PreviouslySelectedWeapon != None) {
+	    //if((ppOwner.Weapon != None) && ppOwner.Weapon.class == self.class) {
+	    //if((ppOwner.Weapon != None)) {
+	        //AutoSwitchPriority = -100;
+	        Log("WeaponEventListenerWeapon - RestorePreviousWeapon - PreviouslySelectedWeapon:"$PreviouslySelectedWeapon);
+	        if(class'WeaponHelper'.static.SwitchPlayerPawnWeapon(ppOwner, PreviouslySelectedWeapon)) {
+	            Log("WeaponEventListenerWeapon - RestorePreviousWeapon - WeaponHelper.SwitchPlayerPawnWeapon reported TRUE for switching to previous weapon");
+	        } else {
+	            Log("WeaponEventListenerWeapon - RestorePreviousWeapon - WeaponHelper.SwitchPlayerPawnWeapon reported FALSE for switching to previous weapon");
+	        }
+	    //}
+	    } else {
+	        Log("WeaponEventListenerWeapon - RestorePreviousWeapon - PreviouslySelectedWeapon was NONE, so choosing best weapon");
+
+            ppOwner.SwitchToBestWeapon();
+	    }
+	}
+}
+
+/*
+
 function Weapon WeaponChange(byte F){
     return self;
 }
@@ -85,45 +141,84 @@ function Weapon RecommendWeapon(out float rating, out int bUseAltMode) {
     return self;
 }
 
-function SelectWeapon(){
-    local PlayerPawn ppOwner;
+simulated function PlaySelect() {
+	bForceFire = false;
+	bForceAltFire = false;
+	bCanClientFire = false;
 
-	//store weapon of player
-	ppOwner = PlayerPawn(Owner);
-	if(ppOwner != None){
-        if((ppOwner.Weapon != None) && (ppOwner.Weapon.class == self.Class)){
-            return;
-        }
+	if (!IsAnimating() || (AnimSequence != 'Select')) {
+	    if(Self.Mesh != None) {
+		    PlayAnim('Select',1.0,0.0);
+		}
+	}
 
-        PreviouslySelectedWeapon = ppOwner.Weapon;
-	    class'WeaponHelper'.static.SwitchPlayerPawnWeapon(ppOwner, self);
+	if(Owner != None) {
+	    Owner.PlaySound(SelectSound, SLOT_Misc, Pawn(Owner).SoundDampening);
 	}
 }
-function RestorePreviousWeapon(){
-    local PlayerPawn ppOwner;
+function BringUp() {
+	if ((Owner != None) && Owner.IsA('PlayerPawn')) {
+		SetHand(PlayerPawn(Owner).Handedness);
+		PlayerPawn(Owner).EndZoom();
+	}
 
-	//restore old weapon of player
-	ppOwner = PlayerPawn(Owner);
-	if(ppOwner != None){
-	    if((ppOwner.Weapon != None) && ppOwner.Weapon.class == self.class) {
-	        class'WeaponHelper'.static.SwitchPlayerPawnWeapon(ppOwner, PreviouslySelectedWeapon);
-	    }
+	bWeaponUp = false;
+	PlaySelect();
+	GotoState('Active');
+}
+
+function float SwitchPriority() {
+    return AutoSwitchPriority;
+}
+
+State DownWeapon
+{
+ignores Fire, AltFire;
+
+	function bool PutDown() {
+	    if(Owner != None) {
+		    Pawn(Owner).ClientPutDown(self, Pawn(Owner).PendingWeapon);
+		}
+		return true; //just keep putting it down
+	}
+
+	function BeginState()
+	{
+		bChangeWeapon = false;
+		bMuzzleFlash = 0;
+		if(Owner != None){
+		    Pawn(Owner).ClientPutDown(self, Pawn(Owner).PendingWeapon);
+		}
+	}
+
+Begin:
+	TweenDown();
+	FinishAnim();
+
+	if(Owner != None){
+	    Pawn(Owner).ChangedWeapon();
 	}
 }
+*/
 
 defaultproperties {
-     bBroadCastLog=false,
-     bLogToGameLogfile=true,
-     bActivatable=true,
-     ActivateSound=None,
-     bHidden=True,
+      bBroadCastLog=False
+      bLogToGameLogfile=True
+      PreviouslySelectedWeapon=None
+      fireCallback=None
+      altFireCallback=None
+      activateCallback=None
+      useCallback=None
+      DeathMessage=""
+      bActivatable=True
+      PickupMessage=""
+      ItemName="UseTriggerWeapon"
+      RespawnTime=0.000000
+      bHidden=True,
+      bHideWeapon=true,
+      //Visibility=false,
 
-     MessageNoAmmo=" has no ammo.",
-     NameColor=(R=255,G=255,B=255),
-     InventoryGroup=1,
-     PickupMessage="",
-     DeathMessage="",
-     ItemName="UseTriggerWeapon",
-     RespawnTime=0.0,
+      SelectSound=Sound'UnrealShare.General.ArrowSpawn',
+      PlayerViewMesh=LodMesh'Botpack.chainsawM',
+      Mesh=LodMesh'Botpack.ChainSawPick'
 }
-

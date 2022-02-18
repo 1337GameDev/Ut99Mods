@@ -99,7 +99,8 @@ static simulated function ClientReceive(
 
 defaultproperties
 {
-     OvertimeMessage="Score tied at the end of regulation. Sudden Death Overtime!!!"
-     GlobalNameChange="changed name to"
-     NewTeamMessage="is now on"
+      OvertimeMessage="Score tied at the end of regulation. Sudden Death Overtime!!!"
+      GlobalNameChange="changed name to"
+      NewTeamMessage="is now on"
+      NewTeamMessageTrailer=""
 }

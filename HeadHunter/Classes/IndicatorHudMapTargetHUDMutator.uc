@@ -27,5 +27,8 @@ function PlayerSpawnedCallback(){
     }
 }
 
-DefaultProperties {
+defaultproperties
+{
+      elementsToAdd=None
+      GlobalIndicator=False
 }

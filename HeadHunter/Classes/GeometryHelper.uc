@@ -31,3 +31,7 @@ static final function bool isInsideTriangle(int vertex1x, int vertex1y, int vert
        /* Check if sum of A1, A2 and A3 is same as A */
         return (A == A1 + A2 + A3);
 }
+
+defaultproperties
+{
+}

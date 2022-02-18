@@ -213,6 +213,6 @@ static function Rotator GetAnglesBetweenVectors(Vector A, Vector B) {
     return ResultingRot;
 }
 
-defaultproperties {
-
+defaultproperties
+{
 }

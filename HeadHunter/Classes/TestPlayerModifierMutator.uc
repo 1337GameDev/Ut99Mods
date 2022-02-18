@@ -52,6 +52,7 @@ function Mutate(string MutateString, PlayerPawn Sender) {
     }
 }
 
-defaultproperties {
-
+defaultproperties
+{
+      playerModifierInstance=None
 }

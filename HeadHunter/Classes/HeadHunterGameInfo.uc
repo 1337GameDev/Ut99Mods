@@ -488,8 +488,9 @@ function Timer() {
 
 		if(!bHasPlayedIntro) {
 			For (P=Level.PawnList; P!=None; P=P.NextPawn) {
-				P.PlaySound(IntroSound,, 32.0);
-				//P.ClientPlaySound(Default.SpreeSound[Switch],, true);
+				if(P.IsA('PlayerPawn')) {
+					class'SoundHelper'.static.ClientPlaySound(PlayerPawn(P),IntroSound,, true, 100);
+				}
 			}
 
 		    bHasPlayedIntro = true;
@@ -573,11 +574,10 @@ function AdvanceSkullCollectCountdown() {
 	} else if(SkullsCollectedCountdown <= 0) {
 	    //send message to collect all skulls
 		BroadcastLocalizedMessage(class'HeadHunterMessage', 6);
-
-		for (pp = Level.PawnList; pp != None; pp = pp.NextPawn) {
-			if (pp.IsA('PlayerPawn')) {
-				//PlayerPawn(pp).ClientPlaySound(SkullCollectedSound,,true);
-				PlayerPawn(pp).PlaySound(SkullCollectedSound, SLOT_None, 32, true);
+		
+		For (pp=Level.PawnList; pp!=None; pp=pp.NextPawn) {
+			if(pp.IsA('PlayerPawn')) {
+				class'SoundHelper'.static.ClientPlaySound(PlayerPawn(pp), SkullCollectedSound,, true, 32);
 			}
 		}
 
@@ -841,31 +841,27 @@ function string GetRules() {
 	return ResultSet;
 }
 
-defaultproperties {
-     SkullCarryLimit=4,
-     SkullCollectTimeInterval=45,
-     SkullCollectGoal=4,
-
-     ShowDroppedSkullIndicators=true,
-     ShowPlayersWithSkullThreshold=true,
-     SkullThresholdToShowPlayers=0,
-
-     FragLimit=30
-     RestartWait=15
-     CountDown=10
-     gamegoal="skulls wins the match."
-     InitialBots=1
-     HUDType=Class'HeadHunter.HeadHunterHUD'
-     MapListType=Class'Botpack.TDMmaplist'
-     MapPrefix="DM"
-     BeaconName="DM"
-     GameName="HeadHunter"
-     DMMessageClass=Class'HeadHunter.HeadHunterMessage'
-     MutatorClass=Class'HeadHunter.HHMutator'
-     GameReplicationInfoClass=Class'HeadHunter.HeadHunterGameReplicationInfo',
-     RulesMenuType="HeadHunter.HHGameOptionsMenu",
-     ScoreBoardType=Class'HeadHunter.HHScoreBoard',
-
-	 IntroSound=Sound'HeadHunter.Announcer.HeadHunterIntro',
-	 SkullCollectedSound=Sound'HeadHunter.Announcer.SkullsCollected'
+defaultproperties
+{
+      IntroSound=Sound'HeadHunter.Announcer.HeadHunterIntro'
+      SkullCollectedSound=Sound'HeadHunter.Announcer.SkullsCollected'
+      HHRepInfo=None
+      bHasPlayedIntro=False
+      SkullCollectGoal=4
+      SkullCarryLimit=10
+      SkullCollectTimeInterval=900
+      SkullsCollectedCountdown=0
+      bHasInitAnyHUDMutators=False
+      ShowDroppedSkullIndicators=True
+      ShowPlayersWithSkullThreshold=True
+      SkullThresholdToShowPlayers=0
+      GlobalIndicatorTargets=None
+      gamegoal="skulls wins the match."
+      ScoreBoardType=Class'HeadHunter.HHScoreBoard'
+      RulesMenuType="HeadHunter.HHGameOptionsMenu"
+      HUDType=Class'HeadHunter.HeadHunterHUD'
+      GameName="HeadHunter"
+      DMMessageClass=Class'HeadHunter.HeadHunterMessage'
+      MutatorClass=Class'HeadHunter.HHMutator'
+      GameReplicationInfoClass=Class'HeadHunter.HeadHunterGameReplicationInfo'
 }

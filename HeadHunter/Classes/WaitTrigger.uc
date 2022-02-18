@@ -87,30 +87,19 @@ function UnTouch(Actor Other) {
     }
 }
 
-defaultproperties {
-     ShowWaitMessage=True,
-     Texture=Texture'WaitTrigger',
-     Message="Activated!",
-     WaitMessage="Wait To Activate",
-     //the message to show based on the Trigger's RetriggerDelay
-     RetriggerCooldownMessage="Wait To Reactivate...",
-
-     TimeToTrigger=2.0,
-
-     //Whether to show the time elapsed when looking at the trigger
-     ShowTimeWaitedAt=True,
-     //whether to show the time remaining, when showing the time looked at
-     ShowTimeRemaining=True,
-     //whether to show the time remaining to trigger, if showing the time looked at
-     ShowTimeCountingDown=True,
-
-     //whether to show a message when waiting for the RetriggerDelay
-     ShowMessagesAfterActivated=True,
-     //whether to show text stating the player has to wait to retrigger
-     ShowRetriggerCooldownMessage=True,
-     //whether to show the time for the RetriggerDelay - counting up
-     ShowCooldownTime=True,
-     //whether to show the time for the RetriggerDelay - counting down
-     ShowCooldownTimeRemaining=True
+defaultproperties
+{
+      ShowWaitMessage=True
+      WaitMessage="Wait To Activate"
+      ShowTimeWaitedAt=True
+      ShowTimeRemaining=True
+      ShowTimeCountingDown=True
+      TimeToTrigger=2.000000
+      ShowMessagesAfterActivated=True
+      ShowRetriggerCooldownMessage=True
+      ShowCooldownTime=True
+      ShowCooldownTimeRemaining=True
+      RetriggerCooldownMessage="Wait To Reactivate..."
+      Message="Activated!"
+      Texture=Texture'HeadHunter.WaitTrigger'
 }
-

@@ -8,6 +8,7 @@ function CallbackFunc() {
     Super.CallbackFunc();
 }
 
-defaultproperties {
-
+defaultproperties
+{
+      SpawnedPlayer=None
 }

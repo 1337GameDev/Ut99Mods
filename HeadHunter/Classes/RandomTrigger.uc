@@ -41,12 +41,14 @@ function ActivateRandomly(Actor Other){
     }
 }
 
-DefaultProperties {
-   PlayActivationSound=false,
-   RepeatTriggerTime=1.0,
-   ActivateOnTimer=True,
-   Successes=10,
-   OutOfTotal=100,
-   Texture=Texture'RandomTrigger',
-   Message="Random Event"
+defaultproperties
+{
+      ActivateOnTimer=True
+      Successes=10
+      OutOfTotal=100
+      Probability=0.000000
+      PlayActivationSound=False
+      Message="Random Event"
+      RepeatTriggerTime=1.000000
+      Texture=Texture'HeadHunter.RandomTrigger'
 }

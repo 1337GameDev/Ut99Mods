@@ -242,6 +242,8 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 	return true;
 }
 
-defaultproperties {
-     bLogToGameLogfile=false
+defaultproperties
+{
+      MyGame=None
+      bLogToGameLogfile=False
 }

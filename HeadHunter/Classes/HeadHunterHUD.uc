@@ -74,6 +74,7 @@ simulated function DrawTimeAt(Canvas Canvas, float X, float Y) {
     class'HUDHelper'.static.RenderLEDTimerToHUD(Canvas, X, Y, timerColor, Style, Scale, gameInfo.SkullsCollectedCountdown);
 }
 
-defaultproperties {
-     SkullIconColor=(R=255,G=186,B=3)
+defaultproperties
+{
+      SkullIconColor=(R=255,G=186,B=3,A=0)
 }

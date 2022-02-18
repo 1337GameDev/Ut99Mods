@@ -12,3 +12,8 @@ final static function FontInfo GetRef(Actor referenceToUseForSpawn) {
 
     return default.Ref;
 }
+
+defaultproperties
+{
+      Ref=None
+}

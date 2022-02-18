@@ -1,4 +1,4 @@
 ls=dir /P /N $*
-uccmake=C:\Users\User\Desktop\Modding\UnrealTournament-client\compileWithUCC.bat
-runmap=C:\Users\User\Desktop\Modding\UnrealTournament-client\startUt99WithMap.bat
-runmaplarge=C:\Users\User\Desktop\Modding\UnrealTournament-client\startUt99WithMap-large.bat
+uccmake=C:\Users\richardduerr\Desktop\Modding\UnrealTournament-client\compileWithUCC.bat
+runmap=C:\Users\richardduerr\Desktop\Modding\UnrealTournament-client\startUt99WithMap.bat
+runmaplarge=C:\Users\richardduerr\Desktop\Modding\UnrealTournament-client\startUt99WithMap-large.bat

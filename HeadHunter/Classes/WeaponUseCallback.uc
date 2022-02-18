@@ -10,7 +10,7 @@ function CallbackFunc() {
     Super.CallbackFunc();
 }
 
-DefaultProperties
+defaultproperties
 {
-
+      WeaponInstance=None
 }

@@ -32,8 +32,10 @@ function Touch( actor Other )
 	}
 }
 
-defaultproperties {
-     RemoteRole=ROLE_None
-     CollisionRadius=200.000000
-     Physics=PHYS_Trailer
+defaultproperties
+{
+      bInitiallyActive=False
+      Physics=PHYS_Trailer
+      RemoteRole=ROLE_None
+      CollisionRadius=200.000000
 }

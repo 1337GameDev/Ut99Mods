@@ -17,20 +17,18 @@ function PickupFunction(Pawn Other) {
     BroadCastMessage("Keycard: PickupFunction");
 }
 
-defaultproperties {
-     bCanHaveMultipleCopies=true,
-     PickupMessage="You picked up a keycard!",
-     RespawnTime=0,
-     PickupViewMesh=Mesh'HeadHunter.Keycard',
-     ItemName="Keycard",
-     PickupSound=Sound'HeadHunter.Keycard.KeycardPickup',
-     RemoteRole=ROLE_SimulatedProxy,
-     Mesh=LodMesh'HeadHunter.Keycard',
-     Skin=Texture'HeadHunter.Skins.Keycard',
-     Icon=Texture'HeadHunter.Icons.KeycardIcon',
-     SoundRadius=16,
-     CollisionRadius=18.000000,
-     CollisionHeight=15.000000,
-     Mass=5.000000
+defaultproperties
+{
+      bCanHaveMultipleCopies=True
+      PickupMessage="You picked up a keycard!"
+      ItemName="Keycard"
+      PickupViewMesh=LodMesh'HeadHunter.Keycard'
+      PickupSound=Sound'HeadHunter.Keycard.KeycardPickup'
+      Icon=Texture'HeadHunter.Icons.KeycardIcon'
+      Skin=Texture'HeadHunter.Skins.Keycard'
+      Mesh=LodMesh'HeadHunter.Keycard'
+      SoundRadius=16
+      CollisionRadius=18.000000
+      CollisionHeight=15.000000
+      Mass=5.000000
 }
-

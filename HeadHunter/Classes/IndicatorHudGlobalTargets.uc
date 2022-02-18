@@ -27,3 +27,9 @@ final static function SetRef(IndicatorHudGlobalTargets targets) {
 
     default.Ref = targets;
 }
+
+defaultproperties
+{
+      Ref=None
+      GlobalIndicatorTargets=None
+}

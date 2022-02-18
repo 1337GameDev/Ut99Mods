@@ -102,9 +102,9 @@ static function ActorDirectionRelationResult GetDirectionRelationOfSourceToTarge
         // Get the vector from Target to Source
         aToB = Target.Location - Source.Location;
         orientation = aFacing dot Normal(aToB);
-        // > 0.0  Target points forwards in relation to Source (up to 90° apart)
-        // = 0.0  Target is perpendicular to Source (exactly 90° between Target and Source)
-        // < 0.0  Target points backwards in relation to Source (more than 90° apart)
+        // > 0.0  Target points forwards in relation to Source (up to 90Â° apart)
+        // = 0.0  Target is perpendicular to Source (exactly 90Â° between Target and Source)
+        // < 0.0  Target points backwards in relation to Source (more than 90Â° apart)
     } else {
         // What direction is Source facing in?
         aFacing = Normal(Vector(Source.Rotation));
@@ -119,6 +119,90 @@ static function ActorDirectionRelationResult GetDirectionRelationOfSourceToTarge
     result.SetRelationFromDotResult(orientation);
 }
 
-defaultproperties {
+/******************************************************************************
+Checks if *A* is relevant and destroys it, if not.
+The result of Level.Game.IsRelevant() is returned.
+Intended for use with hacked bGameRelevant=True-spawned Actors.
+******************************************************************************/
+static function bool CheckActorRelevance(Actor A) {
+	local bool result;
 
+    if(A == None) {
+        return false;
+    }
+
+	result = A.Level.Game.IsRelevant(A);
+
+	if (!result && ! A.bDeleteMe) {
+		A.Destroy();
+	}
+
+	return result;
+}
+
+static function CheckSpawnedActorArrayRelevance(Actor context, LinkedList ActorList) {
+    local ListElement le;
+    local Actor ActorValue;
+
+    if(ActorList != None) {
+        le = ActorList.Head;
+        ActorValue = Actor(le.Value);
+
+        While(le != None) {
+            if(ActorValue != None) {
+                Class'ActorHelper'.static.CheckActorRelevance(ActorValue);
+            }
+
+            le = le.Next;
+            ActorValue = Actor(le.Value);
+        }
+    }
+}
+
+/******************************************************************************
+Tries to spawn an Actor of the given *SpawnClass* with the properties
+bBlockActors=false, bCollideWorld=false to avoid collision while placing and
+bGameRelevant = true to avoid passing the new created Actor to the relevance
+chain. Always call *CheckActorRelevance()* later to have the Actor passed the
+relevance chain.
+
+Changed default properties are reset to their previous values after the actor
+has spawned.
+Either the new Actor is returned or None if spawn failed.
+******************************************************************************/
+static function Actor SpawnActor(Actor context, Class<Actor> SpawnClass, optional Actor SpawnOwner, optional Name SpawnTag, optional Vector SpawnLocation, optional Rotator SpawnRotation) {
+	local Actor result;
+
+	local bool bBlockActorsDefault;
+	local bool bGameRelevantDefault;
+	local bool bCollideWorldDefault;
+
+	bBlockActorsDefault = SpawnClass.Default.bBlockActors;
+	bGameRelevantDefault = SpawnClass.Default.bGameRelevant;
+	bCollideWorldDefault = SpawnClass.Default.bCollideWorld;
+
+	SpawnClass.Default.bBlockActors = false;
+	SpawnClass.Default.bGameRelevant = true;
+	SpawnClass.Default.bCollideWorld = false;
+
+	result = context.Spawn(SpawnClass, SpawnOwner, SpawnTag, SpawnLocation, SpawnRotation);
+
+	SpawnClass.Default.bBlockActors = bBlockActorsDefault;
+	SpawnClass.Default.bGameRelevant = bGameRelevantDefault;
+	SpawnClass.Default.bCollideWorld = bCollideWorldDefault;
+
+	if (result == None) {
+		Log("SpawnActor - could not spawn"@SpawnClass@"at location"@SpawnLocation);
+	} else {
+		result.SetCollision(result.bCollideActors, SpawnClass.Default.bBlockActors, result.bBlockPlayers);
+		result.bGameRelevant = bGameRelevantDefault;
+		result.bCollideWorld = bCollideWorldDefault;
+
+		Log("SpawnActor - spawned"@result@"at location"@SpawnLocation);
+	}
+
+	return result;
+}
+
+defaultproperties {
 }

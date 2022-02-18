@@ -34,7 +34,9 @@ static function CustomTrigger SpawnAndListenForEvent(Actor src, name eventName, 
    }
 }
 
-defaultproperties {
-	Tag=MyDesiredEvent
-	DefaultEvent='CustomEvent'
+defaultproperties
+{
+      DefaultEvent="None"
+      triggerCallback=None
+      Tag="MyDesiredEvent"
 }

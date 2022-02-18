@@ -85,6 +85,23 @@ static function int DeleteInventoriesOnGround(Actor context, name invClass) {
     return countDeleted;
 }
 
+static function bool IsAPowerup(Inventory Item, bool includeArmor, bool includeHealth, bool includePowerItems) {
+	if(Item == None) {
+	    return false;
+	} else {
+	    if(includeArmor && (Item.IsA('Health') || Item.IsA('HealthPack') || Item.IsA('HealthVial') || Item.IsA('MedBox') || Item.IsA('NaliFruit') || Item.IsA('Bandages') || Item.IsA('SuperHealth')) ) {
+			return true;
+		} else if(includeArmor && (Item.bIsAnArmor || Item.IsA('c_Armorshard') || Item.IsA('Armor') || Item.IsA('Armor2') || Item.IsA('Armor') || Item.IsA('KevlarSuit') || Item.IsA('ToxinSuit') || Item.IsA('AsbestosSuit')) ) {
+		    return true;
+		} else if(includePowerItems && (Item.IsA('UT_Jumpboots') || Item.IsA('UDamage') || Item.IsA('UT_Invisibility') || Item.IsA('UT_ShieldBelt') || Item.IsA('ForceField') || Item.IsA('RelicInventory') || Item.IsA('SCUBAGear')) ){
+		    return true;
+		}
+	}
+
+	return false;
+}
+
 defaultproperties
 {
+      DroppedInventoryMarkerMutatorInstance=None
 }

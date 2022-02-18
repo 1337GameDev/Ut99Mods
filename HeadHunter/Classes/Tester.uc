@@ -1,8 +1,12 @@
 class Tester extends Actor nousercreate;
 
 var bool Initialized;
+var TesterCache cache;//caches every Tester class instance or easy access
 
 function PreBeginPlay() {
+      cache = class'TesterCache'.static.GetRef(self);
+      cache.AllTesters.Push(self);
+
       if(!Initialized) {
          Standup();
       }
@@ -66,4 +70,10 @@ function bool BeginPlayTests() {
 
 function bool PostBeginPlayTests() {
     return true;
+}
+
+defaultproperties
+{
+      Initialized=False
+      cache=None
 }
