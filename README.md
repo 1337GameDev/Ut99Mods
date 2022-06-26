@@ -1,4 +1,4 @@
-# Ut99Mods
+# Ut99Mods ![Ut99 Logo](https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true)
 A collection of my hand-made mods for one of my my favorite games - Unreal Tournament '99!
 
 # Setup
@@ -29,6 +29,8 @@ Look for the `[Editor.EditorEngine]` section, and the EditPackages entries.
 
 Add the following to the end of them (order matters):
 
+    EditPackages=LGDUtilities
+    EditPackages=HaloAnnouncer
     EditPackages=HeadHunter
     EditPackages=Gibber
     EditPackages=ItemSpawnerWeapon
@@ -40,8 +42,26 @@ Add the following to the end of them (order matters):
 
 # Useage
 
-To merely use the pre-compiled packages, look in the System folder, and copy the **.u** and **.int** files to your Ut99/System directory.
+To merely use the pre-compiled packages and copy the following files:
+
+1. Ut99Mods/System/**.u** and **.int** files to your Ut99/System directory.
+2. Ut99Mods/Sounds/**HaloAnnouncer.uax** to your Ut99/Sounds folder
+3. Ut99Mods/Maps/**1HH-TestBox-Large.unr** to your Ut99/Maps folder (a demo map)
 
 Then load up the game, and look at the relevant test map, as well as the included mutators.
 
 To use them in your own custom maps, they need to be in **EditPackages** or loaded manually in the editor (or embedded into the map using MyLevel).
+
+Below are sections for various objects, and extra information on them / their usage.
+
+# Extra Documentation
+
+<details>
+  <summary>Infection (Gametype)</summary>
+  
+  ## Heading
+  1. A numbered
+  2. list
+     * With some
+     * Sub bullets
+</details>
