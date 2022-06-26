@@ -1,7 +1,7 @@
-# Ut99Mods ![Ut99 Logo](https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true)
+# <img src="https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true" width="100" height="100" title="Ut99 Logo" alt="Ut99 Logo" height="35px" width="35px"> Ut99Mods <img src="https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true" width="100" height="100" title="Ut99 Logo" alt="Ut99 Logo" height="35px" width="35px">
 A collection of my hand-made mods for one of my my favorite games - Unreal Tournament '99!
 
-# Setup
+# Setup :wrench:
 To compile, navigate to the ut99 directory with UCC.exe and run `ucc make`.
 
 **Alternatively**
@@ -40,7 +40,7 @@ Add the following to the end of them (order matters):
     EditPackages=Infection
     EditPackages=GuidedEnergyLance
 
-# Useage
+# Useage :video_game:
 
 To merely use the pre-compiled packages and copy the following files:
 
@@ -54,7 +54,7 @@ To use them in your own custom maps, they need to be in **EditPackages** or load
 
 Below are sections for various objects, and extra information on them / their usage.
 
-# Extra Documentation
+# Extra Documentation :page_facing_up:
 
 <details>
   <summary>Infection (Gametype)</summary>
