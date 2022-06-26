@@ -18,8 +18,7 @@ simulated function Timer() {
      }
 }
 
-defaultproperties
-{
+defaultproperties {
       UpdateIntervalSecs=0.001000
       AnimRate=2.000000
       DrawType=DT_Mesh

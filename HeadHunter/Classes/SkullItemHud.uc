@@ -14,7 +14,7 @@ function PreBeginPlay() {
         Log("SkullItemHud: PreBeginPlay");
     }
 
-    MyFonts = class'MyFontsSingleton'.static.GetRef(self);
+    MyFonts = class'LGDUtilities.MyFontsSingleton'.static.GetRef(self);
 }
 
 simulated function PostRender(canvas C) {
@@ -52,7 +52,7 @@ simulated function PostRender(canvas C) {
 
             C.Style = ERenderStyle.STY_Translucent;
             C.SetPos(C.ClipX - 58 * HudScale, C.ClipY - 133 * HudScale);
-            IconScale = class'HudHelper'.static.getScaleForTextureToGetDesiredWidth(MySkullItem.Icon, 64.0);
+            IconScale = class'LGDUtilities.HudHelper'.static.getScaleForTextureToGetDesiredWidth(MySkullItem.Icon, 64.0);
             C.DrawIcon(MySkullItem.Icon, HudScale*IconScale);
 
             C.Font = MyFonts.GetHugeFont(C.ClipX);
@@ -70,8 +70,7 @@ simulated function PostRender(canvas C) {
     }
 }
 
-defaultproperties
-{
+defaultproperties {
       ShowMaxAmount=False
       UseHudColorForSkullCount=False
       SkullCountColor=(R=255,G=186,B=3,A=0)

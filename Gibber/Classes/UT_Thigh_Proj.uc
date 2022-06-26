@@ -57,13 +57,13 @@ function Touch(Actor Other) {
     if((Self.Instigator == p) || (Self.Instigator == p.Owner)){
         if(ProjectileHurtOwner) {
             //heal the originator
-            class'PawnHelper'.static.HealPawn(Self.Instigator, HealingToUse, Self.HealSound, "You picked up one of your gibs: +"$int(HealingToUse));
+            class'LGDUtilities.PawnHelper'.static.HealPawn(Self.Instigator, HealingToUse, Self.HealSound, "You picked up one of your gibs: +"$int(HealingToUse));
             Self.Destroy();
         }
     } else if(Self.Physics != PHYS_None){
         HitLocationToUse = Location + CollisionHeight * vect(0,0,0.5);
 		//apply damage, based on prediction if this will kill the target
-		PredictedDamageTaken = class'PawnHelper'.static.PredictDamageToPawn(p, DamageToUse, Self.Instigator, HitLocationToUse, (MomentumTransfer * Normal(Velocity)), MyDamageType);
+		PredictedDamageTaken = class'LGDUtilities.PawnHelper'.static.PredictDamageToPawn(p, DamageToUse, Self.Instigator, HitLocationToUse, (MomentumTransfer * Normal(Velocity)), MyDamageType);
 
 		if(p.Health <= PredictedDamageTaken){
 			p.gibbedBy(Self.Instigator);
@@ -96,7 +96,7 @@ simulated function HitWall(vector HitNormal, actor Wall) {
 
 	speed = VSize(Velocity);
 	if(speed > 120) {
-        Velocity = Velocity << class'RotatorHelper'.static.RandomlyVaryRotation(Rot(0,0,0), 3, 3, 3);//yaw, pitch, roll
+        Velocity = Velocity << class'LGDUtilities.RotatorHelper'.static.RandomlyVaryRotation(Rot(0,0,0), 3, 3, 3);//yaw, pitch, roll
 	}
 }
 
@@ -108,8 +108,7 @@ singular event BaseChange() {
     Self.Instigator = PrevInstigator;
 }
 
-defaultproperties
-{
+defaultproperties {
       Damage=0.000000
       MomentumTransfer=10000
       MyDamageType="shredded"

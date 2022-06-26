@@ -7,14 +7,12 @@ class HHMutator expands Mutator;
 var HeadHunterGameInfo MyGame;
 var bool bLogToGameLogfile;
 
-function PostBeginPlay()
-{
+function PostBeginPlay() {
 	MyGame = HeadHunterGameInfo(Level.Game);
 	Super.PostBeginPlay();
 }
 
-function bool AlwaysKeep(Actor Other)
-{
+function bool AlwaysKeep(Actor Other)  {
 	if ( Other.IsA('StationaryPawn') )
 		return true;
 
@@ -23,8 +21,7 @@ function bool AlwaysKeep(Actor Other)
 	return false;
 }
 
-function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
-{
+function bool CheckReplacement(Actor Other, out byte bSuperRelevant) {
 	local Inventory Inv;
 
 	// replace Unreal I inventory actors by their Unreal Tournament equivalents
@@ -242,8 +239,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 	return true;
 }
 
-defaultproperties
-{
+defaultproperties {
       MyGame=None
       bLogToGameLogfile=False
 }

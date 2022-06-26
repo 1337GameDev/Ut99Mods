@@ -71,35 +71,16 @@ function float RateSelf(out int bUseAltMode) {
 }
 
 function AltFire(float Value) {
-
 	if ( AmmoType == None )
 	{
 		// ammocheck
 		GiveAmmo(Pawn(Owner));
 	}
-
-	/*
-	if (AmmoType.UseAmmo(1))
-	{
-		Pawn(Owner).PlayRecoil(FiringSpeed);
-		bPointing=True;
-		bCanClientFire = true;
-		Owner.MakeNoise(Pawn(Owner).SoundDampening);
-		GetAxes(Pawn(owner).ViewRotation,X,Y,Z);
-		Start = Owner.Location + CalcDrawOffset();
-		Spawn(class'WeaponLight',,'',Start+X*20,rot(0,0,0));
-		Start = Start + FireOffset.X * X + FireOffset.Y * Y + FireOffset.Z * Z;
-		AdjustedAim = pawn(owner).AdjustToss(AltProjectileSpeed, Start, AimError, True, bAltWarnTarget);
-		Spawn(class'FlakSlug',,, Start,AdjustedAim);
-		ClientAltFire(Value);
-		GoToState('AltFiring');
-	}
-	*/
 }
 
-defaultproperties
-{
+defaultproperties {
       WeaponDescription="Classification: Heavy ShrapnelnPrimary Fire: White hot chunks of scrap metal are sprayed forth, shotgun style.nSecondary Fire: DISABLED nTechniques: The Primary Only Flak Cannon is the same as the original except it cannot ALT FIRE."
       PickupMessage="You got the Primary Only Flak Cannon."
       ItemName="Flak Cannon (Primary Fire Only)"
+	  PickupAmmoCount=30,//2x more than normal flak cannon
 }

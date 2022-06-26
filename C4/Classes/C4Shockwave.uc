@@ -65,7 +65,7 @@ simulated function Timer() {
 		}
 	}//end of code for dedicated server
 
-	foreach VisibleCollidingActors(class 'Actor', Victims, ShockSize*29, Location) {
+	foreach VisibleCollidingActors(class'Actor', Victims, ShockSize*29, Location) {
 		dir = Victims.Location - Location;
 		dist = FMax(1,VSize(dir));
 		dir = dir/dist + vect(0,0,0.3);
@@ -127,8 +127,7 @@ simulated function SpawnEffects() {
 	 W.RemoteRole = ROLE_None;
 }
 
-defaultproperties
-{
+defaultproperties {
       ShockwaveMaxSize=13.000000
       MaxDamage=1000.000000
       MaxMomentum=1100.000000

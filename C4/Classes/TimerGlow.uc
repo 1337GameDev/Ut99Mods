@@ -32,8 +32,7 @@ state Blinking {
 	}
 }
 
-defaultproperties
-{
+defaultproperties {
       CurrentGlowBlinkTimeInterval=0.000000
       BlinkTime=0.100000
       bNetTemporary=False

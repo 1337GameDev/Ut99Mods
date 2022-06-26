@@ -58,7 +58,7 @@ function HurtOwner(int Damage, Pawn SourceOfDamage){
 	HitLocationToUse = Location + CollisionHeight * vect(0,0,0.5);
 
 	//hurt owner
-	PredictedDamaged = class'PawnHelper'.static.PredictDamageToPawn(PawnOwner, Damage, SourceOfDamage, HitLocationToUse, Vect(0,0,0), WielderDamageType);
+	PredictedDamaged = class'LGDUtilities.PawnHelper'.static.PredictDamageToPawn(PawnOwner, Damage, SourceOfDamage, HitLocationToUse, Vect(0,0,0), WielderDamageType);
 
 	if(PawnOwner.Health <= PredictedDamaged) {
 		PawnOwner.gibbedBy(SourceOfDamage);
@@ -77,7 +77,7 @@ function UTPlayerChunks SpawnNextChunk(Vector Pos, Rotator AimVector, float Chun
      local GibberProjectileContext ProjectileContext;
 
      PawnOwner = Pawn(Owner);
-     IsOwnerBoss = class'PawnHelper'.static.IsBoss(Pawn(Owner)) || true;
+     IsOwnerBoss = class'LGDUtilities.PawnHelper'.static.IsBoss(Pawn(Owner)) || true;
 
      if(IsOwnerBoss){
          NumberChunksDefined = ArrayCount(BossChunksToFire);
@@ -112,7 +112,7 @@ function UTPlayerChunks SpawnNextChunk(Vector Pos, Rotator AimVector, float Chun
 
       //now spawn the class if it's valid
       if(ClassToSpawn != None) {
-          AimVector = class'RotatorHelper'.static.RandomlyVaryRotation(AimVector, 2, 2, 2);//yaw, pitch, roll
+          AimVector = class'LGDUtilities.RotatorHelper'.static.RandomlyVaryRotation(AimVector, 2, 2, 2);//yaw, pitch, roll
           SpawnedChunk = Spawn(ClassToSpawn,,'GibberChunk', Pos, AimVector);
 
           if(SpawnedChunk != None){
@@ -120,7 +120,7 @@ function UTPlayerChunks SpawnNextChunk(Vector Pos, Rotator AimVector, float Chun
 			  SpawnedChunk.Initfor(self);
 			  InitialChunkSpeed = (ChunkInitialSpeed + FRand() * 600);
 
-			  ProjectileContext = Spawn(class'GibberProjectileContext');
+			  ProjectileContext = Spawn(class'Gibber.GibberProjectileContext');
 
               if(ProjectileContext != None){
                   ProjectileContext.DoesFiringHurtOwner = DoesFiringHurtOwner;
@@ -260,7 +260,7 @@ event float BotDesireability(Pawn Bot) {
 
     // If we already have the max Skulls, we don't want another one.
     desirability = MaxDesireability;
-    Inv = Bot.FindInventoryType(class'Gibber');
+    Inv = Bot.FindInventoryType(class'Gibber.Gibber');
 
     if(Inv != None) {
         desirability = -1;
@@ -615,8 +615,7 @@ function bool HandlePickupQuery(inventory Item) {
     return Inventory.HandlePickupQuery(Item);
 }
 
-defaultproperties
-{
+defaultproperties {
       Angle=0.000000
       Count=0.000000
       TimeWhenLastAltFire=0.000000

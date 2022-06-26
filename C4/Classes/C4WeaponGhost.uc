@@ -35,7 +35,7 @@ function UpdateTimer(int timerValue){
    local int mins, tens, ones;
 
    if(C4WeaponOwner != None){
-       class'MathHelper'.static.Get3DigitTimerPartsFromSeconds(timerValue, mins, tens, ones);
+       class'LGDUtilities.MathHelper'.static.Get3DigitTimerPartsFromSeconds(timerValue, mins, tens, ones);
 
        Self.MultiSkins[2] = class'C4.C4Weapon'.default.TimerDigitTextures[mins];
        Self.MultiSkins[3] = class'C4.C4Weapon'.default.TimerDigitTextures[tens];
@@ -52,8 +52,7 @@ function ShowGhost(){
     Self.DrawType = DT_Mesh;
 }
 
-defaultproperties
-{
+defaultproperties {
       C4WeaponOwner=None
       UpdateIntervalSecs=1.000000
       CurrentTimeInterval=0.000000

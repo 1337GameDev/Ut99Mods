@@ -57,10 +57,10 @@ function PreBeginPlay() {
     local PlayerSpawnNotifyForJuggernautCallback playerSpawnCallback;
 	Super.PreBeginPlay();
 
-    GlobalIndicatorTargets = class'IndicatorHudGlobalTargets'.static.GetRef(self);
-	playerSpawnCallback = new class'PlayerSpawnNotifyForJuggernautCallback';
+    GlobalIndicatorTargets = class'LGDUtilities.IndicatorHudGlobalTargets'.static.GetRef(self);
+	playerSpawnCallback = new class'LGDUtilities.PlayerSpawnNotifyForJuggernautCallback';
 
-	class'PlayerSpawnMutator'.static.RegisterToPlayerSpawn(self, playerSpawnCallback);
+	class'LGDUtilities.PlayerSpawnMutator'.static.RegisterToPlayerSpawn(self, playerSpawnCallback);
 }
 
 function CheckReady() {
@@ -103,9 +103,17 @@ event InitGame(string Options, out string Error) {
 	RegenSeconds = GetIntOption(Options, "RegenSeconds", RegenSeconds);
     ShieldRegenRate = GetIntOption(Options, "ShieldRegenRate", ShieldRegenRate);
     HealthRegenRate = GetIntOption(Options, "HealthRegenRate", HealthRegenRate);
-	JugJumpModifier = GetIntOption(Options, "JugJumpModifier", JugJumpModifier);
-	JugMovementMultiplier = GetIntOption(Options, "JugMovementMultiplier", JugMovementMultiplier);
-
+	
+	InOpt = ParseOption(Options, "JugJumpModifier");
+	if(InOpt != "") {
+		JugJumpModifier = float(InOpt);
+	}
+	
+	InOpt = ParseOption(Options, "JugMovementMultiplier");
+	if(InOpt != "") {
+		JugMovementMultiplier = float(InOpt);
+	}
+	
 	//handle bool values
     InOpt = ParseOption(Options, "ShowJuggernautIndicator");
     if(InOpt != ""){
@@ -158,12 +166,13 @@ function ScoreKill(Pawn Killer, Pawn Other) {
 
 // Monitor killed messages for fraglimit
 function Killed(Pawn killer, Pawn Other, name damageType) {
-    local String Message, KillerWeapon, OtherWeapon;
-	local bool bSpecialDamage, bEndOverTime;
+	local bool bEndOverTime;
     local Pawn P, Best;
 
 	local int NextTaunt, i;
 	local bool bAutoTaunt;
+	//local bool IsSuicide;
+	//IsSuicide = (Killer == Other) || (Killer == None);
 
     if(Other == None){
 		return;
@@ -187,141 +196,9 @@ function Killed(Pawn killer, Pawn Other, name damageType) {
 			Level.Game.WorldLog.LogSpecialEvent("headshot", Killer.PlayerReplicationInfo.PlayerID, Other.PlayerReplicationInfo.PlayerID);
 		Killer.ReceiveLocalizedMessage(class'DecapitationMessage');
 	}
-
-	// ---------------------------------------------------------------------- Copied from GameInfo.Killed ---------------------------------------------------------------------- //
-
-	if(Other.bIsPlayer) {
-	    if(Killer != None) {
-			if(!Killer.bIsPlayer) {
-				Message = Killer.KillMessage(damageType, Other);
-				BroadcastMessage( Message, false, 'DeathMessage');
-
-				if (LocalLog != None){
-					LocalLog.LogSuicide(Other, DamageType, None);
-				}
-
-				if (WorldLog != None){
-					WorldLog.LogSuicide(Other, DamageType, None);
-				}
-
-				return;
-			}
-
-			if( (DamageType == 'SpecialDamage') && (SpecialDamageString != "") ){
-				BroadcastMessage( ParseKillMessage(
-						Killer.PlayerReplicationInfo.PlayerName,
-						Other.PlayerReplicationInfo.PlayerName,
-						Killer.Weapon.ItemName,
-						SpecialDamageString
-						),
-					false, 'DeathMessage');
-				bSpecialDamage = True;
-			}
-		}
-
-		Other.PlayerReplicationInfo.Deaths += 1;
-
-        if ((Killer == None) || (Killer == Other)) {
-			// Suicide
-			if (damageType == '') {
-				if (LocalLog != None){
-					LocalLog.LogSuicide(Other, 'Unknown', Killer);
-				}
-
-                if (WorldLog != None){
-					WorldLog.LogSuicide(Other, 'Unknown', Killer);
-				}
-			} else {
-				if (LocalLog != None){
-					LocalLog.LogSuicide(Other, damageType, Killer);
-				}
-
-				if (WorldLog != None){
-					WorldLog.LogSuicide(Other, damageType, Killer);
-				}
-			}
-
-			if (!bSpecialDamage) {
-				if ( damageType == 'Fell' )
-					BroadcastLocalizedMessage(DeathMessageClass, 2, Other.PlayerReplicationInfo, None);
-				else if ( damageType == 'Eradicated' )
-					BroadcastLocalizedMessage(DeathMessageClass, 3, Other.PlayerReplicationInfo, None);
-				else if ( damageType == 'Drowned' )
-					BroadcastLocalizedMessage(DeathMessageClass, 4, Other.PlayerReplicationInfo, None);
-				else if ( damageType == 'Burned' )
-					BroadcastLocalizedMessage(DeathMessageClass, 5, Other.PlayerReplicationInfo, None);
-				else if ( damageType == 'Corroded' )
-					BroadcastLocalizedMessage(DeathMessageClass, 6, Other.PlayerReplicationInfo, None);
-				else if ( damageType == 'Mortared' )
-					BroadcastLocalizedMessage(DeathMessageClass, 7, Other.PlayerReplicationInfo, None);
-				else
-					BroadcastLocalizedMessage(DeathMessageClass, 1, Other.PlayerReplicationInfo, None);
-			}
-		} else {
-			if (Killer.bIsPlayer) {
-				KillerWeapon = "None";
-
-				if (Killer.Weapon != None){
-					KillerWeapon = Killer.Weapon.ItemName;
-				}
-
-				OtherWeapon = "None";
-
-				if (Other.Weapon != None) {
-					OtherWeapon = Other.Weapon.ItemName;
-				}
-
-				if (Killer.PlayerReplicationInfo.Team == Other.PlayerReplicationInfo.Team) {
-					if (LocalLog != None) {
-						LocalLog.LogTeamKill(
-							Killer.PlayerReplicationInfo.PlayerID,
-							Other.PlayerReplicationInfo.PlayerID,
-							KillerWeapon,
-							OtherWeapon,
-							damageType
-						);
-					}
-					if (WorldLog != None){
-						WorldLog.LogTeamKill(
-							Killer.PlayerReplicationInfo.PlayerID,
-							Other.PlayerReplicationInfo.PlayerID,
-							KillerWeapon,
-							OtherWeapon,
-							damageType
-						);
-					}
-				} else {
-					if (LocalLog != None){
-						LocalLog.LogKill(
-							Killer.PlayerReplicationInfo.PlayerID,
-							Other.PlayerReplicationInfo.PlayerID,
-							KillerWeapon,
-							OtherWeapon,
-							damageType
-						);
-					}
-
-					if(WorldLog != None) {
-						WorldLog.LogKill(
-							Killer.PlayerReplicationInfo.PlayerID,
-							Other.PlayerReplicationInfo.PlayerID,
-							KillerWeapon,
-							OtherWeapon,
-							damageType
-						);
-					}
-				}
-
-				if (!bSpecialDamage && (Other != None)) {
-					BroadcastRegularDeathMessage(Killer, Other, damageType);
-				}
-			}
-		}
-	}
-	ScoreKill(Killer, Other);
-
-	// ---------------------------------------------------------------------- END of GameInfo.Killed ---------------------------------------------------------------------- //
-
+	
+	Super(GameInfo).Killed(killer, Other, damageType);
+	
 	if (Other.Spree > 4) {
 		EndSpree(Killer, Other);
 	}
@@ -514,7 +391,7 @@ function Timer() {
 	    if(!bHasInitAnyHUDMutators){
             //init IndicatorHud
             if(ShowJuggernautIndicator){
-                class'IndicatorHud'.static.SpawnAndRegister(self);
+                class'LGDUtilities.IndicatorHud'.static.SpawnAndRegister(self);
 
                 //ensure the juggernaut is visible
 				For(P=Level.PawnList; P!=None; P=P.NextPawn) {
@@ -529,7 +406,7 @@ function Timer() {
 		if(!bHasPlayedIntro) {
 			For (P=Level.PawnList; P!=None; P=P.NextPawn) {
 				if(P.IsA('PlayerPawn')) {
-				    class'SoundHelper'.static.ClientPlaySound(PlayerPawn(P), IntroSound, true, true, 100);
+				    class'LGDUtilities.SoundHelper'.static.ClientPlaySound(PlayerPawn(P), IntroSound, true, true, 100);
 				}
 			}
 
@@ -614,23 +491,23 @@ function PickNewJuggernaut(optional bool excludeAPlayer, optional int excludePla
 			}
 		}
 
-        excludePlayersFromJugSelection = new class'LinkedList';
+        excludePlayersFromJugSelection = new class'LGDUtilities.LinkedList';
 
 		if(excludeAPlayer) {
-            class'IntObj'.static.PushIntOntoLinkedList(excludePlayersFromJugSelection, excludePlayerIDFromJugSelection);
+            class'LGDUtilities.IntObj'.static.PushIntOntoLinkedList(excludePlayersFromJugSelection, excludePlayerIDFromJugSelection);
         }
 
 		//now choose a random player to become the new juggernaut
-		p = class'PawnHelper'.static.GetRandomPlayerPawnOrBot(self, excludePlayersFromJugSelection);
+		p = class'LGDUtilities.PawnHelper'.static.GetRandomPlayerPawnOrBot(self, excludePlayersFromJugSelection);
 
 		if(p == None) {
 		    Log("ERROR - JuggernautGameInfo - Unable to select new PlayerPawn / Bot for new juggernaut!");
-			BroadcastLocalizedMessage(class'JuggernautMessage', 6);
+			BroadcastLocalizedMessage(class'Juggernaut.JuggernautMessage', 6);
 		} else if(p.PlayerReplicationInfo != None) {
 		    TransferJuggernaut(p);
 		} else {
 		    Log("ERROR - JuggernautGameInfo - Unable to select new PlayerPawn / Bot for new juggernaut due to missing PlayerReplicationInfo!");
-			BroadcastLocalizedMessage(class'JuggernautMessage', 6);
+			BroadcastLocalizedMessage(class'Juggernaut.JuggernautMessage', 6);
 		}
 	}
 }
@@ -664,12 +541,12 @@ function PrepareAssignedJuggernaut() {
 
 	//get current assigned juggernaut, and give them the neccessary items
 	if(JugRepInfo != None) {
-		p = class'PawnHelper'.static.GetPawnFromPlayerID(self, JugRepInfo.CurrentJuggernautPlayerID);
+		p = class'LGDUtilities.PawnHelper'.static.GetPawnFromPlayerID(self, JugRepInfo.CurrentJuggernautPlayerID);
         jugBelt = JuggernautBelt(p.FindInventoryType(class'Juggernaut.JuggernautBelt'));
 
 		if((p.PlayerReplicationInfo != None) && (jugBelt == None)) {
 		    //give them a new JuggernautBelt
-			jugBelt = Spawn(class'JuggernautBelt');
+			jugBelt = Spawn(class'Juggernaut.JuggernautBelt');
 
 			if(jugBelt != None) {
 			    jugBelt.JumpModifier = JugRepInfo.JugJumpModifier;
@@ -684,11 +561,11 @@ function PrepareAssignedJuggernaut() {
 				jugBelt.GiveTo(p);
 			} else {
 			    Log("ERROR - JuggernautGameInfo - Unable to select new PlayerPawn / Bot for new juggernaut due to inability to spawn JuggernautBelt!");
-				BroadcastLocalizedMessage(class'JuggernautMessage', 6);
+				BroadcastLocalizedMessage(class'Juggernaut.JuggernautMessage', 6);
 			}
 		} else {
 		    Log("ERROR - JuggernautGameInfo - Unable to select new PlayerPawn / Bot for new juggernaut due to missing PlayerReplicationInfo!");
-			BroadcastLocalizedMessage(class'JuggernautMessage', 6);
+			BroadcastLocalizedMessage(class'Juggernaut.JuggernautMessage', 6);
 		}
 	}
 }
@@ -704,22 +581,40 @@ function TransferJuggernaut(Pawn NewPawn) {
 		    JugRepInfo.CurrentJuggernautPlayerID = NewPawn.PlayerReplicationInfo.PlayerID;
 			JugRepInfo.LastJuggernautChangeTime = Level.TimeSeconds;
 
-			BroadcastLocalizedMessage(class'JuggernautMessage', 5, NewPawn.PlayerReplicationInfo);
+			BroadcastLocalizedMessage(class'Juggernaut.JuggernautMessage', 5, NewPawn.PlayerReplicationInfo);
 
 			//play the new juggernaut sound
 			if(bHasPlayedIntro) {
 				For (P=Level.PawnList; P!=None; P=P.NextPawn) {
 					if(P.IsA('PlayerPawn')) {
-						class'SoundHelper'.static.ClientPlaySound(PlayerPawn(P), NewJuggernautSound, true, true, 100);
+						class'LGDUtilities.SoundHelper'.static.ClientPlaySound(PlayerPawn(P), NewJuggernautSound, true, true, 100);
 					}
 				}
 			}
 
-			if(!class'PawnHelper'.static.IsPawnDead(P)) {
+			if(!class'LGDUtilities.PawnHelper'.static.IsPawnDead(P)) {
 			    PrepareAssignedJuggernaut();
 			}
 		}
 	}
+}
+
+//
+// Called when pawn has a chance to pick Item up (i.e. when
+// the pawn touches a weapon pickup). Should return true if
+// he wants to pick it up, false if he does not want it.
+//
+function bool PickupQuery(Pawn Other, Inventory Item) {
+	local bool CanPickup;
+	CanPickup = Super.PickupQuery(Other, Item);
+	
+	if(CanPickup && (Other.PlayerReplicationInfo != None) && (Other.PlayerReplicationInfo.PlayerID != JugRepInfo.CurrentJuggernautPlayerID)) {
+		if(Item.IsA('JuggernautBelt') || class'LGDUtilities.InventoryHelper'.static.IsAPowerup(Item, true, true, true)) {
+			return false;
+		}
+	}
+	
+	return CanPickup;
 }
 
 //adds an indicator to every player / bot that gets passed to this
@@ -732,20 +627,21 @@ function AddPlayerIndicator(Pawn player){
         return;
     }
 
-    le = new class'IndicatorHudTargetListElement';
-    indicatorMod = new class'JuggernautPlayerIndicatorModifierFn';
+    le = new class'LGDUtilities.IndicatorHudTargetListElement';
+	le.IndicatorSource = self;
+    indicatorMod = new class'Juggernaut.JuggernautPlayerIndicatorModifierFn';
     indicatorMod.Player = player;
     indicatorMod.Context = Self;
 
-    settings = new class'IndicatorSettings';
+    settings = new class'LGDUtilities.IndicatorSettings';
     settings.UseCustomColor = true;
-    settings.IndicatorColor = class'ColorHelper'.default.RedColor;
+    settings.IndicatorColor = class'LGDUtilities.ColorHelper'.default.RedColor;
     settings.ShowIndicatorAboveTarget = true;
     settings.ScaleIndicatorSizeToTarget = false;
     settings.ShowIndicatorLabel = false;
 
-    //settings.TextureVariations = class'IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
-    settings.TextureVariations = class'IndicatorHud'.static.GetTexturesForBuiltInOption(74);//HudIndicator_Crown
+    //settings.TextureVariations = class'LGDUtilities.IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
+    settings.TextureVariations = class'LGDUtilities.IndicatorHud'.static.GetTexturesForBuiltInOption(74);//HudIndicator_Crown
     settings.TextureVariations.BehindViewTex = None;
     settings.ShowTargetDistanceLabels = false;
     settings.MaxViewDistance = 0;
@@ -802,8 +698,7 @@ function string GetRules() {
 	return ResultSet;
 }
 
-defaultproperties
-{
+defaultproperties {
       IntroSound=Sound'Juggernaut.Announcer.JuggernautIntro'
       NewJuggernautSound=Sound'Juggernaut.Announcer.NewJuggernaut'
       JugRepInfo=None

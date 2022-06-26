@@ -24,8 +24,7 @@ static function string GetString(
     return "Cannot Spawn Object";
 }
 
-defaultproperties
-{
+defaultproperties {
       FontSize=1
       bIsSpecial=True
       bIsUnique=True

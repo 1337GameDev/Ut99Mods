@@ -1,5 +1,7 @@
 @ECHO OFF
 cd %~dp0\System
+del /f LGDUtilities.u
+del /f HaloAnnouncer.u
 del /f HeadHunter.u
 del /f Gibber.u
 del /f ItemSpawnerWeapon.u

@@ -51,7 +51,7 @@ function bool HandlePickupQuery( inventory Item )
 		SlaveEnforcer.SetUpSlave( Pawn(Owner).Weapon == self );
 		SlaveEnforcer.SetDisplayProperties(Style, Texture, bUnlit, bMeshEnviromap);
 		SetTwoHands();
-		P.ReceiveLocalizedMessage( class'PickupMessagePlus', 0, None, None, Self.Class );
+		P.ReceiveLocalizedMessage(class'PickupMessagePlus', 0, None, None, Self.Class);
 		Item.PlaySound(Item.PickupSound);
 		if (Level.Game.LocalLog != None)
 			Level.Game.LocalLog.LogPickup(Item, Pawn(Owner));
@@ -111,10 +111,10 @@ function ProcessTraceHit(Actor Other, Vector HitLocation, Vector HitNormal, Vect
 	}
 }
 
-defaultproperties
-{
+defaultproperties {
       DoubleName="Double HeadShot Enforcer"
       WeaponDescription="Classification: Light PistolnPrimary Fire: Accurate but slow firing instant hit.nSecondary Fire: Sideways, or 'Gangsta' firing mode, shoots twice as fast and half as accurate as the primary fire.nTechniques: Aim for the head with this variant."
       PickupMessage="You picked up another HeadShotEnforcer Enforcer!"
       ItemName="HeadShot Enforcer"
+	  PickupAmmoCount=60,//2x more than normal enforcer
 }

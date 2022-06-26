@@ -97,8 +97,7 @@ static simulated function ClientReceive(
 	//P.ClientPlaySound(sound'Announcer.FirstBlood',, true);
 }
 
-defaultproperties
-{
+defaultproperties {
       OvertimeMessage="Score tied at the end of regulation. Sudden Death Overtime!!!"
       GlobalNameChange="changed name to"
       NewTeamMessage="is now on"

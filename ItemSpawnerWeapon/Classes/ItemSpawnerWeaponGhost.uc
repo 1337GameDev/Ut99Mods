@@ -33,8 +33,7 @@ simulated function Tick(float DeltaTime) {
 	}
 }
 
-defaultproperties
-{
+defaultproperties {
       SpawnerWeapon=None
       UpdateIntervalSecs=0.100000
       CurrentTimeInterval=0.000000

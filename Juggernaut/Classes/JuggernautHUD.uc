@@ -33,7 +33,7 @@ simulated function WriteCurrentJuggernautMessage(Canvas Canvas, JuggernautGameIn
     if(JugGameInfo.CurrentJuggernautPlayerID == PRI.PlayerID) {
 	    Canvas.Font = MyFonts.GetMediumFont(Canvas.ClipX);
 
-	    Canvas.DrawColor = class'ColorHelper'.default.RedColor;
+	    Canvas.DrawColor = class'LGDUtilities.ColorHelper'.default.RedColor;
 	    Canvas.StrLen(YouAreTheJuggernautText, XL, YL);
 	    Canvas.SetPos(Canvas.ClipX/2 - XL/2 - 32, Canvas.ClipY - 106);
 
@@ -41,7 +41,7 @@ simulated function WriteCurrentJuggernautMessage(Canvas Canvas, JuggernautGameIn
 	} else if (JugGameInfo.CurrentJuggernautPlayerID == -1){
 	    Canvas.Font = MyFonts.GetMediumFont(Canvas.ClipX);
 
-	    Canvas.DrawColor = class'ColorHelper'.default.RedColor;
+	    Canvas.DrawColor = class'LGDUtilities.ColorHelper'.default.RedColor;
 	    Canvas.StrLen(NoJuggernaut, XL, YL);
 	    Canvas.SetPos(Canvas.ClipX/2 - XL/2, YL);
 
@@ -49,8 +49,7 @@ simulated function WriteCurrentJuggernautMessage(Canvas Canvas, JuggernautGameIn
 	}
 }
 
-defaultproperties
-{
+defaultproperties {
       YouAreTheJuggernautText="You are the Juggernaut!"
       NoJuggernaut="No Juggernaut was chosen! Please restart the match!"
 }

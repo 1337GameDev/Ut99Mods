@@ -3,7 +3,7 @@
 //************************************//
 class PlayerSpawnNotifyForJuggernautCallback extends PlayerSpawnMutatorCallback;
 
-function PlayerSpawnedCallback(){
+function PlayerSpawnedCallback() {
     local JuggernautGameInfo gameInfo;
 	gameInfo = JuggernautGameInfo(Self.Context);
 
@@ -12,6 +12,5 @@ function PlayerSpawnedCallback(){
 	}
 }
 
-defaultproperties
-{
+defaultproperties {
 }

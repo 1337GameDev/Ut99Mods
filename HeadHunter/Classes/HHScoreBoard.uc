@@ -45,7 +45,7 @@ function DrawVictoryConditions(Canvas Canvas) {
 
     XPosToDrawGameName = Canvas.CurX;
     Canvas.StrLen(TGRI.GameName, XL, YL);
-	TexScale = class'HudHelper'.static.getScaleForTextureToGetDesiredWidth(SkullTex, 64.0);
+	TexScale = class'LGDUtilities.HudHelper'.static.getScaleForTextureToGetDesiredWidth(SkullTex, 64.0);
     XPosForSkull = (Canvas.SizeX / 2.0) - (XL / 2.0) - 64;
 
     Canvas.SetPos(XPosForSkull, Canvas.CurY);
@@ -303,8 +303,7 @@ function ShowScores(Canvas Canvas) {
 	Canvas.Font = CanvasFont;
 }
 
-defaultproperties
-{
+defaultproperties {
       LightGreenColor=(R=0,G=136,B=0,A=0)
       DarkGreenColor=(R=0,G=255,B=128,A=0)
       SkullTex=Texture'UnrealShare.Icons.IconSkull'

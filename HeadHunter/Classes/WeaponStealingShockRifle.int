@@ -1,3 +1,0 @@
-[Public]
-; the weapon
-Object=(Name=HeadHunter.WeaponStealingShockRifle,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="Weapon Stealing ShockRifle")

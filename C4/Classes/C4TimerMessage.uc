@@ -24,8 +24,7 @@ static function string GetString(
     return "Timer set to...";
 }
 
-defaultproperties
-{
+defaultproperties {
       FontSize=1
       bIsSpecial=True
       bIsUnique=True

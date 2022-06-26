@@ -43,7 +43,7 @@ function CreateFlame() {
          FlamePos.Z += (Self.CollisionHeight / 2.0) - 4;
          FlamePos = FlamePos - Self.Location;//used as an offset, not absolute position
 
-         FlameActor = Spawn(class'HeadHunter.FlameFollower', Self);
+         FlameActor = Spawn(class'LGDUtilities.FlameFollower', Self);
          if(FlameActor != None){
              FlameActor.PrePivot = FlamePos;
          }
@@ -103,7 +103,7 @@ simulated function ProcessTouch(Actor Touched, Vector HitLocation) {
 
                 Destroy();
             } else {
-                touchedPawn.ReceiveLocalizedMessage(class'HeadHunterMaxSkullsMessage', 0);
+                touchedPawn.ReceiveLocalizedMessage(class'HeadHunter.HeadHunterMaxSkullsMessage', 0);
                 return;
             }
         } else {
@@ -134,7 +134,7 @@ simulated function HitWall(Vector HitNormal, Actor Wall) {
     speed = VSize(Velocity);
 
     if(speed < 20) {
-	    degreesBetweenVectors = class'VectorHelper'.static.GetDegreesBetweenNormalizedVectors(Vect(0,0,1), HitNormal);
+	    degreesBetweenVectors = class'LGDUtilities.VectorHelper'.static.GetDegreesBetweenNormalizedVectors(Vect(0,0,1), HitNormal);
 
         if((degreesBetweenVectors <= AngleForSteepSurface) || (NumSteepBounces >= MaxBouncesOnSteepSurface)){
 		    //create a SkullItem in place of this
@@ -174,8 +174,7 @@ function Destroyed() {
 	Super.Destroyed();
 }
 
-defaultproperties
-{
+defaultproperties {
       bHitWater=False
       Count=0.000000
       PickupSound=Sound'HeadHunter.SkullItem.SkullPickup'

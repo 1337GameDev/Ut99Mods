@@ -6,14 +6,12 @@ class InfectionGameTypeMutator expands Mutator;
 
 var InfectionGameInfo MyGame;
 
-function PostBeginPlay()
-{
+function PostBeginPlay() {
 	MyGame = InfectionGameInfo(Level.Game);
 	Super.PostBeginPlay();
 }
 
-function bool AlwaysKeep(Actor Other)
-{
+function bool AlwaysKeep(Actor Other) {
 	if ( Other.IsA('StationaryPawn') )
 		return true;
 
@@ -22,8 +20,7 @@ function bool AlwaysKeep(Actor Other)
 	return false;
 }
 
-function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
-{
+function bool CheckReplacement(Actor Other, out byte bSuperRelevant) {
 	local Inventory Inv;
 
 	// replace Unreal I inventory actors by their Unreal Tournament equivalents
@@ -31,8 +28,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 	// to check on relevancy of this actor.
 
 	bSuperRelevant = 1;
-	if ( MyGame.bMegaSpeed && Other.bIsPawn && Pawn(Other).bIsPlayer )
-	{
+	if (MyGame.bMegaSpeed && Other.bIsPawn && Pawn(Other).bIsPlayer) {
 		Pawn(Other).GroundSpeed *= 1.4;
 		Pawn(Other).WaterSpeed *= 1.4;
 		Pawn(Other).AirSpeed *= 1.4;
@@ -59,8 +55,6 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 		if ( Other.IsA('TournamentWeapon') )
 			return true;
 
-		Log("InfectionGameTypeMutator.CheckReplacement - Found "$Other$" at "$Other.location);
-		//Assert(false);
 		if ( Other.IsA('Stinger') )
 		{
 			ReplaceWith(Other, "Botpack.PulseGun");
@@ -118,9 +112,6 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 	{
 		if ( Other.IsA('TournamentAmmo') )
 			return true;
-
-		log("Found "$Other$" at "$Other.location);
-		//Assert(false);
 
 		if ( Other.IsA('ASMDAmmo') )
 		{
@@ -185,9 +176,6 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 	if ( Other.IsA('TournamentHealth') )
 		return true;
 
-	log("Found "$Other$" at "$Other.location);
-	//Assert(false);
-
 	if ( Other.IsA('JumpBoots') )
 	{
 		if ( MyGame.bJumpMatch )
@@ -239,10 +227,44 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 		ReplaceWith( Other, "Botpack.UT_Invisibility" );
 		return false;
 	}
+	
+	//remove any impact hammer
+	if (Other.IsA('ImpactHammer')) {
+		return false;
+	}
 
 	bSuperRelevant = 0;
 	return true;
 }
 
-defaultproperties {
+function bool HandlePickupQuery(Pawn Other, Inventory Item, out byte bAllowPickup) {
+	local InfectionGameInfo gameinfo;
+	local InfectionGameReplicationInfo IRI;
+	local bool IsPlayer;
+	
+	IsPlayer = Other.IsA('PlayerPawn');
+	gameinfo = InfectionGameInfo(Other.Level.Game);
+	IRI = gameinfo.InfRepInfo;
+	
+	if((Other.PlayerReplicationInfo != None) && (IRI != None)) {		
+		if(!IRI.HumansPickupWeapons && (Other.PlayerReplicationInfo.Team == IRI.HumanTeam)) {
+			if(!IsPlayer) {
+				Item.SetRespawn();
+			}
+			
+			return true;
+		} else if(!IRI.ZombiesPickupWeapons && (Other.PlayerReplicationInfo.Team == IRI.ZombieTeam)) {
+			if(!IsPlayer) {
+				Item.SetRespawn();
+			}
+
+			return true;
+		} else {
+			return Super.HandlePickupQuery(Other, Item, bAllowPickup);
+		}
+	} else {
+	    return Super.HandlePickupQuery(Other, Item, bAllowPickup);
+	}
 }
+
+defaultproperties {}

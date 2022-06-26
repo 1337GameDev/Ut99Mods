@@ -7,12 +7,10 @@ class C4Fear extends Triggers;
 
 var() bool bInitiallyActive;
 
-function Touch( actor Other )
-{
+function Touch(Actor Other) {
 	local Bot B;
 
-	if ( Other.bIsPawn )
-	{
+	if (Other.bIsPawn) {
 		B = Bot(Other);
 		if ( B == None )
 			return;
@@ -32,8 +30,7 @@ function Touch( actor Other )
 	}
 }
 
-defaultproperties
-{
+defaultproperties {
       bInitiallyActive=False
       Physics=PHYS_Trailer
       RemoteRole=ROLE_None

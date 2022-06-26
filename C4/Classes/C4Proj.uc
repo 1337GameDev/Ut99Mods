@@ -40,7 +40,7 @@ function PostBeginPlay() {
 function UpdateTimer(int timerValue){
    local int mins, tens, ones;
 
-   class'MathHelper'.static.Get3DigitTimerPartsFromSeconds(timerValue, mins, tens, ones);
+   class'LGDUtilities.MathHelper'.static.Get3DigitTimerPartsFromSeconds(timerValue, mins, tens, ones);
    Self.MultiSkins[2] = class'C4.C4Weapon'.default.TimerDigitTextures[mins];
    Self.MultiSkins[3] = class'C4.C4Weapon'.default.TimerDigitTextures[tens];
    Self.MultiSkins[4] = class'C4.C4Weapon'.default.TimerDigitTextures[ones];
@@ -51,7 +51,7 @@ function UpdateDisarmedTimer(int timerValue){
 
    Self.MultiSkins[1] = Texture'C4.Timer.C4ScreenOn_Grey';
 
-   class'MathHelper'.static.Get3DigitTimerPartsFromSeconds(timerValue, mins, tens, ones);
+   class'LGDUtilities.MathHelper'.static.Get3DigitTimerPartsFromSeconds(timerValue, mins, tens, ones);
    Self.MultiSkins[2] = class'C4.C4Weapon'.default.GreyTimerDigitTextures[mins];
    Self.MultiSkins[3] = class'C4.C4Weapon'.default.GreyTimerDigitTextures[tens];
    Self.MultiSkins[4] = class'C4.C4Weapon'.default.GreyTimerDigitTextures[ones];
@@ -119,6 +119,7 @@ function BigExplode(Vector ExplodeLocation, Vector ExplodeNormal) {
 
 	HurtRadius(Damage, BigExplosionRadius, MyDamageType, MomentumTransfer, ExplodeLocation);
 	shockwave = Spawn(class'C4.C4ShockWave',,,ExplodeLocation + (ExplodeNormal*16) );
+	
 	if(shockwave != None){
 	    shockwave.MaxDamage = BigExplosionDamage;
         shockwave.ShockwaveMaxSize = BigExplosionRadius;
@@ -311,7 +312,7 @@ state OnSurface {
             SetTimer(1.0, True);
 		    UpdateTimer(Countdown);
 		    Glow = Spawn(class'C4.TimerGlow', Self);
-		    MyFear = Spawn(class'HeadHunter.C4Fear', Self);
+		    MyFear = Spawn(class'C4.C4Fear', Self);
         }
 
 		if (Mover(Base) != None) {
@@ -320,8 +321,7 @@ state OnSurface {
 	}
 }
 
-defaultproperties
-{
+defaultproperties {
       SmallExplosionDamage=25.000000
       SmallExplosionRadius=2.000000
       SmallExplosionMomentum=500.000000

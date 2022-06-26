@@ -32,6 +32,5 @@ function bool AlwaysKeep(Actor Other) {
 	return Super.AlwaysKeep(Other);
 }
 
-defaultproperties
-{
+defaultproperties {
 }

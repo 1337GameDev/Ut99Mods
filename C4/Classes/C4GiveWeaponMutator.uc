@@ -25,6 +25,5 @@ simulated function ModifyPlayer(Pawn Other) {
 	}
 }
 
-defaultproperties
-{
+defaultproperties {
 }

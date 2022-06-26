@@ -3,17 +3,18 @@
 //=============================================================================
 class GuidedEnergyProj extends UT_SeekingRocket;
 
-var Weapon FiringWeapon;
+var GuidedEnergyLance FiringWeapon;
 var bool ProjectileSteeredByWeapon;
-var int SteerVertically;
-var int SteerHorizontally;
-
-var int VerticalDegreeRotateSpeed;
-var int HorizontalDegreeRotateSpeed;
+var Vector TargetLocation;
 
 var int NumWallHits;
 var int MaxWallHits;
 var bool bCanHitInstigator;
+
+var float SeekingAcceleration;
+var float SeekingDirBlendValue;//how much of the new direction should be added to the old? (0 -> 1 range)
+
+var EffectFollower TrailingEffect;
 
 replication {
 	// Relationships.
@@ -21,57 +22,83 @@ replication {
 		FiringWeapon;
 }
 
+simulated function Destroyed() {
+	if (TrailingEffect != None) {
+		TrailingEffect.Destroy();
+	}
+
+	Super.Destroyed();
+}
+
+function PreBeginPlay() {
+    TrailingEffect = Spawn(Class'LGDUtilities.EffectFollower', Self ,, Location);
+	TrailingEffect.Mesh = LodMesh'Botpack.SparksM';
+	TrailingEffect.Texture = Texture'Botpack.Effects.Sparky';
+	TrailingEffect.DrawScale = 0.100000;
+	TrailingEffect.DrawType = DT_Mesh;
+    TrailingEffect.Style = STY_Translucent;
+	TrailingEffect.bParticles = True;
+    TrailingEffect.bCollideWorld = True;
+	TrailingEffect.PlayAnim('Trail');
+    TrailingEffect.bGameRelevant = True;
+
+	TrailingEffect.BaseRotation.Pitch = class'LGDUtilities.MathHelper'.default.DegToUnrRot * -180;
+	Self.PrePivot.X = -5;
+}
+
 simulated function Timer() {
-	//local ut_SpriteSmokePuff b;
 	local AnimSpriteEffect b;
 	local PlayerPawn player;
-	local int verticalDegreeChange, horizontalDegreeChange;
+	local Vector SeekingDir;
+	local float MagnitudeVel;
 
     if (bHitWater || (Level.NetMode == NM_DedicatedServer)) {
 	    DetachFromGun();
 		return;
     }
 
+	if(InitialDir == Vect(0,0,0) ) {//store the original firing direction
+		InitialDir = Normal(Velocity);
+	}
+
 	if(ProjectileSteeredByWeapon) {
-	    player = PlayerPawn(FiringWeapon.Owner);
+	    if(FiringWeapon != None) {
+			player = PlayerPawn(FiringWeapon.Owner);
 
-	    if ((player != None) && (FiringWeapon != None) && (player.Weapon == FiringWeapon)) {
-		    if(Self.SteerVertically > 0) {
-			    verticalDegreeChange = Self.VerticalDegreeRotateSpeed;
-			}
-			if(Self.SteerHorizontally > 0) {
-			    horizontalDegreeChange = Self.HorizontalDegreeRotateSpeed;
-			}
+			if ((player != None) && (player.Weapon == FiringWeapon)) {
+			    SeekingDir = Normal(TargetLocation - Location);
 
-            class'RotatorHelper'.static.RotateActorUpDownLeftRightByDegrees(Self, verticalDegreeChange, horizontalDegreeChange);
-	    } else {
-	        DetachFromGun();
-	    }
+				if((SeekingDir Dot InitialDir) > 0) {//if the projectile is going back gainst initial direction
+                    MagnitudeVel = VSize(Velocity);
+                    SeekingDir = Normal(SeekingDir * SeekingDirBlendValue * MagnitudeVel + Velocity);
+				    Velocity =  MagnitudeVel * SeekingDir;
+				    Acceleration = SeekingAcceleration * SeekingDir;
+
+				    SetRotation(Rotator(Velocity));
+                }
+			} else {
+				DetachFromGun();
+			}
+		} else {
+		    ProjectileSteeredByWeapon = false;
+		}
 	}
 
 	if ((Level.bHighDetailMode && !Level.bDropDetail) || (FRand() < 0.5)) {
-		//b = Spawn(class'ut_SpriteSmokePuff');
-		b = Spawn(class'SpriteLightning',,,Location);
+		b = Spawn(class'ut_SpriteSmokePuff',,,Location);
+		b.RemoteRole = ROLE_None;
+		b = Spawn(class'UnrealShare.EnergyBurst',,,Location);
 		b.RemoteRole = ROLE_None;
 	}
 }
 
-function EnableGunControl() {
-	SetPhysics(PHYS_None);
-	ProjectileSteeredByWeapon = true;
-}
-
-function DisableGunControl() {
-    SetPhysics(PHYS_Falling);
-	ProjectileSteeredByWeapon = false;
-}
-
 function DetachFromGun() {
-	FiringWeapon = None;
-	SteerVertically = 0;
-	SteerHorizontally = 0;
-
-	DisableGunControl();
+    Log("GuidedEnergyProj - DetachFromGun");
+    if(FiringWeapon != None) {
+		FiringWeapon.ProjectileToSteer = None;
+		FiringWeapon = None;
+        TargetLocation = Vect(0,0,0);
+	}
 }
 
 simulated function PostBeginPlay() {
@@ -86,13 +113,11 @@ function BlowUp(vector HitLocation) {
 }
 
 simulated function Explosion(vector HitLocation, vector HitNormal) {
-	//local UT_SpriteBallExplosion s;
     local AnimSpriteEffect s;
 	BlowUp(HitLocation);
 
 	if (Level.NetMode != NM_DedicatedServer) {
 		Spawn(class'Botpack.BlastMark',,,,rot(16384,0,0));
-  		//s = Spawn(class'UT_SpriteBallExplosion',,,HitLocation);
   		s = Spawn(class'ShockExplo',,,HitLocation);
 		s.RemoteRole = ROLE_None;
 		s.DrawScale = 2.5;
@@ -149,7 +174,6 @@ auto state Flying {
 		}
 
 		NumWallHits++;
-		SetTimer(0, False);
 		MakeNoise(0.3);
 
 		if(NumWallHits > MaxWallHits) {
@@ -205,7 +229,6 @@ auto state Flying {
 	}
 
 	simulated function Explode(vector HitLocation, vector HitNormal) {
-		//local UT_SpriteBallExplosion s;
 		local AnimSpriteEffect s;
 
 		s = spawn(class'ShockExplo',,,HitLocation + HitNormal*16);
@@ -219,18 +242,15 @@ auto state Flying {
 }
 
 defaultproperties {
-      bCanHitInstigator=False
-      Seeking=None
       InitialDir=(X=0.000000,Y=0.000000,Z=0.000000)
+      bCanHitInstigator=False
       LifeSpan=20.000000
 	  Physics=PHYS_Falling
-	  VerticalDegreeRotateSpeed=5
-	  HorizontalDegreeRotateSpeed=5
 	  ProjectileSteeredByWeapon=false
-	  SteerVertically=0
-	  SteerHorizontally=0
 	  NumWallHits=0
       MaxWallHits=1
+      SeekingDirBlendValue=0.4
+      SeekingAcceleration=45
 
 	  AmbientSound=Sound'UnrealShare.Dispersion.DispFly'
       Mesh=LodMesh'Botpack.ShockRWM'
@@ -240,7 +260,7 @@ defaultproperties {
       ImpactSound=Sound'UnrealShare.General.DispEX1'
       ExplosionDecal=Class'Botpack.EnergyImpact'
       AnimSequence=""
-      speed=1500.000000
+      speed=1200.000000
       Damage=35.000000
       MomentumTransfer=90000
       Mass=100.000000

@@ -23,8 +23,7 @@ static function string GetString(
     return "";
 }
 
-defaultproperties
-{
+defaultproperties {
       FontSize=1
       bIsSpecial=True
       bIsUnique=True

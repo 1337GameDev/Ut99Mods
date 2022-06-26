@@ -54,7 +54,7 @@ function CreateFlame() {
          FlamePos.Z += (Self.CollisionHeight / 2.0) - 4;
          FlamePos = FlamePos - Self.Location;//used as an offset, not absolute position
 
-         FlameActor = Spawn(class'HeadHunter.FlameFollower', Self);
+         FlameActor = Spawn(class'LGDUtilities.FlameFollower', Self);
          if(FlameActor != None){
              FlameActor.PrePivot = FlamePos;
          }
@@ -98,7 +98,7 @@ function bool HandlePickupQuery(Inventory Item) {
             }
 
             //Log("SkullItem - HandlePickupQuery - Cannot pickup more skulls");
-            Pawn(Owner).ReceiveLocalizedMessage(class'HeadHunterMaxSkullsMessage', 0);
+            Pawn(Owner).ReceiveLocalizedMessage(class'HeadHunter.HeadHunterMaxSkullsMessage', 0);
             return true;//if we are at the max skull count
         }
 
@@ -134,7 +134,7 @@ function bool HandlePickupQuery(Inventory Item) {
 
              //otherSkull.SetRespawn();
             //Log("SkullItem - HandlePickupQuery - Cannot pickup more skulls");
-            Pawn(Owner).ReceiveLocalizedMessage(class'HeadHunterMaxSkullsMessage', 0);
+            Pawn(Owner).ReceiveLocalizedMessage(class'HeadHunter.HeadHunterMaxSkullsMessage', 0);
             return true;
         } else {
            //collect less than max
@@ -184,7 +184,7 @@ function PickupFunction(Pawn Other) {
 
      if(NumCopies == 1){
          if(UseInventoryToolbelt) {
-             toolbelt = class'InventoryToolbelt'.static.GetCurrentPlayerInventoryToolbeltHudInstance(self, PlayerPawn(Owner));
+             toolbelt = class'LGDUtilities.InventoryToolbelt'.static.GetCurrentPlayerInventoryToolbeltHudInstance(self, PlayerPawn(Owner));
 
              if(toolbelt != None){
                  toolbelt.AddInventoryToToolbelt(self);
@@ -302,7 +302,7 @@ simulated function CheckForHUDMutator() {
                 M = M.NextHUDMutator;
             }
 
-            SIH = Spawn(class'SkullItemHud');
+            SIH = Spawn(class'HeadHunter.SkullItemHud');
             SIH.RegisterThisHUDMutator();
 
             if(SIH.bHUDMutator) {
@@ -321,7 +321,7 @@ event float BotDesireability(Pawn Bot) {
 
     // If we already have the max Skulls, we don't want another one.
     desirability = MaxDesireability;
-    Inv = Bot.FindInventoryType(class'SkullItem');
+    Inv = Bot.FindInventoryType(class'HeadHunter.SkullItem');
 
     if(Inv != None) {
         skull = SkullItem(Inv);
@@ -388,7 +388,7 @@ static function int SpawnNumberFromPoint(Actor context, Vector point, int number
    local Vector skullDir;
    local int numberSkullsSpawned;
 
-   PointsToSpawnAt = class'MathHelper'.static.GetNumberEquadistantPointsAroundCircleCenter(Vect(0,0,0), 50.0, numberOfSkulls, Vect(0,0,1));
+   PointsToSpawnAt = class'LGDUtilities.MathHelper'.static.GetNumberEquadistantPointsAroundCircleCenter(Vect(0,0,0), 50.0, numberOfSkulls, Vect(0,0,1));
    if(PointsToSpawnAt != None){
        hhGameInfo = HeadHunterGameInfo(context.Level.Game);
        le = PointsToSpawnAt.Head;
@@ -409,7 +409,7 @@ static function int SpawnNumberFromPoint(Actor context, Vector point, int number
 
                skull.Velocity = (skullDir * 200);
                skull.Velocity.Z += 275;
-               skull.Velocity = skull.Velocity >> class'RotatorHelper'.static.RandomRotationByDegrees(15, 15, 15);
+               skull.Velocity = skull.Velocity >> class'LGDUtilities.RotatorHelper'.static.RandomRotationByDegrees(15, 15, 15);
                skull.Speed = VSize(skull.Velocity);
            }
 
@@ -430,8 +430,7 @@ static function int SpawnNumberFromPoint(Actor context, Vector point, int number
    return numberSkullsSpawned;
 }
 
-defaultproperties
-{
+defaultproperties {
       SkullsDroppedSound=Sound'HeadHunter.SkullItem.SkullPop'
       BounceSound=Sound'HeadHunter.SkullItem.SkullBounce'
       MaxCount=2

@@ -21,7 +21,7 @@ function SetInMotion(){
     local Class<Carcass> pawnCarcass;
 
 	ChunkOwner.Velocity = Vector(ChunkOwner.Rotation) * BaseGibSpeed;
-	ChunkOwner.SetRotation(class'HeadHunter.RandomHelper'.static.GetRandomRotation());
+	ChunkOwner.SetRotation(class'LGDUtilities.RandomHelper'.static.GetRandomRotation());
 
 	if(ChunkOwner.Region.Zone.bWaterZone) {
 		ChunkOwner.Velocity *= 0.5;
@@ -64,8 +64,7 @@ function SetInMotion(){
 	}
 }
 
-defaultproperties
-{
+defaultproperties {
       BaseGibSpeed=1.000000
       DoesFiringHurtOwner=False
       BossGibDamageMultiplier=1.000000

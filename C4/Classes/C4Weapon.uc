@@ -174,13 +174,14 @@ simulated function IncrementTimer(){
 	local StringObj spawnMsg;
 
 	TimerSeconds = Max(MinTimerSeconds, (TimerSeconds+TimerIncrementAmount) % MaxTimerSeconds);
-	spawnMsg = new class'StringObj';
+	spawnMsg = new class'LGDUtilities.StringObj';
 	spawnMsg.Value = "Timer set to \""$TimerSeconds$"\" seconds.";
 	Pawn(Owner).ReceiveLocalizedMessage(class'C4.C4TimerMessage', 0, None, None, spawnMsg);
 }
+
 function UpdateTimer(int timerValue){
    local int mins, tens, ones;
-   class'MathHelper'.static.Get3DigitTimerPartsFromSeconds(timerValue, mins, tens, ones);
+   class'LGDUtilities.MathHelper'.static.Get3DigitTimerPartsFromSeconds(timerValue, mins, tens, ones);
 
    Self.MultiSkins[2] = class'C4.C4Weapon'.default.TimerDigitTextures[mins];
    Self.MultiSkins[3] = class'C4.C4Weapon'.default.TimerDigitTextures[tens];
@@ -425,8 +426,7 @@ function float SwitchPriority() {
     }
 }
 
-defaultproperties
-{
+defaultproperties {
       UpdateIntervalSecs=0
       CurrentTimeInterval=0.000000
       MaxPlaceDistance=400.000000

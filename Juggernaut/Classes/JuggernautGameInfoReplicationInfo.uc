@@ -27,14 +27,13 @@ replication {
 simulated function PostBeginPlay() {
 	Super.PostBeginPlay();
 
-    if(HeadHunterGameInfo(Level.Game) != None){
+    if(JuggernautGameInfo(Level.Game) != None){
 
 	}
 
 }
 
-defaultproperties
-{
+defaultproperties {
       ShowJuggernautIndicator=True
       OnlyJuggernautScores=False
       RegenSeconds=5

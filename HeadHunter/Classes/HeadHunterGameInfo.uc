@@ -48,13 +48,13 @@ function PreCacheReferences() {
 
 	spawn(class'HeadHunter.SkullItem');
 	spawn(class'HeadHunter.SkullItemProj');
-	spawn(class'HeadHunter.FlameFollower');
+	spawn(class'LGDUtilities.FlameFollower');
 }
 
 function PreBeginPlay() {
 	Super.PreBeginPlay();
 
-    GlobalIndicatorTargets = class'IndicatorHudGlobalTargets'.static.GetRef(self);
+    GlobalIndicatorTargets = class'LGDUtilities.IndicatorHudGlobalTargets'.static.GetRef(self);
 }
 
 function CheckReady() {
@@ -116,7 +116,7 @@ function bool RestartPlayer(Pawn aPlayer) {
     local bool foundStart;
     foundStart = Super.RestartPlayer(aPlayer);
     if(foundStart){
-        //modify any indictor lists of IndicatorHud
+        //modify any indicator lists of IndicatorHud
 
     }
 
@@ -144,9 +144,6 @@ function ScoreKill(pawn Killer, pawn Other) {
 
 // Monitor killed messages for fraglimit
 function Killed(Pawn killer, Pawn Other, name damageType) {
-    local String Message, KillerWeapon, OtherWeapon;
-	local bool bSpecialDamage;
-
 	local int NextTaunt, i, NumSkullsToDrop, NumSkullsSpawned;
 	local bool bAutoTaunt;
 	local SkullItem existingSkull;
@@ -173,141 +170,9 @@ function Killed(Pawn killer, Pawn Other, name damageType) {
 			Level.Game.WorldLog.LogSpecialEvent("headshot", Killer.PlayerReplicationInfo.PlayerID, Other.PlayerReplicationInfo.PlayerID);
 		Killer.ReceiveLocalizedMessage(class'DecapitationMessage');
 	}
-
-	// ---------------------------------------------------------------------- Copied from GameInfo.Killed ---------------------------------------------------------------------- //
-
-	if(Other.bIsPlayer) {
-	    if(Killer != None) {
-			if(!Killer.bIsPlayer) {
-				Message = Killer.KillMessage(damageType, Other);
-				BroadcastMessage( Message, false, 'DeathMessage');
-
-				if (LocalLog != None){
-					LocalLog.LogSuicide(Other, DamageType, None);
-				}
-
-				if (WorldLog != None){
-					WorldLog.LogSuicide(Other, DamageType, None);
-				}
-
-				return;
-			}
-
-			if( (DamageType == 'SpecialDamage') && (SpecialDamageString != "") ){
-				BroadcastMessage( ParseKillMessage(
-						Killer.PlayerReplicationInfo.PlayerName,
-						Other.PlayerReplicationInfo.PlayerName,
-						Killer.Weapon.ItemName,
-						SpecialDamageString
-						),
-					false, 'DeathMessage');
-				bSpecialDamage = True;
-			}
-		}
-
-		Other.PlayerReplicationInfo.Deaths += 1;
-
-        if ((Killer == None) || (Killer == Other)) {
-			// Suicide
-			if (damageType == '') {
-				if (LocalLog != None){
-					LocalLog.LogSuicide(Other, 'Unknown', Killer);
-				}
-
-                if (WorldLog != None){
-					WorldLog.LogSuicide(Other, 'Unknown', Killer);
-				}
-			} else {
-				if (LocalLog != None){
-					LocalLog.LogSuicide(Other, damageType, Killer);
-				}
-
-				if (WorldLog != None){
-					WorldLog.LogSuicide(Other, damageType, Killer);
-				}
-			}
-
-			if (!bSpecialDamage) {
-				if ( damageType == 'Fell' )
-					BroadcastLocalizedMessage(DeathMessageClass, 2, Other.PlayerReplicationInfo, None);
-				else if ( damageType == 'Eradicated' )
-					BroadcastLocalizedMessage(DeathMessageClass, 3, Other.PlayerReplicationInfo, None);
-				else if ( damageType == 'Drowned' )
-					BroadcastLocalizedMessage(DeathMessageClass, 4, Other.PlayerReplicationInfo, None);
-				else if ( damageType == 'Burned' )
-					BroadcastLocalizedMessage(DeathMessageClass, 5, Other.PlayerReplicationInfo, None);
-				else if ( damageType == 'Corroded' )
-					BroadcastLocalizedMessage(DeathMessageClass, 6, Other.PlayerReplicationInfo, None);
-				else if ( damageType == 'Mortared' )
-					BroadcastLocalizedMessage(DeathMessageClass, 7, Other.PlayerReplicationInfo, None);
-				else
-					BroadcastLocalizedMessage(DeathMessageClass, 1, Other.PlayerReplicationInfo, None);
-			}
-		} else {
-			if (Killer.bIsPlayer) {
-				KillerWeapon = "None";
-
-				if (Killer.Weapon != None){
-					KillerWeapon = Killer.Weapon.ItemName;
-				}
-
-				OtherWeapon = "None";
-
-				if (Other.Weapon != None) {
-					OtherWeapon = Other.Weapon.ItemName;
-				}
-
-				if (Killer.PlayerReplicationInfo.Team == Other.PlayerReplicationInfo.Team) {
-					if (LocalLog != None) {
-						LocalLog.LogTeamKill(
-							Killer.PlayerReplicationInfo.PlayerID,
-							Other.PlayerReplicationInfo.PlayerID,
-							KillerWeapon,
-							OtherWeapon,
-							damageType
-						);
-					}
-					if (WorldLog != None){
-						WorldLog.LogTeamKill(
-							Killer.PlayerReplicationInfo.PlayerID,
-							Other.PlayerReplicationInfo.PlayerID,
-							KillerWeapon,
-							OtherWeapon,
-							damageType
-						);
-					}
-				} else {
-					if (LocalLog != None){
-						LocalLog.LogKill(
-							Killer.PlayerReplicationInfo.PlayerID,
-							Other.PlayerReplicationInfo.PlayerID,
-							KillerWeapon,
-							OtherWeapon,
-							damageType
-						);
-					}
-
-					if(WorldLog != None) {
-						WorldLog.LogKill(
-							Killer.PlayerReplicationInfo.PlayerID,
-							Other.PlayerReplicationInfo.PlayerID,
-							KillerWeapon,
-							OtherWeapon,
-							damageType
-						);
-					}
-				}
-
-				if (!bSpecialDamage && (Other != None)) {
-					BroadcastRegularDeathMessage(Killer, Other, damageType);
-				}
-			}
-		}
-	}
-	ScoreKill(Killer, Other);
-
-	// ---------------------------------------------------------------------- END of GameInfo.Killed ---------------------------------------------------------------------- //
-
+	
+	Super(GameInfo).Killed(killer, Other, damageType);
+	
 	if (Other.Spree > 4) {
 		EndSpree(Killer, Other);
 	}
@@ -475,7 +340,7 @@ function Timer() {
 	    if(!bHasInitAnyHUDMutators){
             //init IndicatorHud
             if(ShowDroppedSkullIndicators || ShowPlayersWithSkullThreshold){
-                class'IndicatorHud'.static.SpawnAndRegister(self);
+                class'LGDUtilities.IndicatorHud'.static.SpawnAndRegister(self);
 
                 For(P=Level.PawnList; P!=None; P=P.NextPawn) {
                     AddPlayerIndicator(P);
@@ -489,7 +354,7 @@ function Timer() {
 		if(!bHasPlayedIntro) {
 			For (P=Level.PawnList; P!=None; P=P.NextPawn) {
 				if(P.IsA('PlayerPawn')) {
-					class'SoundHelper'.static.ClientPlaySound(PlayerPawn(P),IntroSound,, true, 100);
+					class'LGDUtilities.SoundHelper'.static.ClientPlaySound(PlayerPawn(P),IntroSound,, true, 100);
 				}
 			}
 
@@ -568,16 +433,16 @@ function AdvanceSkullCollectCountdown() {
     SkullsCollectedCountdown--;
 
 	if((SkullsCollectedCountdown > 0) && (SkullsCollectedCountdown <= 6)) {
-	    countObj = new class'IntObj';
+	    countObj = new class'LGDUtilities.IntObj';
 		countObj.Value = SkullsCollectedCountdown;
-	    BroadcastLocalizedMessage(class'HeadHunterMessage', 5,,, countObj);
+	    BroadcastLocalizedMessage(class'HeadHunter.HeadHunterMessage', 5,,, countObj);
 	} else if(SkullsCollectedCountdown <= 0) {
 	    //send message to collect all skulls
-		BroadcastLocalizedMessage(class'HeadHunterMessage', 6);
+		BroadcastLocalizedMessage(class'HeadHunter.HeadHunterMessage', 6);
 		
 		For (pp=Level.PawnList; pp!=None; pp=pp.NextPawn) {
 			if(pp.IsA('PlayerPawn')) {
-				class'SoundHelper'.static.ClientPlaySound(PlayerPawn(pp), SkullCollectedSound,, true, 32);
+				class'LGDUtilities.SoundHelper'.static.ClientPlaySound(PlayerPawn(pp), SkullCollectedSound,, true, 32);
 			}
 		}
 
@@ -595,8 +460,8 @@ function ScoreSkulls(){
 	local int PointsScored;
 
     //delete existing skulls that aren't picked up
-    class'ProjectileHelper'.static.DeleteProjectilesOfClass(self, 'SkullItemProj');
-    class'InventoryHelper'.static.DeleteInventoriesOnGround(self, 'SkullItem');
+    class'LGDUtilities.ProjectileHelper'.static.DeleteProjectilesOfClass(self, 'SkullItemProj');
+    class'LGDUtilities.InventoryHelper'.static.DeleteInventoriesOnGround(self, 'SkullItem');
 
     for(P = Level.PawnList; P != None; P = P.nextPawn) {
         if(P.bIsPlayer && (P.PlayerReplicationInfo != None)) {
@@ -605,7 +470,7 @@ function ScoreSkulls(){
             if(existingSkull != None){
 			    PointsScored += existingSkull.NumCopies;
                 P.PlayerReplicationInfo.Score += existingSkull.NumCopies;
-                P.ReceiveLocalizedMessage(class'HeadHunterScoredSkullsMessage',0,,, existingSkull);
+                P.ReceiveLocalizedMessage(class'HeadHunter.HeadHunterScoredSkullsMessage',0,,, existingSkull);
 				existingSkull.Destroy();
             }
         }
@@ -660,7 +525,7 @@ function RemoveAllPlayerIndicators(){
     }
 }
 
-//adds an indictaor to every player / bot that gets passed to this
+//adds an indicator to every player / bot that gets passed to this
 function AddPlayerIndicator(Pawn player){
     local IndicatorHudTargetListElement le;
     local IndicatorSettings settings;
@@ -670,18 +535,19 @@ function AddPlayerIndicator(Pawn player){
         return;
     }
 
-    le = new class'IndicatorHudTargetListElement';
-    indicatorMod = new class'HeadHunterPlayerIndicatorModifierFn';
+    le = new class'LGDUtilities.IndicatorHudTargetListElement';
+	le.IndicatorSource = self;
+    indicatorMod = new class'HeadHunter.HeadHunterPlayerIndicatorModifierFn';
     indicatorMod.Player = player;
     indicatorMod.Context = Self;
 
-    settings = new class'IndicatorSettings';
+    settings = new class'LGDUtilities.IndicatorSettings';
     settings.UseCustomColor = true;
-    settings.IndicatorColor = class'ColorHelper'.default.RedColor;
+    settings.IndicatorColor = class'LGDUtilities.ColorHelper'.default.RedColor;
     settings.ShowIndicatorAboveTarget = true;
     settings.ScaleIndicatorSizeToTarget = false;
 
-    settings.TextureVariations = class'IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
+    settings.TextureVariations = class'LGDUtilities.IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
     settings.TextureVariations.BehindViewTex = None;
     settings.ShowTargetDistanceLabels = false;
     settings.MaxViewDistance = 0;
@@ -711,11 +577,11 @@ function AddSkullItemIndicator(SkullItem skull){
         return;
     }
 
-    le = new class'IndicatorHudTargetListElement';
-
-    settings = new class'IndicatorSettings';
+    le = new class'LGDUtilities.IndicatorHudTargetListElement';
+	le.IndicatorSource = self;
+    settings = new class'LGDUtilities.IndicatorSettings';
     settings.UseCustomColor = true;
-    settings.IndicatorColor = class'ColorHelper'.default.RedColor;
+    settings.IndicatorColor = class'LGDUtilities.ColorHelper'.default.RedColor;
     settings.ShowIndicatorAboveTarget = true;
     settings.ShowTargetDistanceLabels = false;
     settings.ScaleIndicatorSizeToTarget = false;
@@ -723,10 +589,10 @@ function AddSkullItemIndicator(SkullItem skull){
     settings.MaxViewDistance = 0;
     settings.ShowIndicatorWhenOffScreen = true;
 
-    settings.TextureVariations = class'IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
+    settings.TextureVariations = class'LGDUtilities.IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
     settings.TextureVariations.BehindViewTex = None;
 
-    texVars = class'IndicatorHud'.static.GetTexturesForBuiltInOption(73);//HudIndicator_Skull
+    texVars = class'LGDUtilities.IndicatorHud'.static.GetTexturesForBuiltInOption(73);//HudIndicator_Skull
     settings.TextureVariations.InViewTex = texVars.InViewTex;
 
     le.IndicatorSettings = settings;
@@ -750,10 +616,11 @@ function AddSkullItemProjIndicator(SkullItemProj skullProj){
         return;
     }
 
-    le = new class'IndicatorHudTargetListElement';
-    settings = new class'IndicatorSettings';
+    le = new class'LGDUtilities.IndicatorHudTargetListElement';
+	le.IndicatorSource = self;
+    settings = new class'LGDUtilities.IndicatorSettings';
     settings.UseCustomColor = true;
-    settings.IndicatorColor = class'ColorHelper'.default.RedColor;
+    settings.IndicatorColor = class'LGDUtilities.ColorHelper'.default.RedColor;
     settings.ShowIndicatorAboveTarget = true;
     settings.ShowTargetDistanceLabels = false;
     settings.ScaleIndicatorSizeToTarget = false;
@@ -761,10 +628,10 @@ function AddSkullItemProjIndicator(SkullItemProj skullProj){
     settings.MaxViewDistance = 0;
     settings.ShowIndicatorWhenOffScreen = true;
 
-    settings.TextureVariations = class'IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
+    settings.TextureVariations = class'LGDUtilities.IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
     settings.TextureVariations.BehindViewTex = None;
 
-    texVars = class'IndicatorHud'.static.GetTexturesForBuiltInOption(73);//HudIndicator_Skull
+    texVars = class'LGDUtilities.IndicatorHud'.static.GetTexturesForBuiltInOption(73);//HudIndicator_Skull
     settings.TextureVariations.InViewTex = texVars.InViewTex;
 
     le.IndicatorSettings = settings;
@@ -784,13 +651,13 @@ function AddAllSkullIndicators(){
     local SkullItem skull;
     local SkullItemProj skullProj;
 
-    ForEach AllActors(class'SkullItem', skull) {
+    ForEach AllActors(class'HeadHunter.SkullItem', skull) {
         if(!skull.bHeldItem && (skull.Owner == None) && !skull.bCarriedItem && !skull.bOnlyOwnerSee){
             AddSkullItemIndicator(skull);
         }
     }
 
-    ForEach AllActors(class'SkullItemProj', skullProj) {
+    ForEach AllActors(class'HeadHunter.SkullItemProj', skullProj) {
         AddSkullItemProjIndicator(skullProj);
     }
 }
@@ -798,11 +665,11 @@ function RemoveAllSkullIndicators(){
     local SkullItem skull;
     local SkullItemProj skullProj;
 
-    ForEach AllActors(class'SkullItem', skull) {
+    ForEach AllActors(class'HeadHunter.SkullItem', skull) {
         RemoveSkullItemIndicator(skull);
     }
 
-    ForEach AllActors(class'SkullItemProj', skullProj) {
+    ForEach AllActors(class'HeadHunter.SkullItemProj', skullProj) {
         RemoveSkullItemProjIndicator(skullProj);
     }
 }
@@ -841,8 +708,7 @@ function string GetRules() {
 	return ResultSet;
 }
 
-defaultproperties
-{
+defaultproperties {
       IntroSound=Sound'HeadHunter.Announcer.HeadHunterIntro'
       SkullCollectedSound=Sound'HeadHunter.Announcer.SkullsCollected'
       HHRepInfo=None

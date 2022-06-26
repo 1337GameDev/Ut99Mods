@@ -29,8 +29,7 @@ simulated function PostBeginPlay() {
 
 }
 
-defaultproperties
-{
+defaultproperties {
       SkullCollectGoal=10
       SkullCarryLimit=0
       SkullCollectTimeInterval=0

@@ -83,8 +83,7 @@ static function string GetString(
 	return "";
 }
 
-defaultproperties
-{
+defaultproperties {
       OvertimeMessage="Score tied at the end of regulation. Sudden Death Overtime!!!"
       GlobalNameChange="changed name to"
       NewTeamMessage="is now on"

@@ -1,2 +1,0 @@
-[Public]
-Object=(Name=HeadHunter.RadarHudMutator,Class=Class,MetaClass=Engine.Mutator,Description="Radar HUD, Enable radar on every player's HUD that show moving enemies/teammates")

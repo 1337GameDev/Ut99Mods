@@ -25,7 +25,6 @@ function IndicatorSettings ModifierFunc(IndicatorHudTargetListElement indicatorL
    return indicatorListElement.IndicatorSettings;
 }
 
-defaultproperties
-{
+defaultproperties {
       Player=None
 }

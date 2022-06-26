@@ -30,11 +30,10 @@ function Created() {
 	RegenSecondsEdit.SetHelpText(RegenSecondsHelp);
 	RegenSecondsEdit.SetFont(F_Normal);
 	RegenSecondsEdit.SetNumericOnly(True);
-	//RegenSecondsEdit.SetNumericFloat(False);
 	RegenSecondsEdit.SetMaxLength(3);
 	RegenSecondsEdit.Align = TA_Right;
 	RegenSecondsEdit.EditBoxWidth = 25;
-	RegenSecondsEdit.SetValue(String(class'JuggernautGameInfo'.default.RegenSeconds));
+	RegenSecondsEdit.SetValue(String(class'Juggernaut.JuggernautGameInfo'.default.RegenSeconds));
 	ControlOffset += 25;
 
 	ShieldRegenRateEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlLeft+3, ControlOffset, ControlWidth+38, 1));
@@ -42,11 +41,10 @@ function Created() {
 	ShieldRegenRateEdit.SetHelpText(ShieldRegenRateHelp);
 	ShieldRegenRateEdit.SetFont(F_Normal);
 	ShieldRegenRateEdit.SetNumericOnly(True);
-	//ShieldRegenRateEdit.SetNumericFloat(False);
 	ShieldRegenRateEdit.SetMaxLength(3);
 	ShieldRegenRateEdit.Align = TA_Right;
 	ShieldRegenRateEdit.EditBoxWidth = 25;
-	ShieldRegenRateEdit.SetValue(String(class'JuggernautGameInfo'.default.ShieldRegenRate));
+	ShieldRegenRateEdit.SetValue(String(class'Juggernaut.JuggernautGameInfo'.default.ShieldRegenRate));
 	ControlOffset += 25;
 
 	HealthRegenRateEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlLeft+3, ControlOffset, ControlWidth+40, 1));
@@ -54,18 +52,17 @@ function Created() {
 	HealthRegenRateEdit.SetHelpText(HealthRegenRateHelp);
 	HealthRegenRateEdit.SetFont(F_Normal);
 	HealthRegenRateEdit.SetNumericOnly(True);
-	//HealthRegenRateEdit.SetNumericFloat(False);
 	HealthRegenRateEdit.SetMaxLength(3);
 	HealthRegenRateEdit.Align = TA_Right;
 	HealthRegenRateEdit.EditBoxWidth = 25;
-	HealthRegenRateEdit.SetValue(String(class'JuggernautGameInfo'.default.HealthRegenRate));
+	HealthRegenRateEdit.SetValue(String(class'Juggernaut.JuggernautGameInfo'.default.HealthRegenRate));
 	ControlOffset += 25;
 	
 	ShowJuggernautIndicatorCheckbox = UWindowCheckBox(CreateControl(class'UWindowCheckBox', ControlLeft+3, ControlOffset, ControlWidth+40, 1));
 	ShowJuggernautIndicatorCheckbox.SetText(ShowJuggernautIndicatorText);
 	ShowJuggernautIndicatorCheckbox.SetHelpText(ShowJuggernautIndicatorHelp);
 	ShowJuggernautIndicatorCheckbox.SetFont(F_Normal);
-	ShowJuggernautIndicatorCheckbox.bChecked = class'JuggernautGameInfo'.default.ShowJuggernautIndicator;
+	ShowJuggernautIndicatorCheckbox.bChecked = class'Juggernaut.JuggernautGameInfo'.default.ShowJuggernautIndicator;
 	ShowJuggernautIndicatorCheckbox.Align = TA_Right;
 	ControlOffset += 25;
 
@@ -73,7 +70,7 @@ function Created() {
 	OnlyCountKillsAsJuggernautCheckbox.SetText(OnlyCountKillsAsJuggernautText);
 	OnlyCountKillsAsJuggernautCheckbox.SetHelpText(OnlyCountKillsAsJuggernautHelp);
 	OnlyCountKillsAsJuggernautCheckbox.SetFont(F_Normal);
-	OnlyCountKillsAsJuggernautCheckbox.bChecked = class'JuggernautGameInfo'.default.OnlyJuggernautScores;
+	OnlyCountKillsAsJuggernautCheckbox.bChecked = class'Juggernaut.JuggernautGameInfo'.default.OnlyJuggernautScores;
 	OnlyCountKillsAsJuggernautCheckbox.Align = TA_Right;
 	ControlOffset += 25;
 	
@@ -82,11 +79,10 @@ function Created() {
 	JugJumpModifierEdit.SetHelpText(JugJumpModifierHelp);
 	JugJumpModifierEdit.SetFont(F_Normal);
 	JugJumpModifierEdit.SetNumericOnly(True);
-	//JugJumpModifierEdit.SetNumericFloat(False);
 	JugJumpModifierEdit.SetMaxLength(3);
 	JugJumpModifierEdit.Align = TA_Right;
 	JugJumpModifierEdit.EditBoxWidth = 25;
-	JugJumpModifierEdit.SetValue(String(class'JuggernautGameInfo'.default.JugJumpModifier));
+	JugJumpModifierEdit.SetValue(String(class'Juggernaut.JuggernautGameInfo'.default.JugJumpModifier));
 	ControlOffsetRightSideTop += 25;
 	
 	JugMovementMultiplierEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlRight+32, ControlOffsetRightSideTop, ControlWidth+55, 1));
@@ -94,11 +90,10 @@ function Created() {
 	JugMovementMultiplierEdit.SetHelpText(JugMovementMultiplierHelp);
 	JugMovementMultiplierEdit.SetFont(F_Normal);
 	JugMovementMultiplierEdit.SetNumericOnly(True);
-	//JugMovementMultiplierEdit.SetNumericFloat(False);
 	JugMovementMultiplierEdit.SetMaxLength(3);
 	JugMovementMultiplierEdit.Align = TA_Right;
 	JugMovementMultiplierEdit.EditBoxWidth = 25;
-	JugMovementMultiplierEdit.SetValue(String(class'JuggernautGameInfo'.default.JugMovementMultiplier));
+	JugMovementMultiplierEdit.SetValue(String(class'Juggernaut.JuggernautGameInfo'.default.JugMovementMultiplier));
 	ControlOffsetRightSideTop += 25;
 }
 
@@ -143,31 +138,31 @@ function Notify(UWindowDialogControl C, byte E) {
 		case DE_Change: // the message sent by sliders and checkboxes
 			switch(C) {
 				case ShowJuggernautIndicatorCheckbox:
-					class'JuggernautGameInfo'.default.ShowJuggernautIndicator = ShowJuggernautIndicatorCheckbox.bChecked;
+					class'Juggernaut.JuggernautGameInfo'.default.ShowJuggernautIndicator = ShowJuggernautIndicatorCheckbox.bChecked;
 					matchedAControl = true;
 					break;
 				case OnlyCountKillsAsJuggernautCheckbox:
-					class'JuggernautGameInfo'.default.OnlyJuggernautScores = OnlyCountKillsAsJuggernautCheckbox.bChecked;
+					class'Juggernaut.JuggernautGameInfo'.default.OnlyJuggernautScores = OnlyCountKillsAsJuggernautCheckbox.bChecked;
 					matchedAControl = true;
 					break;
 				case RegenSecondsEdit:
-					class'JuggernautGameInfo'.default.RegenSeconds = Int(RegenSecondsEdit.GetValue());
+					class'Juggernaut.JuggernautGameInfo'.default.RegenSeconds = Int(RegenSecondsEdit.GetValue());
 					matchedAControl = true;
 					break;
 				case ShieldRegenRateEdit:
-					class'JuggernautGameInfo'.default.ShieldRegenRate = Int(ShieldRegenRateEdit.GetValue());
+					class'Juggernaut.JuggernautGameInfo'.default.ShieldRegenRate = Int(ShieldRegenRateEdit.GetValue());
 					matchedAControl = true;
 					break;
 				case HealthRegenRateEdit:
-					class'JuggernautGameInfo'.default.HealthRegenRate = Int(HealthRegenRateEdit.GetValue());
+					class'Juggernaut.JuggernautGameInfo'.default.HealthRegenRate = Int(HealthRegenRateEdit.GetValue());
 					matchedAControl = true;
 					break;
 				case JugJumpModifierEdit:
-					class'JuggernautGameInfo'.default.JugJumpModifier = Int(JugJumpModifierEdit.GetValue());
+					class'Juggernaut.JuggernautGameInfo'.default.JugJumpModifier = Int(JugJumpModifierEdit.GetValue());
 					matchedAControl = true;
 					break;
 				case JugMovementMultiplierEdit:
-					class'JuggernautGameInfo'.default.JugMovementMultiplier = Int(JugMovementMultiplierEdit.GetValue());
+					class'Juggernaut.JuggernautGameInfo'.default.JugMovementMultiplier = Int(JugMovementMultiplierEdit.GetValue());
 					matchedAControl = true;
 					break;
 			}
@@ -175,15 +170,14 @@ function Notify(UWindowDialogControl C, byte E) {
 	}
 
 	if(matchedAControl) {
-		class'JuggernautGameInfo'.static.StaticSaveConfig();
+		class'Juggernaut.JuggernautGameInfo'.static.StaticSaveConfig();
 	}
 }
 
 
 //--]]]]----
 
-defaultproperties
-{
+defaultproperties {
       ShowJuggernautIndicatorCheckbox=None
       OnlyCountKillsAsJuggernautCheckbox=None
       RegenSecondsEdit=None

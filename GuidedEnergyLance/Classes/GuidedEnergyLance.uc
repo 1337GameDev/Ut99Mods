@@ -9,19 +9,12 @@ var int DistanceFromCenterToSteer;
 var GuidedEnergyProj ProjectileToSteer;
 var bool ControllingProjectile;
 
+var float TimeHoldingAltFire;
+
 function AltFire(float Value) {
 	if(Owner == None) {
 		return;
 	}
-    
-	ControllingProjectile = true;
-	if ((PlayerPawn(Owner) != None) && (PlayerPawn(Owner).Player != None) && PlayerPawn(Owner).Player.IsA('ViewPort')) {
-		//PlayerPawn(Owner).ToggleZoom();
-		//fov is between 1 and 170
-		PlayerPawn(Owner).DesiredFOV = 30; 
-	}
-	
-	Log("GuidedEnergyLance - AltFire - SET ControllingProjectile");
 }
 
 function Fire(float Value) {
@@ -35,58 +28,41 @@ function Fire(float Value) {
 		RocketsLoaded = 1;
 		GotoState('');
 		GotoState('FireRockets', 'Begin');
-	}
-}
-
-function Actor CheckTarget() {
-	return None;
-}
-
-function Tick(float DeltaTime) {
-	if(Pawn(Owner).bAltFire != 0) {//alt fire held down
-		ControllingProjectile = true;
-	} else {
-	    ControllingProjectile = false;
-		
-		if ((PlayerPawn(Owner) != None) && (PlayerPawn(Owner).Player != None) && PlayerPawn(Owner).Player.IsA('ViewPort')) {
-			//PlayerPawn(Owner).StopZoom();
-			PlayerPawn(Owner).DesiredFOV = PlayerPawn(Owner).DefaultFOV; 
-			PlayerPawn(Owner).bZooming = false;
-			
-		}
+	} else if ((AmmoType.AmmoAmount <= 0) && (ProjectileToSteer == None)) {
+		Pawn(Owner).SwitchToBestWeapon();  //Goto Weapon that has Ammo
 	}
 }
 
 simulated function PostRender(Canvas C) {
-    local int ProjectileXCoord, ProjectileYCoord, middleX, middleY;
-	
+	local PlayerPawn PawnOwner;
+	local Vector AimTraceHitLoc, AimTraceHitNormal, StartTraceLoc, EndTraceLoc;
+	local Actor TraceHitActor;
+
+	PawnOwner = PlayerPawn(Owner);
+
+	if(PawnOwner == None) {
+	    return;
+	}
+
     //Set "bLockedOn" to trigger the lock on reticle
 	bLockedOn = ControllingProjectile;
 	Super.PostRender(C);
 	//reset "bLockedOn" variable
 	bLockedOn = false;
 
-	if(ControllingProjectile && (ProjectileToSteer != None)) {
-	    class'HUDHelper'.static.getXY(C, ProjectileToSteer.Location, ProjectileXCoord, ProjectileYCoord);
+    if(ProjectileToSteer != None) {
+		if(ControllingProjectile) {
+		    class'LGDUtilities.WeaponHelper'.static.FindTracePointsOfWeapon(self,100000, StartTraceLoc, EndTraceLoc);
 
-	    if(class'HUDHelper'.static.GetScreenPointOutsideCenterCircle(C, ProjectileXCoord, ProjectileYCoord, Self.DistanceFromCenterToSteer)) {
-            middleX = C.ClipX / 2;
-            middleY = C.ClipY / 2;
-
-            if(ProjectileXCoord > middleX) {
-                ProjectileToSteer.SteerHorizontally = -1;
-            } else {
-                ProjectileToSteer.SteerHorizontally = 1;
+			TraceHitActor = Trace(AimTraceHitLoc, AimTraceHitNormal, EndTraceLoc, StartTraceLoc, true);
+			if(TraceHitActor != None){
+                ProjectileToSteer.TargetLocation = AimTraceHitLoc;
             }
 
-            if(ProjectileYCoord > middleY) {
-                ProjectileToSteer.SteerVertically = 1;
-            } else {
-                ProjectileToSteer.SteerVertically = -1;
-            }
-
-            ProjectileToSteer.ProjectileSteeredByWeapon = true;
-	    }
+			ProjectileToSteer.ProjectileSteeredByWeapon = true;
+		} else {
+			ProjectileToSteer.ProjectileSteeredByWeapon = false;
+		}
 	}
 }
 simulated event RenderTexture(ScriptedTexture Tex) {
@@ -108,6 +84,39 @@ simulated event RenderTexture(ScriptedTexture Tex) {
 	Tex.DrawColoredText(2, 10, Temp, Font'LEDFont2', C);
 }
 
+function Tick(float DeltaTime) {
+    local Pawn PawnOwner;
+    local PlayerPawn PlayerOwner;
+
+    PawnOwner = Pawn(Owner);
+    PlayerOwner = PlayerPawn(Owner);
+
+    if((PawnOwner == None) || !bWeaponUp){
+        Disable('Tick');
+    } else {
+        if(PawnOwner.bAltFire != 0) {
+             TimeHoldingAltFire += DeltaTime;
+
+             if(TimeHoldingAltFire >= AltRefireRate) {
+                 ControllingProjectile = !ControllingProjectile;
+                 TimeHoldingAltFire = 0;
+
+                 if ((PlayerOwner != None) && (PlayerOwner.Player != None) && PlayerOwner.Player.IsA('ViewPort')) {
+			         //fov is between 1 and 170
+		             if(ControllingProjectile) {
+                         PlayerOwner.DesiredFOV = 50;
+                     } else {
+                         PlayerOwner.DesiredFOV = PlayerOwner.DefaultFOV;
+			             PlayerOwner.bZooming = false;
+                     }
+                 }
+
+
+             }
+        }
+	}
+}
+
 simulated function PlayRFiring(int num) {
 	if (Owner.IsA('PlayerPawn')) {
 		PlayerPawn(Owner).shakeview(ShakeTime, ShakeMag*RocketsLoaded, ShakeVert); //shake player view
@@ -119,10 +128,7 @@ simulated function PlayRFiring(int num) {
 	}
 
 	if (bFireLoad) {
-		//PlayOwnedSound(Self.ProjectileClass.Default.SpawnSound, SLOT_None, 4.0*Pawn(Owner).SoundDampening);
-		PlayOwnedSound(Class'GuidedEnergyProj'.Default.SpawnSound, SLOT_None, 4.0*Pawn(Owner).SoundDampening);
-	} else {
-		//PlayOwnedSound(AltFireSound, SLOT_None, 4.0*Pawn(Owner).SoundDampening);
+		PlayOwnedSound(Class'GuidedEnergyLance.GuidedEnergyProj'.Default.SpawnSound, SLOT_None, 4.0*Pawn(Owner).SoundDampening);
 	}
 
 	if (bFireLoad && bInstantRocket) {
@@ -135,7 +141,6 @@ simulated function PlayRFiring(int num) {
 ///////////////////////////////////////////////////////
 state FireRockets {
 	function Fire(float F) {}
-	function AltFire(float F) {}
 
 	function ForceFire() {
 		bForceFire = true;
@@ -152,7 +157,6 @@ state FireRockets {
 	function BeginState() {
 		local vector StartLoc, X,Y,Z;
 		local GuidedEnergyProj r;
-
 		local Pawn PawnOwner;
 		local PlayerPawn PlayerOwner;
 
@@ -186,6 +190,7 @@ state FireRockets {
 		r = Spawn(Class'GuidedEnergyLance.GuidedEnergyProj',, '', StartLoc, AdjustedAim);
 		if (r != none) {
 		    ProjectileToSteer = r;
+			ProjectileToSteer.FiringWeapon = Self;
 		}
 
 		RocketsLoaded = 0;
@@ -194,6 +199,9 @@ state FireRockets {
 	}
 
 	function AnimEnd() {
+	    local Pawn PawnOwner;
+		PawnOwner = Pawn(Owner);
+
 		if (!bRotated && (AmmoType.AmmoAmount > 0)) {
 			PlayLoading(1.5, 0);
 			RocketsLoaded = 1;
@@ -203,44 +211,103 @@ state FireRockets {
 
 		LockedTarget = None;
 		Finish();
+
+		if (PawnOwner.bAltFire != 0) {
+		    //if alt fire was pressed, we didn't transition to another state and should
+			PawnOwner.StopFiring();
+			GotoState('Idle');
+		}
 	}
 Begin:
 }
 
 ///////////////////////////////////////////////////////
 state Idle {
-
 Begin:
-	if (Pawn(Owner).bFire!=0) { 
-	    Fire(0.0); 
+	if (Pawn(Owner).bFire != 0) {
+	    Fire(0.0);
 	}
-	
-	if (Pawn(Owner).bAltFire!=0) { 
-	    AltFire(0.0); 
-	}
-	
-	bPointing=False;
-	
-	if (AmmoType.AmmoAmount<=0) { 
+
+	bPointing = False;
+
+	if ((AmmoType.AmmoAmount<=0) && (ProjectileToSteer == None)) {
 		Pawn(Owner).SwitchToBestWeapon();  //Goto Weapon that has Ammo
 	}
-	
+
 	PlayIdleAnim();
 	LockedTarget = None;
 	bLockedOn = False;
-	ControllingProjectile = false;
-	Log("GuidedEnergyLance - IDLE - Reset ControllingProjectile");
-	
+}
+
+State DownWeapon {
+    ignores Fire, AltFire, AnimEnd;
+
+	function BeginState() {
+	    local PlayerPawn PawnOwner;
+		PawnOwner = PlayerPawn(Owner);
+
+		Super.BeginState();
+		bCanClientFire = false;
+
+		LockedTarget = None;
+		bLockedOn = False;
+        ControllingProjectile = False;
+
+		if(ProjectileToSteer != None) {
+		    ProjectileToSteer.DetachFromGun();
+			ProjectileToSteer = None;
+		}
+
+		if ((PawnOwner.Player != None) && PawnOwner.Player.IsA('ViewPort')) {
+			PawnOwner.DesiredFOV = PawnOwner.DefaultFOV;
+			PawnOwner.bZooming = false;
+		}
+	}
+}
+
+state Active {
+	function Fire(float F){}
+	function AltFire(float F){}
+
+	function bool PutDown() {
+	    ControllingProjectile = False;
+
+		if (bWeaponUp || (AnimFrame < 0.75)) {
+			GotoState('DownWeapon');
+		} else {
+			bChangeWeapon = true;
+        }
+
+		return True;
+	}
+
+	function BeginState() {
+		bChangeWeapon = false;
+	}
+
+Begin:
+	FinishAnim();
+	if (bChangeWeapon) {
+		GotoState('DownWeapon');
+	}
+
+	bWeaponUp = True;
+	Enable('Tick');
+
+	PlayPostSelect();
+	FinishAnim();
+	Finish();
 }
 
 defaultproperties {
       WeaponDescription="Classification: Energy Lance\nPrimary Fire: Instant hit laser beam that steals the targets weapon.\nSecondary Fire: Large, slow moving plasma balls, that ricochet off walls.\nTechniques: Hitting the secondary fire plasma balls with the regular fire's laser beam will cause an immensely powerful explosion. You can even aim the plasma balls around corners or bounce them in hallways to block a path."
-      AltProjectileClass=Class'HeadHunter.RicochetShockProj'
       PickupMessage="You got the Guided Energy Lance."
       ItemName="Guided Energy Lance"
       DistanceFromCenterToSteer=10
       bAlwaysInstant=true
-	  ControllingProjectile=false
+	  AltRefireRate=0.5
+
+      ControllingProjectile=false
 
       SelectSound=Sound'UnrealShare.Eightball.Selecting'
       AltFireSound=Sound'UnrealShare.Eightball.EightAltFire'

@@ -23,10 +23,11 @@ simulated function DrawFragCount(Canvas C){
     SkullIconScale = 2.0 * Scale;
     TimerPadding = 5;
     PlayerStatusHudWidth = 256;
-    TimerWidth = 125;//5 sliced textures -- 00:00
+    TimerWidth = 125;//5 sliced textures -- [0][0][:][0][0]
     if(gameInfo.SkullCollectTimeInterval >= 600){
          TimerWidth += 25;//add an extra 0
     }
+	TimerWidth *= Scale;
 
     TimerXPos = C.ClipX - ((PlayerStatusHudWidth + TimerWidth + (2*TimerPadding)) * Scale);
 
@@ -71,10 +72,9 @@ simulated function DrawTimeAt(Canvas Canvas, float X, float Y) {
 
     timerColor = HUDColor;
 
-    class'HUDHelper'.static.RenderLEDTimerToHUD(Canvas, X, Y, timerColor, Style, Scale, gameInfo.SkullsCollectedCountdown);
+    class'LGDUtilities.HUDHelper'.static.RenderLEDTimerToHUD(Canvas, X, Y, timerColor, Style, Scale, gameInfo.SkullsCollectedCountdown);
 }
 
-defaultproperties
-{
+defaultproperties {
       SkullIconColor=(R=255,G=186,B=3,A=0)
 }

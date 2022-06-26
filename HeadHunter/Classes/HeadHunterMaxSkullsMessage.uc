@@ -17,8 +17,7 @@ static function string GetString(
     return "You cannot pick up any more skulls.";
 }
 
-defaultproperties
-{
+defaultproperties {
       FontSize=1
       bIsSpecial=True
       bIsUnique=True

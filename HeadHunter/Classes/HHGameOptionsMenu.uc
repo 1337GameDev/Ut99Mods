@@ -27,7 +27,7 @@ function Created() {
 	ShowDroppedSkullIndicatorsCheckbox.SetText(ShowDroppedSkullIndicatorsText);
 	ShowDroppedSkullIndicatorsCheckbox.SetHelpText(ShowDroppedSkullIndicatorsHelp);
 	ShowDroppedSkullIndicatorsCheckbox.SetFont(F_Normal);
-	ShowDroppedSkullIndicatorsCheckbox.bChecked = class'HeadHunterGameInfo'.default.ShowDroppedSkullIndicators;
+	ShowDroppedSkullIndicatorsCheckbox.bChecked = class'HeadHunter.HeadHunterGameInfo'.default.ShowDroppedSkullIndicators;
 	ShowDroppedSkullIndicatorsCheckbox.Align = TA_Right;
 	ControlOffset += 25;
 
@@ -35,7 +35,7 @@ function Created() {
 	ShowPlayersWithSkullThresholdCheckbox.SetText(ShowPlayersWithSkullThresholdText);
 	ShowPlayersWithSkullThresholdCheckbox.SetHelpText(ShowPlayersWithSkullThresholdHelp);
 	ShowPlayersWithSkullThresholdCheckbox.SetFont(F_Normal);
-	ShowPlayersWithSkullThresholdCheckbox.bChecked = class'HeadHunterGameInfo'.default.ShowPlayersWithSkullThreshold;
+	ShowPlayersWithSkullThresholdCheckbox.bChecked = class'HeadHunter.HeadHunterGameInfo'.default.ShowPlayersWithSkullThreshold;
 	ShowPlayersWithSkullThresholdCheckbox.Align = TA_Right;
 	ControlOffset += 25;
 
@@ -48,7 +48,7 @@ function Created() {
 	SkullThresholdToShowPlayersEdit.SetMaxLength(2);
 	SkullThresholdToShowPlayersEdit.Align = TA_Right;
 	SkullThresholdToShowPlayersEdit.EditBoxWidth = 25;
-	SkullThresholdToShowPlayersEdit.SetValue(String(class'HeadHunterGameInfo'.default.SkullThresholdToShowPlayers));
+	SkullThresholdToShowPlayersEdit.SetValue(String(class'HeadHunter.HeadHunterGameInfo'.default.SkullThresholdToShowPlayers));
 	ControlOffset += 25;
 
 	SkullCollectIntervalEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlLeft+3, ControlOffset, ControlWidth+78, 1));
@@ -60,7 +60,7 @@ function Created() {
 	SkullCollectIntervalEdit.SetMaxLength(3);
 	SkullCollectIntervalEdit.Align = TA_Right;
 	SkullCollectIntervalEdit.EditBoxWidth = 25;
-	SkullCollectIntervalEdit.SetValue(String(class'HeadHunterGameInfo'.default.SkullCollectTimeInterval));
+	SkullCollectIntervalEdit.SetValue(String(class'HeadHunter.HeadHunterGameInfo'.default.SkullCollectTimeInterval));
 	ControlOffset += 25;
 
 	SkullCarryLimitEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlLeft+3, ControlOffset, ControlWidth+30, 1));
@@ -72,7 +72,7 @@ function Created() {
 	SkullCarryLimitEdit.SetMaxLength(2);
 	SkullCarryLimitEdit.Align = TA_Right;
 	SkullCarryLimitEdit.EditBoxWidth = 25;
-	SkullCarryLimitEdit.SetValue(String(class'HeadHunterGameInfo'.default.SkullCarryLimit));
+	SkullCarryLimitEdit.SetValue(String(class'HeadHunter.HeadHunterGameInfo'.default.SkullCarryLimit));
 	ControlOffset += 25;
 }
 
@@ -116,23 +116,23 @@ function Notify(UWindowDialogControl C, byte E) {
 		case DE_Change: // the message sent by sliders and checkboxes
 			switch(C) {
 				case ShowDroppedSkullIndicatorsCheckbox:
-					class'HeadHunterGameInfo'.default.ShowDroppedSkullIndicators = ShowDroppedSkullIndicatorsCheckbox.bChecked;
+					class'HeadHunter.HeadHunterGameInfo'.default.ShowDroppedSkullIndicators = ShowDroppedSkullIndicatorsCheckbox.bChecked;
 					matchedAControl = true;
 					break;
 				case ShowPlayersWithSkullThresholdCheckbox:
-					class'HeadHunterGameInfo'.default.ShowPlayersWithSkullThreshold = ShowPlayersWithSkullThresholdCheckbox.bChecked;
+					class'HeadHunter.HeadHunterGameInfo'.default.ShowPlayersWithSkullThreshold = ShowPlayersWithSkullThresholdCheckbox.bChecked;
 					matchedAControl = true;
 					break;
 				case SkullThresholdToShowPlayersEdit:
-					class'HeadHunterGameInfo'.default.SkullThresholdToShowPlayers = Int(SkullThresholdToShowPlayersEdit.GetValue());
+					class'HeadHunter.HeadHunterGameInfo'.default.SkullThresholdToShowPlayers = Int(SkullThresholdToShowPlayersEdit.GetValue());
 					matchedAControl = true;
 					break;
 				case SkullCollectIntervalEdit:
-					class'HeadHunterGameInfo'.default.SkullCollectTimeInterval = Int(SkullCollectIntervalEdit.GetValue());
+					class'HeadHunter.HeadHunterGameInfo'.default.SkullCollectTimeInterval = Int(SkullCollectIntervalEdit.GetValue());
 					matchedAControl = true;
 					break;
 				case SkullCarryLimitEdit:
-					class'HeadHunterGameInfo'.default.SkullCarryLimit = Int(SkullCarryLimitEdit.GetValue());
+					class'HeadHunter.HeadHunterGameInfo'.default.SkullCarryLimit = Int(SkullCarryLimitEdit.GetValue());
 					matchedAControl = true;
 					break;
 			}
@@ -140,7 +140,7 @@ function Notify(UWindowDialogControl C, byte E) {
 	}
 
 	if(matchedAControl) {
-		class'HeadHunterGameInfo'.static.StaticSaveConfig();
+		class'HeadHunter.HeadHunterGameInfo'.static.StaticSaveConfig();
 	}
 }
 
@@ -151,8 +151,7 @@ function FragChanged() {
 
 //--]]]]----
 
-defaultproperties
-{
+defaultproperties {
       ShowDroppedSkullIndicatorsCheckbox=None
       ShowPlayersWithSkullThresholdCheckbox=None
       SkullCollectIntervalEdit=None

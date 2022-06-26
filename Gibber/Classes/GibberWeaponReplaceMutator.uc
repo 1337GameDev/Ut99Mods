@@ -13,13 +13,11 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant) {
 	    ReplaceWith(Other, "Gibber.Gibber");
 		return false;
 	} else if ((Other.Class == Class'Botpack.PAmmo') && (Other.Owner == None) && (Other.Tag != 'GibberAmmo')){
-	    Log("GibberWeaponReplaceMutator - CheckReplacement - Destroyed PAmmo:"$Other.Name);
 	    Other.Destroy();
 	}
 
 	return true;
 }
 
-defaultproperties
-{
+defaultproperties {
 }

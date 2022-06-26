@@ -3,8 +3,7 @@
 //=============================================================================
 class C4Ammo extends TournamentAmmo nousercreate;
 
-defaultproperties
-{
+defaultproperties {
       AmmoAmount=1
       MaxAmmo=16
       UsedInWeaponSlot(0)=1

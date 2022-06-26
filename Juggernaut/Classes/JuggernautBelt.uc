@@ -45,7 +45,7 @@ event float BotDesireability(Pawn Bot) {
 	local inventory Inv;
 
 	for (Inv=Bot.inventory; Inv!=None; Inv=Inv.inventory) {
-		if (Inv.IsA('RelicDefenseInventory')){
+		if (Inv.IsA('RelicDefenseInventory')) {
 			return -1; //can't pickup up shieldbelt if have defense relic
 		}
     }
@@ -54,7 +54,7 @@ event float BotDesireability(Pawn Bot) {
 }
 
 function bool HandlePickupQuery(Inventory Item) {
-    if(Item.IsA('JuggernautBelt') || class'InventoryHelper'.static.IsAPowerup(Item, true, true, true)) {
+    if(Item.IsA('JuggernautBelt') || class'LGDUtilities.InventoryHelper'.static.IsAPowerup(Item, true, true, true)) {
 		if(!Owner.IsA('PlayerPawn')){
             Item.SetRespawn();
 		}
@@ -110,7 +110,7 @@ function PickupFunction(Pawn Other) {
 
     Self.Tag = 'Objective';
 
-    if(BeltEffect != None){
+    if(BeltEffect != None) {
         BeltEffect.bHidden = true;
     }
 
@@ -128,7 +128,7 @@ simulated function Tick(float DeltaTime) {
     }
 }
 
-function RegenOwner(){
+function RegenOwner() {
     local float MaxHealth, RegenRemainder;//regn remainder is for any leftover "regen" to spill over from health to shields
 	local Pawn PawnOwner;
 	local bool HasRegened;
@@ -186,10 +186,8 @@ function RegenOwner(){
 }
 
 function UT_ShieldBelt GetNewUTShieldBelt() {
-    local UT_ShieldBelt newBelt;
-    newBelt = Spawn(class'JuggernautShieldBelt');
 
-    return newBelt;
+    return Spawn(class'Juggernaut.JuggernautShieldBelt');
 }
 
 function Destroyed() {
@@ -202,7 +200,7 @@ function Destroyed() {
 }
 function DropFrom(vector StartLocation) {
     local bool isTestMap;//used to indicate a test map is loaded
-    isTestMap = class'TesterCache'.static.HasATesterLoaded(self);
+    isTestMap = class'LGDUtilities.TesterCache'.static.HasATesterLoaded(self);
 
     Super.DropFrom(StartLocation);
 
@@ -215,7 +213,7 @@ function DropFrom(vector StartLocation) {
 }
 function BecomePickup(){
     local bool isTestMap;//used to indicate a test map is loaded
-    isTestMap = class'TesterCache'.static.HasATesterLoaded(self);
+    isTestMap = class'LGDUtilities.TesterCache'.static.HasATesterLoaded(self);
 
 	Super.BecomePickup();
 
@@ -272,8 +270,7 @@ function ShowBeltItemEffect(){
     }
 }
 
-defaultproperties
-{
+defaultproperties {
       RegenDelayAfterDamaged=3.000000
       RegenHealth=True
       RegenShield=True

@@ -23,15 +23,15 @@ simulated function bool SpawnSelectedClass(Class<Actor> classToSpawn, Vector pos
 
      if(classToSpawn != None){
          if(classToSpawn.default.bStatic || classToSpawn.default.bNoDelete){
-             spawnMsg = new class'StringObj';
+             spawnMsg = new class'LGDUtilities.StringObj';
              spawnMsg.Value = "Cannot spawn \""$classToSpawn.name$"\" because bStatic or bNoDelete are true.";
-             Pawn(Owner).ReceiveLocalizedMessage(class'CannotSpawnMessage', 0, None, None, spawnMsg);
+             Pawn(Owner).ReceiveLocalizedMessage(class'ItemSpawnerWeapon.CannotSpawnMessage', 0, None, None, spawnMsg);
          } else {
              spawned = Spawn(classToSpawn,,,pos, rot);
              if(spawned == None){
-                 spawnMsg = new class'StringObj';
+                 spawnMsg = new class'LGDUtilities.StringObj';
                  spawnMsg.Value = "Cannot spawn \""$classToSpawn.name$"\"";
-                 Pawn(Owner).ReceiveLocalizedMessage(class'CannotSpawnMessage', 0, None, None, spawnMsg);
+                 Pawn(Owner).ReceiveLocalizedMessage(class'ItemSpawnerWeapon.CannotSpawnMessage', 0, None, None, spawnMsg);
              }
          }
      }
@@ -65,7 +65,7 @@ simulated function UpdateGhostFromSelectedObject(){
         SelectedActorGhost.UpdateGhostObject(ItemsToSpawn[ItemToSpawnIndex].default.Mesh, ItemToSpawnCollisionRadius, ItemToSpawnCollisionHeight);
     }
 
-    Pawn(Owner).ReceiveLocalizedMessage(class'SelectItemMessage', 0, None, None, ItemsToSpawn[ItemToSpawnIndex]);
+    Pawn(Owner).ReceiveLocalizedMessage(class'ItemSpawnerWeapon.SelectItemMessage', 0, None, None, ItemsToSpawn[ItemToSpawnIndex]);
 }
 
 simulated function DestroyGhost(){
@@ -83,7 +83,7 @@ simulated function UpdateGhostLocation(){
      local float ItemToSpawnCollisionSize, HitActorCollisionSize;
 
      if(SelectedActorGhost == None){
-         SelectedActorGhost = Spawn(class'ItemSpawnerWeaponGhost');
+         SelectedActorGhost = Spawn(class'ItemSpawnerWeapon.ItemSpawnerWeaponGhost');
          SelectedActorGhost.SpawnerWeapon = Self;
      }
      ItemToSpawnCollisionSize = FMax(ItemToSpawnCollisionRadius, ItemToSpawnCollisionHeight);
@@ -280,7 +280,7 @@ defaultproperties {
       ItemToSpawnIndex=0
       ItemToSpawnCollisionRadius=1.000000
       ItemToSpawnCollisionHeight=1.000000
-      ItemsToSpawn(0)=Class'HeadHunter.PracticeBot'
+      ItemsToSpawn(0)=Class'LGDUtilities.PracticeBot'
       ItemsToSpawn(1)=Class'Botpack.TMale2Bot'
       ItemsToSpawn(2)=Class'Botpack.TFemale1Bot'
       ItemsToSpawn(3)=Class'UnrealShare.Chest'
