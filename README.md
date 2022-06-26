@@ -1,4 +1,4 @@
-# Ut99Mods ![alt text](https://github.com/1337GameDev/Ut99Mods/blob/main/Icons/ut_logo.png?raw=true)
+# Ut99Mods ![Ut99 Logo](https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true)
 A collection of my hand-made mods for one of my my favorite games - Unreal Tournament '99!
 
 # Setup
