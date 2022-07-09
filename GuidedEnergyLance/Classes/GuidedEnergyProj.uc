@@ -245,14 +245,14 @@ defaultproperties {
       InitialDir=(X=0.000000,Y=0.000000,Z=0.000000)
       bCanHitInstigator=False
       LifeSpan=20.000000
-	  Physics=PHYS_Falling
-	  ProjectileSteeredByWeapon=false
-	  NumWallHits=0
+	  	Physics=PHYS_Falling
+	  	ProjectileSteeredByWeapon=false
+	  	NumWallHits=0
       MaxWallHits=1
       SeekingDirBlendValue=0.4
       SeekingAcceleration=45
 
-	  AmbientSound=Sound'UnrealShare.Dispersion.DispFly'
+	  	AmbientSound=Sound'UnrealShare.Dispersion.DispFly'
       Mesh=LodMesh'Botpack.ShockRWM'
       DrawScale=0.5
       MyDamageType="jolted"

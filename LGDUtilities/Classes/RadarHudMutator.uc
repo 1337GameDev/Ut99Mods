@@ -14,7 +14,7 @@ var config float RadarAlpha;
 var config Color RadarCenterDotColor;
 var config float RadarGUICircleRadius;//the radius of the radar display on the HUD (in pixels)
 var config int RadarGUICircleOffsetX;//The X position offset (from the center of the GUI texture) for the center of the radar display
-var config int RadarGUICircleOffsetY;//The Y position osset (from the center of the GUI texture) for the center of the radar display
+var config int RadarGUICircleOffsetY;//The Y position offset (from the center of the GUI texture) for the center of the radar display
 
 var config int RadarBlipSize;
 var config bool ShowAlliesAndEnemiesAsDifferentColors;
@@ -39,7 +39,7 @@ var config bool IndicateTargetOnDifferentLevel;
 
 simulated function ModifyPlayer(Pawn Other) {
     Super.ModifyPlayer(Other);
-	
+
     if (Other.IsA('TournamentPlayer') && (Other.PlayerReplicationInfo != None) ) {
        //ensure player has been set up with the proper targets
        if(!InitiatedPreviously) {
@@ -105,7 +105,7 @@ simulated function PostRender(Canvas C) {
     if(InitiallyPositionAbovePlayerHUDOnLowerLeft) {
         RadarHUDPositionCenter.Y = -64 * PlayerHUDScale;//offset vertically upwards by 128 units -- the height of the player frag count HUD element
     }
-	
+
     RadarHUDPositionCenter.X = RadarHUDPositionCenter.X + (HalfRadarHudTexWidth * RadarGuiScale * PlayerHUDScale) + RadarHUDOffsetX;
     RadarHUDPositionCenter.Y = RadarHUDPositionCenter.Y + (C.ClipY + RadarHUDOffsetY) - (HalfRadarHudTexHeight * RadarGuiScale * PlayerHUDScale);
 
@@ -281,5 +281,5 @@ defaultproperties {
       RadarSameLevelThreshold=83.000000
       ShowTargetsIfBelowVelocityThreshold=False
       ShowTargetsIfCrouching=False
-      IndicateTargetOnDifferentLevel=False
+      IndicateTargetOnDifferentLevel=True
 }

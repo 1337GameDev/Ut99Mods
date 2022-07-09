@@ -1,5 +1,5 @@
 //=============================================================================
-// GuidedEnergyLance - A shock rifle that has 2 special modes: Primary fire is a beam that steals the weapon of somebody it hits -- Alt fire is bouncy plasma balls.
+// GuidedEnergyLance - A rocket launcher that has 2 special modes: Primary fire is a beam that steals the weapon of somebody it hits -- Alt fire is bouncy plasma balls.
 //=============================================================================
 class GuidedEnergyLance extends UT_Eightball;
 
@@ -305,7 +305,7 @@ defaultproperties {
       ItemName="Guided Energy Lance"
       DistanceFromCenterToSteer=10
       bAlwaysInstant=true
-	  AltRefireRate=0.5
+	  	AltRefireRate=0.5
 
       ControllingProjectile=false
 

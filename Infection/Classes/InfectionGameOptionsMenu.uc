@@ -18,18 +18,18 @@ var bool ZombiesPickupWeapons;
 var bool InfiniteAmmo;
 var bool AnyDeathInfects;
 
-var UWindowCheckBox ShowZombieIndicatorCheckbox, ShowHumanIndicatorCheckbox, ShowSameTeamIndicatorsCheckbox, 
+var UWindowCheckBox ShowZombieIndicatorCheckbox, ShowHumanIndicatorCheckbox, ShowSameTeamIndicatorsCheckbox,
 		HumansPickupWeaponsCheckbox, ZombiesPickupWeaponsCheckbox, InfiniteAmmoCheckbox, AnyDeathInfectsCheckbox;
-		
-var UWindowEditControl MinimumZombiesEdit, ZombieJumpModifierEdit, ZombieMovementMultiplierEdit, 
+
+var UWindowEditControl MinimumZombiesEdit, ZombieJumpModifierEdit, ZombieMovementMultiplierEdit,
 		ZombieDamageModEdit, HumanDamageModEdit;
 
-var string ShowZombieIndicatorText, ShowHumanIndicatorText, ShowSameTeamIndicatorsText, MinimumZombiesText, 
-		ZombieJumpModifierText, ZombieMovementMultiplierText, HumansPickupWeaponsText, ZombiesPickupWeaponsText, 
+var string ShowZombieIndicatorText, ShowHumanIndicatorText, ShowSameTeamIndicatorsText, MinimumZombiesText,
+		ZombieJumpModifierText, ZombieMovementMultiplierText, HumansPickupWeaponsText, ZombiesPickupWeaponsText,
 		InfiniteAmmoText, AnyDeathInfectsText, ZombieDamageModText, HumanDamageModText;
-		
-var string ShowZombieIndicatorHelp, ShowHumanIndicatorHelp, ShowSameTeamIndicatorsHelp, MinimumZombiesHelp, 
-		ZombieJumpModifierHelp, ZombieMovementMultiplierHelp, HumansPickupWeaponsHelp, ZombiesPickupWeaponsHelp, 
+
+var string ShowZombieIndicatorHelp, ShowHumanIndicatorHelp, ShowSameTeamIndicatorsHelp, MinimumZombiesHelp,
+		ZombieJumpModifierHelp, ZombieMovementMultiplierHelp, HumansPickupWeaponsHelp, ZombiesPickupWeaponsHelp,
 		InfiniteAmmoHelp, AnyDeathInfectsHelp, ZombieDamageModHelp, HumanDamageModHelp;
 
 function Created() {
@@ -47,7 +47,7 @@ function Created() {
 
 	Super.Created();
 	ControlOffsetRightSideTop = ControlOffset;
-	
+
 	//LEFT SIDE
 	MinimumZombiesEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlLeft+3, ControlOffset, ControlWidth+10, 1));
 	MinimumZombiesEdit.SetText(MinimumZombiesText);
@@ -59,7 +59,7 @@ function Created() {
 	MinimumZombiesEdit.EditBoxWidth = 20;
 	MinimumZombiesEdit.SetValue(String(class'Infection.InfectionGameInfo'.default.MinimumZombies));
 	ControlOffset += 20;
-	
+
 	ShowZombieIndicatorCheckbox = UWindowCheckBox(CreateControl(class'UWindowCheckBox', ControlLeft+3, ControlOffset, ControlWidth+35, 1));
 	ShowZombieIndicatorCheckbox.SetText(ShowZombieIndicatorText);
 	ShowZombieIndicatorCheckbox.SetHelpText(ShowZombieIndicatorHelp);
@@ -67,7 +67,7 @@ function Created() {
 	ShowZombieIndicatorCheckbox.bChecked = class'Infection.InfectionGameInfo'.default.ShowZombieIndicators;
 	ShowZombieIndicatorCheckbox.Align = TA_Right;
 	ControlOffset += 20;
-	
+
 	ShowHumanIndicatorCheckbox = UWindowCheckBox(CreateControl(class'UWindowCheckBox', ControlLeft+3, ControlOffset, ControlWidth+38, 1));
 	ShowHumanIndicatorCheckbox.SetText(ShowHumanIndicatorText);
 	ShowHumanIndicatorCheckbox.SetHelpText(ShowHumanIndicatorHelp);
@@ -75,7 +75,7 @@ function Created() {
 	ShowHumanIndicatorCheckbox.bChecked = class'Infection.InfectionGameInfo'.default.ShowHumanIndicators;
 	ShowHumanIndicatorCheckbox.Align = TA_Right;
 	ControlOffset += 20;
-	
+
 	ShowSameTeamIndicatorsCheckbox = UWindowCheckBox(CreateControl(class'UWindowCheckBox', ControlLeft+3, ControlOffset, ControlWidth+23, 1));
 	ShowSameTeamIndicatorsCheckbox.SetText(ShowSameTeamIndicatorsText);
 	ShowSameTeamIndicatorsCheckbox.SetHelpText(ShowSameTeamIndicatorsHelp);
@@ -83,7 +83,7 @@ function Created() {
 	ShowSameTeamIndicatorsCheckbox.bChecked = class'Infection.InfectionGameInfo'.default.ShowSameTeamIndicators;
 	ShowSameTeamIndicatorsCheckbox.Align = TA_Right;
 	ControlOffset += 20;
-	
+
 	ZombieDamageModEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlLeft+3, ControlOffset, ControlWidth+40, 1));
 	ZombieDamageModEdit.SetText(ZombieDamageModText);
 	ZombieDamageModEdit.SetHelpText(ZombieDamageModHelp);
@@ -95,7 +95,7 @@ function Created() {
 	ZombieDamageModEdit.EditBoxWidth = 25;
 	ZombieDamageModEdit.SetValue(String(class'Infection.InfectionGameInfo'.default.ZombieDamageMod));
 	ControlOffset += 20;
-	
+
 	HumanDamageModEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlLeft+3, ControlOffset, ControlWidth+40, 1));
 	HumanDamageModEdit.SetText(HumanDamageModText);
 	HumanDamageModEdit.SetHelpText(HumanDamageModHelp);
@@ -104,11 +104,11 @@ function Created() {
 	HumanDamageModEdit.SetNumericFloat(True);
 	HumanDamageModEdit.SetMaxLength(3);
 	HumanDamageModEdit.Align = TA_Right;
-	HumanDamageModEdit.EditBoxWidth = 25;	
+	HumanDamageModEdit.EditBoxWidth = 25;
 	HumanDamageModEdit.SetValue(String(class'Infection.InfectionGameInfo'.default.HumanDamageMod));
-	
+
 	ControlOffset += 20;
-	
+
 	//RIGHT SIDE
 	ZombieJumpModifierEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlRight+32, ControlOffsetRightSideTop, ControlWidth+40, 1));
 	ZombieJumpModifierEdit.SetText(ZombieJumpModifierText);
@@ -121,7 +121,7 @@ function Created() {
 	ZombieJumpModifierEdit.EditBoxWidth = 25;
 	ZombieJumpModifierEdit.SetValue(String(class'Infection.InfectionGameInfo'.default.ZombieJumpModifier));
 	ControlOffsetRightSideTop += 20;
-	
+
 	ZombieMovementMultiplierEdit = UWindowEditControl(CreateControl(class'UWindowEditControl', ControlRight+32, ControlOffsetRightSideTop, ControlWidth+40, 1));
 	ZombieMovementMultiplierEdit.SetText(ZombieMovementMultiplierText);
 	ZombieMovementMultiplierEdit.SetHelpText(ZombieMovementMultiplierHelp);
@@ -133,7 +133,7 @@ function Created() {
 	ZombieMovementMultiplierEdit.EditBoxWidth = 25;
 	ZombieMovementMultiplierEdit.SetValue(String(class'Infection.InfectionGameInfo'.default.ZombieMovementModifier));
 	ControlOffsetRightSideTop += 20;
-	
+
 	HumansPickupWeaponsCheckbox = UWindowCheckBox(CreateControl(class'UWindowCheckBox', ControlRight+32, ControlOffsetRightSideTop, ControlWidth+50, 1));
 	HumansPickupWeaponsCheckbox.SetText(HumansPickupWeaponsText);
 	HumansPickupWeaponsCheckbox.SetHelpText(HumansPickupWeaponsHelp);
@@ -141,7 +141,7 @@ function Created() {
 	HumansPickupWeaponsCheckbox.bChecked = class'Infection.InfectionGameInfo'.default.HumansPickupWeapons;
 	HumansPickupWeaponsCheckbox.Align = TA_Right;
 	ControlOffsetRightSideTop += 20;
-	
+
 	ZombiesPickupWeaponsCheckbox = UWindowCheckBox(CreateControl(class'UWindowCheckBox', ControlRight+32, ControlOffsetRightSideTop, ControlWidth+50, 1));
 	ZombiesPickupWeaponsCheckbox.SetText(ZombiesPickupWeaponsText);
 	ZombiesPickupWeaponsCheckbox.SetHelpText(ZombiesPickupWeaponsHelp);
@@ -149,7 +149,7 @@ function Created() {
 	ZombiesPickupWeaponsCheckbox.bChecked = class'Infection.InfectionGameInfo'.default.ZombiesPickupWeapons;
 	ZombiesPickupWeaponsCheckbox.Align = TA_Right;
 	ControlOffsetRightSideTop += 20;
-	
+
 	InfiniteAmmoCheckbox = UWindowCheckBox(CreateControl(class'UWindowCheckBox', ControlRight+32, ControlOffsetRightSideTop, ControlWidth+13, 1));
 	InfiniteAmmoCheckbox.SetText(InfiniteAmmoText);
 	InfiniteAmmoCheckbox.SetHelpText(InfiniteAmmoHelp);
@@ -157,7 +157,7 @@ function Created() {
 	InfiniteAmmoCheckbox.bChecked = class'Infection.InfectionGameInfo'.default.InfiniteAmmo;
 	InfiniteAmmoCheckbox.Align = TA_Right;
 	ControlOffsetRightSideTop += 20;
-	
+
 	AnyDeathInfectsCheckbox = UWindowCheckBox(CreateControl(class'UWindowCheckBox', ControlRight+32, ControlOffsetRightSideTop, ControlWidth+28, 1));
 	AnyDeathInfectsCheckbox.SetText(AnyDeathInfectsText);
 	AnyDeathInfectsCheckbox.SetHelpText(AnyDeathInfectsHelp);
@@ -196,23 +196,23 @@ function LoadCurrentValues() {
 	MinimumZombiesEdit.SetValue(string(Class<InfectionGameInfo>(BotmatchParent.GameClass).Default.MinimumZombies));
 	ZombieJumpModifierEdit.SetValue(string(Class<InfectionGameInfo>(BotmatchParent.GameClass).Default.ZombieJumpModifier));
 	ZombieMovementMultiplierEdit.SetValue(string(Class<InfectionGameInfo>(BotmatchParent.GameClass).Default.ZombieMovementModifier));
-	
+
 	HumansPickupWeaponsCheckbox.bChecked = Class<InfectionGameInfo>(BotmatchParent.GameClass).Default.HumansPickupWeapons;
 	ZombiesPickupWeaponsCheckbox.bChecked = Class<InfectionGameInfo>(BotmatchParent.GameClass).Default.ZombiesPickupWeapons;
 	InfiniteAmmoCheckbox.bChecked = Class<InfectionGameInfo>(BotmatchParent.GameClass).Default.InfiniteAmmo;
-	
+
 	AnyDeathInfectsCheckbox.bChecked = Class<InfectionGameInfo>(BotmatchParent.GameClass).Default.AnyDeathInfects;
-	
-	ZombieDamageModEdit.SetValue(string(Class<InfectionGameInfo>(BotmatchParent.GameClass).Default.ZombieDamageMod));	
+
+	ZombieDamageModEdit.SetValue(string(Class<InfectionGameInfo>(BotmatchParent.GameClass).Default.ZombieDamageMod));
 	HumanDamageModEdit.SetValue(string(Class<InfectionGameInfo>(BotmatchParent.GameClass).Default.HumanDamageMod));
-	
+
 }
 
 function Notify(UWindowDialogControl C, byte E) {
 	local bool matchedAControl;
 	Super.Notify(C, E);
 	matchedAControl = false;
-	
+
 	switch(E) {
 		case DE_Change: // the message sent by sliders and checkboxes
 			switch(C) {
@@ -255,7 +255,7 @@ function Notify(UWindowDialogControl C, byte E) {
 				case AnyDeathInfectsCheckbox:
 					class'Infection.InfectionGameInfo'.default.AnyDeathInfects = AnyDeathInfectsCheckbox.bChecked;
 					matchedAControl = true;
-					break;	
+					break;
 				case ZombieDamageModEdit:
 					class'Infection.InfectionGameInfo'.default.ZombieDamageMod = Float(ZombieDamageModEdit.GetValue());
 					matchedAControl = true;
@@ -263,7 +263,7 @@ function Notify(UWindowDialogControl C, byte E) {
 				case HumanDamageModEdit:
 					class'Infection.InfectionGameInfo'.default.HumanDamageMod = Float(HumanDamageModEdit.GetValue());
 					matchedAControl = true;
-					
+
 					break;
 			}
 			break;
@@ -278,42 +278,42 @@ function Notify(UWindowDialogControl C, byte E) {
 //--]]]]----
 
 defaultproperties {
-      ShowZombieIndicatorCheckbox=None
+    ShowZombieIndicatorCheckbox=None
 	  ShowHumanIndicatorCheckbox=None
-	  
-      MinimumZombiesEdit=None
 
-      ZombieJumpModifierEdit=None
-      ZombieMovementMultiplierEdit=None
-	  
-      ShowZombieIndicatorText="Zombie Indicator?"
-      ShowHumanIndicatorText="Human Indicators?"
+    MinimumZombiesEdit=None
+
+    ZombieJumpModifierEdit=None
+    ZombieMovementMultiplierEdit=None
+
+    ShowZombieIndicatorText="Zombie Indicator?"
+    ShowHumanIndicatorText="Human Indicators?"
 	  ShowSameTeamIndicatorsText="Ally Indicators?"
-      MinimumZombiesText="Min Zombies"
-      ZombieJumpModifierText="Zombie Jump Mod"
-      ZombieMovementMultiplierText="Zombie Move Mod"
+    MinimumZombiesText="Min Zombies"
+    ZombieJumpModifierText="Zombie Jump Mod"
+    ZombieMovementMultiplierText="Zombie Move Mod"
 	  HumansPickupWeaponsText="Human Weapon Pickup?"
 	  ZombiesPickupWeaponsText="Zombie Weapon Pickup?"
 	  InfiniteAmmoText="Infinite Ammo?"
 	  ZombieDamageModText="Zombie Dmg Mod"
 	  HumanDamageModText="Human Dmg Mod"
 	  AnyDeathInfectsText="Any Death Infects?"
-	  
+
 	  ZombieDamageMod=3.0,
 	  HumanDamageMod=0.75,
-	  
-      ShowZombieIndicatorHelp="Whether to show an indicator (for all to see) of the zombies."
-      ShowHumanIndicatorHelp="Whether to show an indicator (for all to see) of the humans."
-      ShowSameTeamIndicatorsHelp="Whether to show an indicator for allies."
-      MinimumZombiesHelp="Minimum number of zombies to start the game with"
-      ZombieJumpModifierHelp="The multiplier for the zombies related to jumping. (3 = Jump Boots)"
-      ZombieMovementMultiplierHelp="The multiplier for movement speed of the zombies."
+
+    ShowZombieIndicatorHelp="Whether to show an indicator (for all to see) of the zombies."
+    ShowHumanIndicatorHelp="Whether to show an indicator (for all to see) of the humans."
+    ShowSameTeamIndicatorsHelp="Whether to show an indicator for allies."
+    MinimumZombiesHelp="Minimum number of zombies to start the game with"
+    ZombieJumpModifierHelp="The multiplier for the zombies related to jumping. (3 = Jump Boots)"
+    ZombieMovementMultiplierHelp="The multiplier for movement speed of the zombies."
 	  HumansPickupWeaponsHelp="Whether humans can pick up weapons."
 	  ZombiesPickupWeaponsHelp="Whether zombies can pick up weapons."
 	  InfiniteAmmoHelp="Do weapons have infinite ammo?"
 	  AnyDeathInfectsHelp="Does any human death cause them to become a zombie? (eg: suicide, trap on map, etc)"
 	  ZombieDamageModHelp="The damage multiplier for zombies."
 	  HumanDamageModHelp="The damage multiplier for humans."
-	  
-      FragHelp="The number of kills to win the game."
+
+    FragHelp="The number of kills to win the game."
 }

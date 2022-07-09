@@ -113,8 +113,8 @@ function ProcessTraceHit(Actor Other, Vector HitLocation, Vector HitNormal, Vect
 
 defaultproperties {
       DoubleName="Double HeadShot Enforcer"
-      WeaponDescription="Classification: Light PistolnPrimary Fire: Accurate but slow firing instant hit.nSecondary Fire: Sideways, or 'Gangsta' firing mode, shoots twice as fast and half as accurate as the primary fire.nTechniques: Aim for the head with this variant."
+      WeaponDescription="Classification: Light Pistol\nPrimary Fire: Accurate but slow firing instant hit.nSecondary Fire: Sideways, or 'Gangsta' firing mode, shoots twice as fast and half as accurate as the primary fire.\nTechniques: Aim for the head with this variant."
       PickupMessage="You picked up another HeadShotEnforcer Enforcer!"
       ItemName="HeadShot Enforcer"
-	  PickupAmmoCount=60,//2x more than normal enforcer
+	    PickupAmmoCount=60,//2x more than normal enforcer
 }

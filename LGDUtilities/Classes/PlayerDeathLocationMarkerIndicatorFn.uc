@@ -53,7 +53,7 @@ function IndicatorSettings ModifierFunc(IndicatorHudTargetListElement indicatorL
 defaultproperties {
       TargetPRI=None
       ShowAllyIndicators=True
-      ShowEnemyIndicators=True
+      ShowEnemyIndicators=False
       ShowNeutralIndicators=False
       NeutralColor=(R=255,G=255,B=255,A=0)
       NeutralTexture=17

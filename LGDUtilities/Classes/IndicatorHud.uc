@@ -79,7 +79,7 @@ enum HUDIndicator_Texture_BuiltIn {
     /*71*/ HudIndicator_SkullAndBones,
     /*72*/ HudIndicator_Bones,
     /*73*/ HudIndicator_Skull,
-	
+
 	/*74*/ HudIndicator_Crown
 };
 
@@ -347,15 +347,15 @@ simulated function PostRender(Canvas C) {
         }
 
         BlinkAlphaValue = (CurrentBlinkTime / BlinkRate);
-				
+
         //draw the player specific indicators
         DrawIndicatorLocations(C, PlayerOwner, self.PlayerIndicatorTargets);
-		
+
         //draw the global target indicators
         if(GlobalIndicatorTargets == None){
            GlobalIndicatorTargets = class'LGDUtilities.IndicatorHudGlobalTargets'.static.GetRef(self);
         }
-		
+
         DrawIndicatorLocations(C, PlayerOwner, self.GlobalIndicatorTargets.GlobalIndicatorTargets);
     } else if(PlayerOwner == None){
           Destroy();
@@ -366,7 +366,7 @@ simulated final function AddBasicTarget(Actor target, optional bool globalTarget
     local IndicatorHudGlobalTargets globalTargets;
 	local ListElement el;
 	local IndicatorHudTargetListElement indicatorHudEl;
-	
+
     if(target == None){
         return;
     }
@@ -374,21 +374,21 @@ simulated final function AddBasicTarget(Actor target, optional bool globalTarget
     if(PlayerIndicatorTargets == None) {
        PlayerIndicatorTargets = new class'LGDUtilities.LinkedList';
     }
-	
+
 	el = self.GetTargetElementFromList(target, globalTarget);
 	if(el != None) {//already exists
 	    indicatorHudEl = IndicatorHudTargetListElement(el);
 	    if(indicatorHudEl != None) {
 			replaceExistingTarget = replaceExistingTarget && !indicatorHudEl.IndicatorSettings.ReplaceExisting;
 		}
-		
+
 		if(replaceExistingTarget) {
 			el.RemoveFromList();
 		} else {
 			return;
 		}
 	}
-	
+
 	indicatorHudEl = new class'LGDUtilities.IndicatorHudTargetListElement';
 	indicatorHudEl.IndicatorSource = SourceToLimit;
 	indicatorHudEl.Value = target;
@@ -409,7 +409,7 @@ simulated final function AddAdvancedTarget(IndicatorHudTargetListElement element
 	local IndicatorHudTargetListElement indicatorHudEl;
 	local IndicatorHudGlobalTargets globalTargets;
 	local Actor elementTarget;
-	
+
     if(element == None) {
         return;
     }
@@ -417,25 +417,25 @@ simulated final function AddAdvancedTarget(IndicatorHudTargetListElement element
 	if(elementTarget == None) {
         return;
     }
-	
+
     if(PlayerIndicatorTargets == None) {
        PlayerIndicatorTargets = new class'LGDUtilities.LinkedList';
     }
-	
+
 	el = self.GetTargetElementFromList(elementTarget, globalTarget, element.IndicatorSource);
 	if(el != None) {//already exists
 		indicatorHudEl = IndicatorHudTargetListElement(el);
 	    if(indicatorHudEl != None) {
 			replaceExistingTarget = (replaceExistingTarget || element.IndicatorSettings.ReplaceExisting) && !indicatorHudEl.IndicatorSettings.ReplaceExisting;
 		}
-		
+
 	    if(replaceExistingTarget) {
 		    el.RemoveFromList();
 		} else {
 		    return;
 		}
 	}
-	
+
     if(globalTarget) {
         globalTargets = class'LGDUtilities.IndicatorHudGlobalTargets'.static.GetRef(self);
 
@@ -455,7 +455,7 @@ final function RemoveTarget(Actor targetToRemove, optional object SourceToLimit)
    if(targetToRemove == None){
        return;
    }
-   
+
    if((PlayerIndicatorTargets != None) && (PlayerIndicatorTargets.Count > 0)) {
       element = PlayerIndicatorTargets.Head;
    }
@@ -463,19 +463,19 @@ final function RemoveTarget(Actor targetToRemove, optional object SourceToLimit)
    if((GlobalIndicatorTargets != None) && (GlobalIndicatorTargets.GlobalIndicatorTargets != None) && GlobalIndicatorTargets.GlobalIndicatorTargets.Count > 0){
       element = GlobalIndicatorTargets.GlobalIndicatorTargets.Head;
    }
-   
+
    While(element != None) {
 	  listTarget = Actor(element.Value);
-	  
+
 	  PerformRemove = (listTarget == targetToRemove);
 	  if(SourceToLimit != None) {
 	     ihElement = IndicatorHudTargetListElement(element);
-		 
+
 		 if(ihElement != None) {
 		     PerformRemove = (ihElement.IndicatorSource == SourceToLimit);
 		 }
 	  }
-	  
+
 	  if(PerformRemove) {
 		   nextElement = element.Next;
 		   element.RemoveFromList();
@@ -495,11 +495,11 @@ final function ListElement GetTargetElementFromList(Actor targetToFind, optional
 	local bool FoundTheElement;
 	local ListElement el, FoundElement;
 	local IndicatorHudTargetListElement ihLe;
-	
+
 	if(targetToFind == None) {
 		return el;
 	}
-	
+
 	if(CheckGlobal) {
 	    globalTargets = class'LGDUtilities.IndicatorHudGlobalTargets'.static.GetRef(self);
 		el = globalTargets.GlobalIndicatorTargets.Head;
@@ -508,7 +508,7 @@ final function ListElement GetTargetElementFromList(Actor targetToFind, optional
 			el = PlayerIndicatorTargets.GetElementByValue(targetToFind);
 		}
 	}
-	
+
 	while(!FoundTheElement  && (el != None)) {
 		if(el.Value == targetToFind) {
 			if(SourceToLimit != None) {
@@ -522,19 +522,19 @@ final function ListElement GetTargetElementFromList(Actor targetToFind, optional
 		} else {
 			el = el.Next;
 		}
-		
+
 		if(FoundTheElement) {
 				FoundElement = el;
 		}
 	}
-	
+
 	return FoundElement;
 }
 
 function int ResetAllTargets() {
     local int countRemoved;
 	local IndicatorHudGlobalTargets globalTargets;
-	
+
     if((PlayerIndicatorTargets != None) && (PlayerIndicatorTargets.Count > 0)){
         countRemoved = PlayerIndicatorTargets.RemoveAll();
     }
@@ -542,10 +542,9 @@ function int ResetAllTargets() {
 	globalTargets = class'LGDUtilities.IndicatorHudGlobalTargets'.static.GetRef(self);
     if(globalTargets.GlobalIndicatorTargets.Count > 0) {
         countRemoved = globalTargets.GlobalIndicatorTargets.RemoveAll();
-		//class'LGDUtilities.IndicatorHudGlobalTargets'.static.SetRef(globalTargets);
     }
-	
-	
+
+
 	return countRemoved;
 }
 
@@ -560,7 +559,7 @@ function int ResetAllTargetsForSource(object SourceToLimit) {
 
 	While(element != None) {
 		ihElement = IndicatorHudTargetListElement(element);
-	 
+
 		if(ihElement != None) {
 			if(ihElement.IndicatorSource == SourceToLimit) {
 				nextElement = element.Next;
@@ -576,10 +575,10 @@ function int ResetAllTargetsForSource(object SourceToLimit) {
 	if((GlobalIndicatorTargets != None) && (GlobalIndicatorTargets.GlobalIndicatorTargets != None) && GlobalIndicatorTargets.GlobalIndicatorTargets.Count > 0){
 		element = GlobalIndicatorTargets.GlobalIndicatorTargets.Head;
 	}
-   
+
 	While(element != None) {
 		ihElement = IndicatorHudTargetListElement(element);
-	 
+
 		if(ihElement != None) {
 			if(ihElement.IndicatorSource == SourceToLimit) {
 				nextElement = element.Next;
@@ -591,7 +590,7 @@ function int ResetAllTargetsForSource(object SourceToLimit) {
 			}
 		}
 	}
-	
+
 	return countRemoved;
 }
 
@@ -610,7 +609,7 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
 	  //used when "ScaleIndicatorSizeToTarget" is TRUE
 	  //is used to help limit the max/min size of the indicator
 	  local float MinIndicatorScaleSize, MaxIndicatorScaleSize;
-	  
+
       local float CurrentTargetDistance;
 
       local ListElement element;
@@ -678,13 +677,13 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
               target = Actor(element.Value);
 			  MaxIndicatorScaleSize = 0;
 			  MinIndicatorScaleSize = 0;
-			  
+
 			  if(target == Player) {
 			      //the target is the same as the Player who owns this IndicatorHud
 			      element = element.Next;
 			      continue;
 			  }
-				
+
               BehindViewTexture = default.BehindViewTexture;
               OffTopLeftViewTexture = default.OffTopLeftViewTexture;
               OffLeftViewTexture = default.OffLeftViewTexture;
@@ -703,18 +702,18 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
               ShowTargetDistanceLabels = default.ShowTargetDistanceLabels;
               ShowIndicatorAboveTarget = default.ShowIndicatorAboveTarget;
               ScaleIndicatorSizeToTarget = default.ScaleIndicatorSizeToTarget;
-			  
+
 			  ScaleIndicatorMaxPixelSize = default.ScaleIndicatorMaxPixelSize;
 			  ScaleIndicatorMaxSizePercentOfScreenLargestDimension = default.ScaleIndicatorMaxSizePercentOfScreenLargestDimension;
 			  ScaleIndicatorMinSizePercentOfScreenLargestDimension = default.ScaleIndicatorMinSizePercentOfScreenLargestDimension;
 			  ScaleIndicatorMaxSizePercentOfScreenSmallestDimension = default.ScaleIndicatorMaxSizePercentOfScreenSmallestDimension;
 			  ScaleIndicatorMinSizePercentOfScreenSmallestDimension = default.ScaleIndicatorMinSizePercentOfScreenSmallestDimension;
-			  
+
 			  ScaleIndicatorMaxSizePercentOfScreenHorizontalDimension = default.ScaleIndicatorMaxSizePercentOfScreenHorizontalDimension;
 			  ScaleIndicatorMinSizePercentOfScreenHorizontalDimension = default.ScaleIndicatorMinSizePercentOfScreenHorizontalDimension;
 			  ScaleIndicatorMaxSizePercentOfScreenVerticalDimension = default.ScaleIndicatorMaxSizePercentOfScreenVerticalDimension;
 			  ScaleIndicatorMinSizePercentOfScreenVerticalDimension = default.ScaleIndicatorMinSizePercentOfScreenVerticalDimension;
-			  
+
               StaticIndicatorPercentOfMinScreenDimension = default.StaticIndicatorPercentOfMinScreenDimension;
               StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen = default.StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen;
               IndicatorOffsetFromTarget = default.IndicatorOffsetFromTarget;
@@ -740,25 +739,25 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
                       Log("IndicatorHud ----------------------- target is:"@target.Name);
                   }
 
-                  if(ShowIndicator) {					  
+                  if(ShowIndicator) {
 					  MaxTargetIndicatorViewDistance = indicatorSettings.MaxViewDistance;
 					  ShowTargetDistanceLabels = indicatorSettings.ShowTargetDistanceLabels;
 					  IndicatorLabel = indicatorSettings.IndicatorLabel;
 					  ShowIndicatorLabel = indicatorSettings.ShowIndicatorLabel;
 					  UseTargetNameForLabel = indicatorSettings.UseTargetNameForLabel;
 					  ScaleIndicatorSizeToTarget = indicatorSettings.ScaleIndicatorSizeToTarget;
-					 
+
  					  ScaleIndicatorMaxPixelSize = indicatorSettings.ScaleIndicatorMaxPixelSize;
 					  ScaleIndicatorMaxSizePercentOfScreenLargestDimension = indicatorSettings.ScaleIndicatorMaxSizePercentOfScreenLargestDimension;
 					  ScaleIndicatorMinSizePercentOfScreenLargestDimension = indicatorSettings.ScaleIndicatorMinSizePercentOfScreenLargestDimension;
 					  ScaleIndicatorMaxSizePercentOfScreenSmallestDimension = indicatorSettings.ScaleIndicatorMaxSizePercentOfScreenSmallestDimension;
 					  ScaleIndicatorMinSizePercentOfScreenSmallestDimension = indicatorSettings.ScaleIndicatorMinSizePercentOfScreenSmallestDimension;
-					  
+
 					  ScaleIndicatorMaxSizePercentOfScreenHorizontalDimension = indicatorSettings.ScaleIndicatorMaxSizePercentOfScreenHorizontalDimension;
 					  ScaleIndicatorMinSizePercentOfScreenHorizontalDimension = indicatorSettings.ScaleIndicatorMinSizePercentOfScreenHorizontalDimension;
 					  ScaleIndicatorMaxSizePercentOfScreenVerticalDimension = indicatorSettings.ScaleIndicatorMaxSizePercentOfScreenVerticalDimension;
 					  ScaleIndicatorMinSizePercentOfScreenVerticalDimension = indicatorSettings.ScaleIndicatorMinSizePercentOfScreenVerticalDimension;
-					  
+
 					  StaticIndicatorPercentOfMinScreenDimension = indicatorSettings.StaticIndicatorPercentOfMinScreenDimension;
 					  StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen = indicatorSettings.StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen;
                       ShowIndicatorWhenOffScreen = indicatorSettings.ShowIndicatorWhenOffScreen;
@@ -857,7 +856,7 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
 
               ShowIndicator = ShowIndicator && (ShowIndicatorsThatAreObscured || FastTrace(PlayerOwner.Location, target.Location));
               ShowIndicator = ShowIndicator && (ShowIndicatorIfTargetHidden || !target.bHidden);
-				
+
               if(target.IsA('Inventory')){
                   targetAsInv = Inventory(target);
 
@@ -1111,23 +1110,23 @@ simulated final function DrawIndicatorLocations(Canvas C, PlayerPawn Player, Lin
                   if(ScaleIndicatorSizeToTarget) {
 					  //combine max/min sizes to enforce consistent limits
 					  MaxIndicatorScaleSize = ScaleIndicatorMaxPixelSize;
-					  
+
 					  //take minimum to ensure we take the smallest maximum
 					  MaxIndicatorScaleSize = FMin(MaxIndicatorScaleSize, screenLargestDimension * ScaleIndicatorMaxSizePercentOfScreenLargestDimension);
 					  MaxIndicatorScaleSize = FMin(MaxIndicatorScaleSize, screenSmallestDimension * ScaleIndicatorMaxSizePercentOfScreenSmallestDimension);
 					  MaxIndicatorScaleSize = FMin(MaxIndicatorScaleSize, C.ClipX * ScaleIndicatorMaxSizePercentOfScreenHorizontalDimension);
 					  MaxIndicatorScaleSize = FMin(MaxIndicatorScaleSize, C.ClipY * ScaleIndicatorMaxSizePercentOfScreenVerticalDimension);
-					  
+
 					  //take maximum to ensure we take the largest minimum
 					  MinIndicatorScaleSize = FMax(MinIndicatorScaleSize, screenLargestDimension * ScaleIndicatorMinSizePercentOfScreenLargestDimension);
 					  MinIndicatorScaleSize = FMax(MinIndicatorScaleSize, screenSmallestDimension * ScaleIndicatorMinSizePercentOfScreenSmallestDimension);
 					  MinIndicatorScaleSize = FMax(MinIndicatorScaleSize, C.ClipX * ScaleIndicatorMinSizePercentOfScreenHorizontalDimension);
 					  MinIndicatorScaleSize = FMax(MinIndicatorScaleSize, C.ClipY * ScaleIndicatorMinSizePercentOfScreenVerticalDimension);
-					  
+
 					  //establish a minimum size
                       targetHudSize = FMax(class'LGDUtilities.HUDHelper'.static.getActorHorizontalSizeOnHudFromCollider(C, target, false), 10);
 					  targetHudSize = Clamp(targetHudSize, MinIndicatorScaleSize, MaxIndicatorScaleSize);
-					  
+
                       finalIndicatorScale = class'LGDUtilities.HUDHelper'.static.getScaleForTextureFromMaxTextureDimension(IndicatorTextureToDisplay, targetHudSize);
                   } else {//if we arent scaling indicator based on the target, then use the static scale value
                       finalIndicatorScale = class'LGDUtilities.HUDHelper'.static.getScaleForTextureFromMaxTextureDimension(IndicatorTextureToDisplay, StaticIndicatorPercentOfMinScreenDimension * screenSmallestDimension);
@@ -1705,22 +1704,22 @@ function Tick(float DeltaTime) {
 defaultproperties {
       PlayerIndicatorTargets=None
       GlobalIndicatorTargets=None
-	  
+
       StaticIndicatorPercentOfMinScreenDimension=0.050000
       StaticIndicatorPercentOfMinScreenDimensionWhenOffScreen=0.050000
       ScaleIndicatorSizeToTarget=True
 	  ScaleIndicatorMaxPixelSize=256
-	  
+
 	  ScaleIndicatorMaxSizePercentOfScreenLargestDimension=0.25//maximum 25% of largest screen dimension
 	  ScaleIndicatorMinSizePercentOfScreenLargestDimension=0.02//minimum 2% of largest screen dimension
 	  ScaleIndicatorMaxSizePercentOfScreenSmallestDimension=1.0//maximum 100% of smallest screen dimension
 	  ScaleIndicatorMinSizePercentOfScreenSmallestDimension=0.0//minimum 0% of smallest screen dimension
-	  
+
 	  ScaleIndicatorMaxSizePercentOfScreenHorizontalDimension=0.25,//maximum 25% of horizontal screen dimension
 	  ScaleIndicatorMinSizePercentOfScreenHorizontalDimension=0.02,//minimum 2% of horizontal screen dimension
 	  ScaleIndicatorMaxSizePercentOfScreenVerticalDimension=1.0,//maximum 100% of vertical screen dimension
 	  ScaleIndicatorMinSizePercentOfScreenVerticalDimension=0.0,//maximum 0% of vertical screen dimension
-	  
+
       UseHudColorForIndicators=False
       UseTextOnlyIndicators=False
       ShowTargetDistanceLabels=False
@@ -1730,7 +1729,7 @@ defaultproperties {
       ShowIndicatorIfInventoryNotHeld=False
       ShowIndicatorIfInventoryDropped=False
       ShowIndicatorsThatAreObscured=True
-	  
+
       MyFonts=None
       MaxTargetIndicatorViewDistance=1000.000000
       IndicatorLabelMargin=10

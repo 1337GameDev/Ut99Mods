@@ -17,24 +17,6 @@ var Mutator GameBaseMutator;
 var Mutator MutatorBeforeThis;
 var Mutator MutatorAfterThis;
 
-/*
-1. find mutator that references me in chain
-
-2. remove me from that part of the chain, and put me in the front
-GameBaseMutator = Level.Game.BaseMutator;
-MutatorBeforeThis = class'LGDUtilities.MutatorHelper'.static.GetMutatorBeforeMutatorInChain(Self);
-MutatorAfterThis = Self.NextMutator;
-
-prev.NextMutator = self.NextMutator
-self.NextMutator = GameBaseMutator
-Level.Game.BaseMutator = self;
-
-3. after my relevant code runs, undo it
-Level.Game.BaseMutator = GameBaseMutator;
-MutatorBeforeThis.NextMutator = Self;
-Self.NextMutator = MutatorAfterThis;
-*/
-
 function PostBeginPlay() {
     InitRandomlyChosenWeaponsList();
     ReplaceMapWeapons();
@@ -62,7 +44,6 @@ function ReplaceMapWeapons() {
 	list = new class'LGDUtilities.LinkedList';
 
     if(!HasReplacedWeaponsOnMap) {
-        //MoveThisMutatorToFirstInChain();
 
 		ForEach AllActors(class'Inventory', i) {
 			if(i.Owner == None) {
@@ -102,7 +83,6 @@ function ReplaceMapWeapons() {
             le = le.Next;
 		}
 
-        //RestoreThisMutatorOriginalPositionInChain();
         HasReplacedWeaponsOnMap = true;
     }
 }
@@ -122,11 +102,11 @@ function InitRandomlyChosenWeaponsList() {
     local int i;
 
 	if(!HasInitArrays) {
-	    weps = class'LGDUtilities.ServerHelper'.static.GetAllWeaponClasses(self);
+	      weps = class'LGDUtilities.ServerHelper'.static.GetAllWeaponClasses(self);
         WeaponsAvailableCount = weps.Count;
 
         le = weps.Head;
-        while(le != None) {
+        while((le != None) && (i < ArrayCount(WeaponsAvailableToChoose)) ) {
             classObj = ClassObj(le.Value);
 
             WeaponsAvailableToChoose[i] = class<Weapon>(classObj.Value);
@@ -141,7 +121,7 @@ function InitRandomlyChosenWeaponsList() {
 
 function class<Weapon> ChooseRandomWeapon() {
     local class<Weapon> chosenWep;
-	local int randomIdx;
+	  local int randomIdx;
 
     //find a randomly used entry
     randomIdx = Rand(WeaponsAvailableCount);
@@ -149,30 +129,6 @@ function class<Weapon> ChooseRandomWeapon() {
 
     return chosenWep;
 }
-
-/*
-function MoveThisMutatorToFirstInChain() {
-    GameBaseMutator = Level.Game.BaseMutator;
-    MutatorBeforeThis = class'LGDUtilities.MutatorHelper'.static.GetMutatorBeforeMutatorInChain(Self);
-    MutatorAfterThis = Self.NextMutator;
-	
-    MutatorBeforeThis.NextMutator = self.NextMutator;
-    Self.NextMutator = GameBaseMutator;
-    Level.Game.BaseMutator = self;
-
-}
-
-function RestoreThisMutatorOriginalPositionInChain() {
-    if(MutatorBeforeThis == None) {
-        //something went wrong before, or we didn't move this to the front, so bail
-        return;
-    }
-
-    Level.Game.BaseMutator = GameBaseMutator;
-    MutatorBeforeThis.NextMutator = Self;
-    Self.NextMutator = MutatorAfterThis;
-}
-*/
 
 defaultproperties {
       HasReplacedWeaponsOnMap=False,

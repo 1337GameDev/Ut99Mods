@@ -460,7 +460,7 @@ defaultproperties {
       SoundThrow=Sound'C4.Weapon.C4Throw'
       SoundPlaced=Sound'UnrealShare.Pickups.VoiceSnd'
       SoundChangeTimer=Sound'UnrealI.flak.Click'
-      WeaponDescription="Classification: Timed BombnPrimary Fire: Place / Throw C4 nSecondary Fire: Increment the timer."
+      WeaponDescription="Classification: Timed Bomb\nPrimary Fire: Place / Throw C4\nSecondary Fire: Increment the timer."
       AmmoName=Class'C4.C4Ammo'
       PickupAmmoCount=1
       FiringSpeed=1.000000
@@ -468,6 +468,7 @@ defaultproperties {
       AIRating=0.000000
       DeathMessage="%k blew up %o!"
       AutoSwitchPriority=0
+      InventoryGroup=0,
       bRotatingPickup=False
       PickupMessage="You got the C4."
       ItemName="C4"

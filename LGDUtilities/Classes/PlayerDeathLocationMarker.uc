@@ -11,12 +11,11 @@ var float LastTimeChecked;
 var int PawnTeam;
 var string PawnType;
 
-static function PlayerDeathLocationMarker SpawnAtPlayerLocation(Actor context, Pawn Player) {
+static function PlayerDeathLocationMarker SpawnAtPlayerLocation(Actor context, Pawn Player, optional PlayerDeathLocationMarkerIndicatorFn fn) {
     local PlayerDeathLocationMarker marker;
     local PlayerReplicationInfo pri;
     local IndicatorHudTargetListElement listElement;
     local IndicatorSettings settings;
-    local PlayerDeathLocationMarkerIndicatorFn fn;
 
     local IndicatorHud ih;
 
@@ -36,7 +35,7 @@ static function PlayerDeathLocationMarker SpawnAtPlayerLocation(Actor context, P
 
     //register globally with indicator hud
     listElement = new class'LGDUtilities.IndicatorHudTargetListElement';
-	listElement.IndicatorSource = class'LGDUtilities.PlayerDeathLocationMarker';
+	  listElement.IndicatorSource = class'LGDUtilities.PlayerDeathLocationMarker';
     settings = new class'LGDUtilities.IndicatorSettings';
     settings.UseTargetNameForLabel = false;
     settings.IndicatorLabel = string(Player.Name);
@@ -49,7 +48,9 @@ static function PlayerDeathLocationMarker SpawnAtPlayerLocation(Actor context, P
     settings.ShowIndicatorWhenOffScreen = false;
     settings.IndicatorOffsetFromTarget = class'LGDUtilities.PawnHelper'.static.GetOffsetAbovePawn(Player);
 
-    fn = new class'LGDUtilities.PlayerDeathLocationMarkerIndicatorFn';
+    if(fn == None) {
+      fn = new class'LGDUtilities.PlayerDeathLocationMarkerIndicatorFn';
+    }
     fn.TargetPRI = pri;
 
     listElement.Value = marker;

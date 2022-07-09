@@ -32,11 +32,11 @@ simulated function PostBeginPlay() {
 defaultproperties {
       SkullCollectGoal=10
       SkullCarryLimit=0
-      SkullCollectTimeInterval=0
+      SkullCollectTimeInterval=180
       SkullsCollectedCountdown=0
       ShowDroppedSkullIndicators=False
       ShowPlayersWithSkullThreshold=False
-      SkullThresholdToShowPlayers=0
+      SkullThresholdToShowPlayers=4
       bHasInitAnyHUDMutators=False
       bHasPlayedIntro=False
 }

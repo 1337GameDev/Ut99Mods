@@ -258,7 +258,7 @@ event float BotDesireability(Pawn Bot) {
     local Inventory Inv;
     local int desirability;
 
-    // If we already have the max Skulls, we don't want another one.
+    // If we already have The Gibber, we don't want another one.
     desirability = MaxDesireability;
     Inv = Bot.FindInventoryType(class'Gibber.Gibber');
 
@@ -661,7 +661,7 @@ defaultproperties {
       BaseGibHealMultiplier=0.100000
       DistanceThresholdToAddExtraDamage=300.000000
       ExtraDamageMultiplier=10.000000
-      WeaponDescription="Classification: Gib RiflenPrimary Fire: Shoot a chunk of your body (which hurts you) and deal some damage. Pick it up to heal some of the lost health. nSecondary Fire: A deadly shotgun blast -- at a steep cost. nTechniques: Lead and bounce gibs around to hit enemies, or close the gap for a devestating slaughter!"
+      WeaponDescription="Classification: Gib Rifle\nPrimary Fire: Shoot a chunk of your body (which hurts you) and deal some damage. Pick it up to heal some of the lost health. \nSecondary Fire: A deadly shotgun blast -- at a steep cost. \nTechniques: Lead and bounce gibs around to hit enemies, or close the gap for a devastating slaughter!"
       InstFlash=-0.150000
       InstFog=(X=139.000000,Y=218.000000,Z=72.000000)
       PickupAmmoCount=100

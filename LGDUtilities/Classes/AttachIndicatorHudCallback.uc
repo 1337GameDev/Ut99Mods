@@ -14,7 +14,7 @@ function PlayerSpawnedCallback(){
     hudTarget2 = Inventory(class'LGDUtilities.ActorHelper'.static.FindActor(Context, 'UDamage0', 'HudTarget2'));
     listElement = new class'LGDUtilities.IndicatorHudTargetListElement';
 	listElement.IndicatorSource = self;
-	
+
     indicatorSettings = new class'LGDUtilities.IndicatorSettings';
 
     listElement.Value = hudTarget2;

@@ -291,7 +291,7 @@ defaultproperties {
       ItemsToSpawn(8)=Class'ChaosUT.ch_WarHeadLauncher'
       ItemsToSpawn(8)=Class'UnrealShare.DispersionPistol'
 
-      WeaponDescription="Classification: SpawnernPrimary Fire: Spawn the selected item. nSecondary Fire: Advance the selected item."
+      WeaponDescription="Classification: Spawner\nPrimary Fire: Spawn the selected item. \nSecondary Fire: Advance the selected item."
       PickupAmmoCount=1
       FiringSpeed=1.000000
       FireOffset=(X=15.000000,Y=-13.000000,Z=-7.000000)
@@ -315,4 +315,7 @@ defaultproperties {
       CollisionRadius=8.000000
       CollisionHeight=3.000000
       Mass=10.000000
+
+      AutoSwitchPriority=0
+      InventoryGroup=0
 }

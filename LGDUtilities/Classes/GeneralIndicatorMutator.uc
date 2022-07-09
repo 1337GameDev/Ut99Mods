@@ -137,16 +137,16 @@ function AddConfiguredTargets() {
                     }
                 }
 
-                if(DoAddTargetIndicator && false) {
+                if(DoAddTargetIndicator) {
                     listElement = new class'LGDUtilities.IndicatorHudTargetListElement';
-					listElement.IndicatorSource = self;
+					          listElement.IndicatorSource = self;
                     indicatorSettings = new class'LGDUtilities.IndicatorSettings';
 
                     listElement.Value = tournamentPlayer;
                     indicatorSettings.MaxViewDistance = 0;
                     indicatorSettings.UseCustomColor = true;
                     indicatorSettings.IndicatorColor = IndicatorColor;
-					
+
                     indicatorSettings.ShowTargetDistanceLabels = false;
                     indicatorSettings.IndicatorLabel = LabelText;
                     indicatorSettings.ShowIndicatorLabel = DoShowLabel;
@@ -155,7 +155,7 @@ function AddConfiguredTargets() {
                     indicatorSettings.ShowIndicatorAboveTarget = true;
                     indicatorSettings.BuiltinIndicatorTexture = BuiltinIndicatorTextureToUse;
                     listElement.IndicatorSettings = indicatorSettings;
-	
+
                     IndicatorHudInstance.AddAdvancedTarget(
                         listElement,
                         false

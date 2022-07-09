@@ -11,6 +11,8 @@ static function DroppedInventoryMarkerMutator RegisterMutator(Actor context) {
 
     mut = context.Spawn(class'LGDUtilities.DroppedInventoryMarkerMutator');
     context.Level.Game.BaseMutator.AddMutator(mut);
+    class'LGDUtilities.InventoryHelper'.default.DroppedInventoryMarkerMutatorInstance = mut;
+
     return mut;
 }
 

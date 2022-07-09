@@ -87,18 +87,18 @@ function InitGameReplicationInfo() {
 	InfRepInfo.ZombieTeam = ZombieTeam;
 	InfRepInfo.HumanTeam = HumanTeam;
 	InfRepInfo.NeutralTeam = NeutralTeam;
-	
+
 	InfRepInfo.HumansPickupWeapons = HumansPickupWeapons;
 	InfRepInfo.ZombiesPickupWeapons = ZombiesPickupWeapons;
 	InfRepInfo.InfiniteAmmo = InfiniteAmmo;
 	InfRepInfo.AnyDeathInfects = AnyDeathInfects;
-	
+
 	InfRepInfo.ZombieDamageMod = ZombieDamageMod;
 	InfRepInfo.HumanDamageMod = HumanDamageMod;
 
 	InfRepInfo.bHasPlayedIntro = bHasPlayedIntro;
 	InfRepInfo.GameStarted = GameStarted;
-	
+
 	InfRepInfo.ExtraPRIList = new class'LGDUtilities.LinkedList';
 }
 
@@ -115,25 +115,25 @@ function PreBeginPlay() {
 event InitGame(string Options, out string Error) {
     local string InOpt;
 	Super.InitGame(Options, Error);
-	
+
 	GoalTeamScore = Self.Default.GoalTeamScore;
-	
+
 	MinimumZombies = GetIntOption(Options, "MinimumZombies", MinimumZombies);
-	
+
 	InOpt = ParseOption(Options, "ZombieMovementModifier");
 	if(InOpt != "") {
 		ZombieMovementModifier = float(InOpt);
 	}
-	
+
 	InOpt = ParseOption(Options, "ZombieJumpModifier");
 	if(InOpt != "") {
 		ZombieJumpModifier = float(InOpt);
 	}
-	
+
     ZombieTeam = Clamp(GetIntOption(Options, "ZombieTeam", ZombieTeam), 0, 3);
 	HumanTeam = Clamp(GetIntOption(Options, "HumanTeam", HumanTeam), 0, 3);
 	NeutralTeam = Clamp(GetIntOption(Options, "NeutralTeam", NeutralTeam), 0, 3);
-	
+
 	//now ensure none are equal, and if so, set defaults
 	if((ZombieTeam == HumanTeam) || (ZombieTeam == NeutralTeam) || (NeutralTeam == HumanTeam) ){
 		//set defaults
@@ -152,42 +152,42 @@ event InitGame(string Options, out string Error) {
     if(InOpt != ""){
         ShowHumanIndicators = bool(InOpt);
     }
-	
+
 	InOpt = ParseOption(Options, "ShowSameTeamIndicators");
     if(InOpt != ""){
         ShowSameTeamIndicators = bool(InOpt);
     }
-	
+
 	InOpt = ParseOption(Options, "HumansPickupWeapons");
     if(InOpt != ""){
         HumansPickupWeapons = bool(InOpt);
     }
-	
+
 	InOpt = ParseOption(Options, "ZombiesPickupWeapons");
     if(InOpt != ""){
         ZombiesPickupWeapons = bool(InOpt);
     }
-	
+
 	InOpt = ParseOption(Options, "InfiniteAmmo");
     if(InOpt != ""){
         InfiniteAmmo = bool(InOpt);
     }
-	
+
 	InOpt = ParseOption(Options, "AnyDeathInfects");
     if(InOpt != ""){
         AnyDeathInfects = bool(InOpt);
     }
-	
+
 	InOpt = ParseOption(Options, "ZombieDamageMod");
 	if(InOpt != "") {
 		ZombieDamageMod = float(InOpt);
 	}
-	
+
 	InOpt = ParseOption(Options, "HumanDamageMod");
 	if(InOpt != "") {
 		HumanDamageMod = float(InOpt);
 	}
-	
+
 	GameStarted = false;
 }
 
@@ -196,7 +196,7 @@ function StartMatch() {
 
     //pick zombie, and balance required # of zombies
 	ReBalance();
-	
+
     Super.StartMatch();
 
 	GameStarted = true;
@@ -214,7 +214,7 @@ function RestartGame() {
 function bool AddBot() {
 	local bot NewBot;
 	local NavigationPoint StartSpot, OldStartSpot;
-		
+
 	NewBot = SpawnBot(StartSpot);
 
 	if (NewBot == None) {
@@ -262,7 +262,7 @@ function bool AddBot() {
 	if(GameStarted && !bGameEnded) {
 		ReBalance();
 	}
-	
+
 	if(bHasInitAnyHUDMutators) {
 		AddPlayerIndicator(NewBot);
 	}
@@ -283,10 +283,10 @@ function playerpawn Login (
 	if (newPlayer == None) {
 		return None;
 	}
-	
+
 	if (bSpawnInTeamArea) {
 		StartSpot = FindPlayerStart(NewPlayer,255, Portal);
-		
+
 		if (StartSpot != None) {
 			NewPlayer.SetLocation(StartSpot.Location);
 			NewPlayer.SetRotation(StartSpot.Rotation);
@@ -296,7 +296,7 @@ function playerpawn Login (
 		}
 	}
 	PlayerTeamNum = NewPlayer.PlayerReplicationInfo.Team;
-	
+
 	return newPlayer;
 }
 
@@ -352,10 +352,10 @@ function AcceptInventory(pawn PlayerPawn) {
 	for(Inv=PlayerPawn.Inventory; Inv!=None; Inv=Inv.Inventory) {
 		Inv.Destroy();
 	}
-	
+
 	PlayerPawn.Weapon = None;
 	PlayerPawn.SelectedItem = None;
-	
+
 	AddDefaultInventory(PlayerPawn);
 }
 
@@ -365,23 +365,23 @@ function AcceptInventory(pawn PlayerPawn) {
 function AddDefaultInventory(Pawn PawnWithInv) {
 	local byte PawnTeam;
 	local Weapon Sword;
-	
+
 	PawnWithInv.JumpZ = PawnWithInv.Default.JumpZ * PlayerJumpZScaling();
-	
+
     if (PawnWithInv.IsA('Spectator') || (bRequireReady && (CountDown > 0)) ) {
         return;
 	}
-	
+
 	PawnTeam = -1;
-	
+
     // Spawn HeadShotEnforcer and PrimaryShotOnlyFlakCannon if human
 	//give melee weapon only if zombie
 	if(PawnWithInv.PlayerReplicationInfo != None) {
 		if(PawnWithInv.PlayerReplicationInfo.Team == ZombieTeam) {
 			Sword = Spawn(class'ChaosUT.Sword');
 			Sword.AutoSwitchPriority = 9;
-			
-			if(Sword != None) { 				
+
+			if(Sword != None) {
 				Sword.Instigator = PawnWithInv;
 				Sword.BecomeItem();
 				PawnWithInv.AddInventory(Sword);
@@ -390,15 +390,15 @@ function AddDefaultInventory(Pawn PawnWithInv) {
 				Sword.SetSwitchPriority(PawnWithInv);
 				Sword.WeaponSet(PawnWithInv);
 			}
-			
+
 		} else if(PawnWithInv.PlayerReplicationInfo.Team == HumanTeam) {
 			GiveWeapon(PawnWithInv, "Infection.HeadShotEnforcer");
 			GiveWeapon(PawnWithInv, "Infection.PrimaryShotOnlyFlakCannon");
 		}
-		
+
 		PawnWithInv.SwitchToBestWeapon();
 	}
-	
+
 	bUseTranslocator = false; // never allow translocator in infection
 	BaseMutator.ModifyPlayer(PawnWithInv);
 }
@@ -428,10 +428,10 @@ function Killed(Pawn killer, Pawn Other, name damageType) {
 	}
 
 	Other.Spree = 0;
-	
+
 	if (bOverTime) {
 		bEndOverTime = true;
-		
+
 		//check for clear winner now
 		// find individual winner
 		for (P=Level.PawnList; P!=None; P=P.nextPawn) {
@@ -446,7 +446,7 @@ function Killed(Pawn killer, Pawn Other, name damageType) {
 				bEndOverTime = false;
 			}
 		}
-		
+
 		if (bEndOverTime) {
 			if ((FragLimit > 0) && (Best.PlayerReplicationInfo.Score >= FragLimit) && (Best.PlayerReplicationInfo.Team == InfRepInfo.HumanTeam)) {
 				EndGame("fraglimit");
@@ -518,7 +518,7 @@ function Timer() {
 	local bool bReady;
 	local Inventory inv;
 	local Weapon wep;
-	
+
     //Code from GameInfo.Timer
 	SentText = 0;
 	//END of code from GameInfo.Timer
@@ -529,7 +529,7 @@ function Timer() {
 		} else {
 			ElapsedTime = 0;
 		}
-		
+
 		if (ElapsedTime > NetWait) {
 			if ((NumPlayers + NumBots < 4) && NeedPlayers()) {
 				AddBot();
@@ -544,13 +544,13 @@ function Timer() {
 					PlayerPawn(P).SetProgressTime(2);
 				}
 			}
-			
+
 			return;
 		} else {
 			while (NeedPlayers()) {
 				AddBot();
 			}
-			
+
 			bRequireReady = false;
 			StartMatch();
 		}
@@ -561,13 +561,13 @@ function Timer() {
 		while ( (RemainingBots > 0) && AddBot()) {
 			RemainingBots--;
 		}
-		
+
 		for (P=Level.PawnList; P!=None; P=P.NextPawn) {
 			if (P.IsA('PlayerPawn')) {
 				PlayerPawn(P).SetProgressTime(2);
 			}
 		}
-		
+
 		if ( ((NumPlayers == MaxPlayers) || (Level.NetMode == NM_Standalone))
 				&& (RemainingBots <= 0) ) {
 			bReady = true;
@@ -577,7 +577,7 @@ function Timer() {
 					bReady = false;
 				}
 			}
-			
+
 			if (bReady)//all non-spectator players are READY, start the auto 30-seconds countdown
 			{
 				StartCount = 30;
@@ -588,7 +588,7 @@ function Timer() {
 					for (P = Level.PawnList; P!=None; P=P.nextPawn) {
 						if (P.IsA('PlayerPawn')) {
 							PlayerPawn(P).ClearProgressMessages();
-							
+
 							if ((CountDown < 11) && P.IsA('TournamentPlayer')) {
 								TournamentPlayer(P).TimeMessage(CountDown);
 							} else {
@@ -631,7 +631,7 @@ function Timer() {
             //init IndicatorHud
             if(ShowZombieIndicators || ShowHumanIndicators) {
                 class'LGDUtilities.IndicatorHud'.static.SpawnAndRegister(self);
-				
+
                 For(P=Level.PawnList; P!=None; P=P.NextPawn) {
 					AddPlayerIndicator(P);
 			    }
@@ -660,7 +660,7 @@ function Timer() {
 				}
 			}
 		}
-		
+
 		if (Level.NetMode != NM_Standalone) {
 			if (NeedPlayers()) {
 				AddBot();
@@ -670,7 +670,7 @@ function Timer() {
 				RemainingBots--;
 			}
 		}
-				
+
 		if (bGameEnded) {
 			if (Level.TimeSeconds > EndTime + RestartWait) {
 				RestartGame();
@@ -680,11 +680,11 @@ function Timer() {
 			GameReplicationInfo.bStopCountDown = false;
 			RemainingTime--;
 			GameReplicationInfo.RemainingTime = RemainingTime;
-			
+
 			if (RemainingTime % 60 == 0) {
 				GameReplicationInfo.RemainingMinute = RemainingTime;
 			}
-			
+
 			if (RemainingTime <= 0) {
 				EndGame("timelimit");
 			}
@@ -692,19 +692,19 @@ function Timer() {
 		{
 			ElapsedTime++;
 			GameReplicationInfo.ElapsedTime = ElapsedTime;
-			
-			if(InfRepInfo.InfiniteAmmo) {				
+
+			if(InfRepInfo.InfiniteAmmo) {
 				For (P=Level.PawnList; P!=None; P=P.NextPawn) {
 					inv = P.Inventory;
-					
+
 					while(inv != None) {
 						wep = Weapon(inv);
-						
-						if(wep != None) {					
+
+						if(wep != None) {
 							wep.PickupAmmoCount = 999;
 							wep.GiveAmmo(P);
 						}
-						
+
 						inv = inv.Inventory;
 					}
 				}
@@ -727,7 +727,7 @@ function ScoreKill(pawn Killer, pawn Other) {
         (Killer.PlayerReplicationInfo.Team != Other.PlayerReplicationInfo.Team)) {
             Super(DeathMatchPlus).ScoreKill(Killer, Other);
     }
-	
+
 	//change killed player (if they are human) to a zombie (if they are killed by a zombie or kill themself)
 	if(Other.PlayerReplicationInfo.Team == InfRepInfo.HumanTeam) {//human being scrutinized
 		if((IsSuicide && InfRepInfo.AnyDeathInfects) || (Killer.PlayerReplicationInfo.Team == InfRepInfo.ZombieTeam)) {//if they comitted suicide OR a zombie killed them
@@ -754,7 +754,7 @@ function ScoreKill(pawn Killer, pawn Other) {
 
 	if (bScoreTeamKills && (GoalTeamScore > 0)
 	   && Killer.bIsPlayer
-	   && (Teams[killer.PlayerReplicationInfo.Team].Score >= GoalTeamScore) && 
+	   && (Teams[killer.PlayerReplicationInfo.Team].Score >= GoalTeamScore) &&
 	   (killer.PlayerReplicationInfo.Team == InfRepInfo.HumanTeam)) {
 			EndGame("teamscorelimit");
 	}
@@ -854,7 +854,7 @@ function AddPlayerIndicator(Pawn player){
     local IndicatorHudGlobalTargets globalTargets;
 	local IndicatorHudTargetListElement le;
     local IndicatorSettings settings;
-		
+
     if((player == None) || !(player.IsA('Bot') || player.IsA('PlayerPawn')) ){
         return;
     }
@@ -867,7 +867,7 @@ function AddPlayerIndicator(Pawn player){
 	settings.ReplaceExisting = true;
     settings.UseCustomColor = true;
     settings.IndicatorColor = class'LGDUtilities.ColorHelper'.default.RedColor;
-	
+
 	settings.ShowTargetDistanceLabels = false;
 	settings.ScaleIndicatorSizeToTarget = true;
 	settings.ShowIndicatorLabel = false;
@@ -880,7 +880,7 @@ function AddPlayerIndicator(Pawn player){
 
     le.IndicatorSettings = settings;
     le.Value = player;
-	
+
 	//should exist at this stage as we init the reference at the earlier stage of game execution
 	globalTargets = class'LGDUtilities.IndicatorHudGlobalTargets'.static.GetRef(self);
     globalTargets.GlobalIndicatorTargets.Enqueue(le);
@@ -888,7 +888,7 @@ function AddPlayerIndicator(Pawn player){
 
 function RemovePlayerIndicator(Pawn player) {
 	local IndicatorHudGlobalTargets globalTargets;
-	
+
     if(player != None) {
         //should exist at this stage as we init the reference at the earlier stage of game execution
 		globalTargets = class'LGDUtilities.IndicatorHudGlobalTargets'.static.GetRef(self);
@@ -911,7 +911,7 @@ function string GetRules() {
 	ResultSet = ResultSet$"\\playersbalanceteams\\"$bPlayersBalanceTeams;
 	ResultSet = ResultSet$"\\friendlyfire\\"$int(FriendlyFireScale*100)$"%";
 	Resultset = ResultSet$"\\tournament\\"$bTournament;
-	
+
 	if(bMegaSpeed)
 		Resultset = ResultSet$"\\gamestyle\\Turbo";
 	else
@@ -935,7 +935,7 @@ function string GetRules() {
 	Resultset = ResultSet$"\\humanspickupweapons\\"$HumansPickupWeapons;
 	Resultset = ResultSet$"\\zombiespickupweapons\\"$ZombiesPickupWeapons;
 	Resultset = ResultSet$"\\infiniteammo\\"$InfiniteAmmo;
-	
+
 	return ResultSet;
 }
 
@@ -953,23 +953,23 @@ function PlayStartUpMessage(PlayerPawn NewPlayer) {
 	NewPlayer.SetProgressColor(class'LGDUtilities.ColorHelper'.default.GreenColor, i);
 	NewPlayer.SetProgressMessage(GameName, i++);
 	NewPlayer.SetProgressColor(class'LGDUtilities.ColorHelper'.default.WhiteColor, i);
-	
+
 	if (bRequireReady && (Level.NetMode != NM_Standalone)) {
 		NewPlayer.SetProgressMessage(TourneyMessage, i++);
 	} else {
 		NewPlayer.SetProgressMessage(StartUpMessage, i++);
 	}
-	
+
 	NewPlayer.SetProgressColor(class'LGDUtilities.ColorHelper'.default.GreenColor, i);
 	NewPlayer.SetProgressMessage("Zombies will try to infect all humans!", i++);
 	NewPlayer.SetProgressColor(class'LGDUtilities.ColorHelper'.default.BlueColor, i);
 	NewPlayer.SetProgressMessage(FragLimit@"zombie kills for any human wins the match!", i++);
-	
+
 	if (bScoreTeamKills && (GoalTeamScore > 0)) {
 		NewPlayer.SetProgressColor(class'LGDUtilities.ColorHelper'.default.BlueColor, i);
 		NewPlayer.SetProgressMessage(int(GoalTeamScore)@"zombie kills for the entire human team, wins the match!", i++);
 	}
-	
+
 	if (NewPlayer.PlayerReplicationInfo.Team < 4) {
 		if (!bRatedGame) {
 			NewPlayer.SetProgressColor(class'LGDUtilities.ColorHelper'.default.WhiteColor, i);
@@ -1003,7 +1003,7 @@ function ChangeToZombie(Pawn pawnToChange, optional bool announceChange) {
 	local Pawn P;
 	local LinkedList ll;
 	local int CurrentHumanCount;
-	
+
 	AddToTeam(Self.ZombieTeam, pawnToChange);
 
 	if(announceChange) {
@@ -1016,7 +1016,7 @@ function ChangeToZombie(Pawn pawnToChange, optional bool announceChange) {
 
 	ll = class'LGDUtilities.PawnHelper'.static.GetAllPlayeIDsOfTeam(self, Self.HumanTeam);
 	CurrentHumanCount = ll.Count;
-	
+
 	if(GameStarted && (CurrentHumanCount == 0)) {
 		EndGame("everybodyinfected");
 	}
@@ -1092,7 +1092,7 @@ function AddToTeam(int num, Pawn Other) {
 
 	Other.static.GetMultiSkin(Other, SkinName, FaceName);
 	Other.static.SetMultiSkin(Other, SkinName, FaceName, num);
-	
+
 	if(GameStarted && !bGameEnded) {
 		ReBalance();
 	}
@@ -1104,7 +1104,7 @@ function ReBalance() {
 
 	ll = class'LGDUtilities.PawnHelper'.static.GetAllPlayeIDsOfTeam(self, Self.ZombieTeam);
 	CurrentZombieCount = ll.Count;
-		
+
 	if (bBalancing || ((ll != None) && (CurrentZombieCount >= Self.MinimumZombies)) ) {
 		return;
 	}
@@ -1160,7 +1160,7 @@ function ChangeAllPlayersToNeutral() {
 function NavigationPoint FindPlayerStart(Pawn Player, optional byte InTeam, optional string incomingName) {
 	local PlayerStart Dest, Candidate[64], InfectionPlayerStarts[64], Best;
 	local InfectionPlayerStart infPlayerStart;
-	
+
 	local float Score[64], BestScore, NextDist;
 	local Pawn OtherPlayer;
 	local int i, num, NumberOfInfectionPlayerStarts;
@@ -1173,13 +1173,13 @@ function NavigationPoint FindPlayerStart(Pawn Player, optional byte InTeam, opti
 		&& (TournamentPlayer(Player).StartSpot != None) ) {
 			return TournamentPlayer(Player).StartSpot;
 	}
-		
+
 	if ((Player != None) && (Player.PlayerReplicationInfo != None)) {
 		Team = Player.PlayerReplicationInfo.Team;
 	} else {
 		Team = InTeam;
 	}
-	
+
 	if(incomingName != "") {
 		foreach AllActors(class 'Teleporter', Tel) {
 			if(string(Tel.Tag) ~= incomingName) {
@@ -1187,15 +1187,15 @@ function NavigationPoint FindPlayerStart(Pawn Player, optional byte InTeam, opti
 			}
 		}
 	}
-	
+
 	if (Team == 255) {
 		Team = 0;
 	}
-	
+
 	//look for infection player starts
 	for (N=Level.NavigationPointList; N!=None; N=N.nextNavigationPoint) {
 		infPlayerStart = InfectionPlayerStart(N);
-		
+
 		if ((infPlayerStart != None) && infPlayerStart.bEnabled
 			&& (!bSpawnInTeamArea || (infPlayerStart.ZombieSpawn || infPlayerStart.HumanSpawn)) )
 		{
@@ -1205,16 +1205,16 @@ function NavigationPoint FindPlayerStart(Pawn Player, optional byte InTeam, opti
 				} else if (Rand(NumberOfInfectionPlayerStarts) < 64) {
 					InfectionPlayerStarts[Rand(64)] = infPlayerStart;
 				}
-				
+
 				NumberOfInfectionPlayerStarts++;
 			}
 		}
 	}
-	
+
 	//choose candidates
 	for (N=Level.NavigationPointList; N!=None; N=N.nextNavigationPoint) {
 		Dest = PlayerStart(N);
-		
+
 		if ( (Dest != None) && Dest.bEnabled
 			&& (!bSpawnInTeamArea || (Team == Dest.TeamNumber)) )
 		{
@@ -1223,7 +1223,7 @@ function NavigationPoint FindPlayerStart(Pawn Player, optional byte InTeam, opti
 			} else if (Rand(num) < 64) {
 				Candidate[Rand(64)] = Dest;
 			}
-			
+
 			num++;
 		}
 	}
@@ -1235,17 +1235,17 @@ function NavigationPoint FindPlayerStart(Pawn Player, optional byte InTeam, opti
 			} else if (Rand(num) < 64) {
 				Candidate[Rand(64)] = Dest;
 			}
-			
+
 			num++;
 		}
-		
+
 		if (num == 0) {
 			return None;
 		}
 	} else if(NumberOfInfectionPlayerStarts > 0) {
 		//only consider these then
 		num = NumberOfInfectionPlayerStarts;
-		
+
 		for (i=0;i<num;i++) {
 			if (i<64) {
 				Candidate[i] = InfectionPlayerStarts[i];
@@ -1254,9 +1254,9 @@ function NavigationPoint FindPlayerStart(Pawn Player, optional byte InTeam, opti
 			}
 		}
 	}
-	
+
 	num = FClamp(num, 0, 64);
-	
+
 	//assess candidates
 	for (i=0;i<num;i++) {
 		if (Candidate[i] == LastStartSpot) {
@@ -1272,7 +1272,7 @@ function NavigationPoint FindPlayerStart(Pawn Player, optional byte InTeam, opti
 				if (OtherPlayer.Region.Zone == Candidate[i].Region.Zone) {
 					Score[i] -= 1500;
 					NextDist = VSize(OtherPlayer.Location - Candidate[i].Location);
-					
+
 					if(NextDist < 2 * (CollisionRadius + CollisionHeight)) {
 						Score[i] -= 1000000.0;
 					} else if ((NextDist < 2000) && (OtherPlayer.PlayerReplicationInfo.Team != Team)
@@ -1282,18 +1282,18 @@ function NavigationPoint FindPlayerStart(Pawn Player, optional byte InTeam, opti
 				}
 			}
 		}
-	}	
+	}
 
 	BestScore = Score[0];
 	Best = Candidate[0];
-	
+
 	for (i=1; i<num; i++) {
 		if(Score[i] > BestScore) {
 			BestScore = Score[i];
 			Best = Candidate[i];
 		}
 	}
-	
+
 	LastStartSpot = Best;
 
 	return Best;
@@ -1302,7 +1302,7 @@ function NavigationPoint FindPlayerStart(Pawn Player, optional byte InTeam, opti
 //----------------------- Damage Methods --------------------------------------------//
 function int ReduceDamage(int Damage, name DamageType, Pawn injured, Pawn instigatedBy) {
 	Damage = Super.ReduceDamage(Damage, DamageType, injured, instigatedBy);
-	
+
 	if(Damage > 0) {
 		if((instigatedBy != injured) && (instigatedBy.PlayerReplicationInfo != None)) {
 			if(instigatedBy.PlayerReplicationInfo.Team == InfRepInfo.ZombieTeam) {
@@ -1312,7 +1312,7 @@ function int ReduceDamage(int Damage, name DamageType, Pawn injured, Pawn instig
 			}
 		}
 	}
-	
+
 	return Damage;
 }
 
@@ -1322,7 +1322,7 @@ function bool SetEndCams(string Reason) {
 	local PlayerPawn player;
 	local bool ZombieTeamWins;
 	local TeamInfo WinningTeamInfo;
-	
+
 	if(Reason ~= "everybodyinfected") {
 		//zombies win
 		Best = class'LGDUtilities.PawnHelper'.static.GetBestScoringPawnOfTeam(self, ZombieTeam, true);
@@ -1358,25 +1358,25 @@ function bool SetEndCams(string Reason) {
 	EndTime = Level.TimeSeconds + 3.0;
 	for (P=Level.PawnList; P!=None; P=P.nextPawn) {
 		player = PlayerPawn(P);
-		
+
 		if (Player != None) {
 			if (!bTutorialGame) {
 				PlayWinMessage(Player, (Player.PlayerReplicationInfo.Team == WinningTeamInfo.TeamIndex));
 			}
-			
+
 			player.bBehindView = true;
 			if (Player == Best) {
 				Player.ViewTarget = None;
 			} else {
 				Player.ViewTarget = Best;
 			}
-			
+
 			player.ClientGameEnded();
 		}
-		
+
 		P.GotoState('GameEnded');
 	}
-	
+
 	CalcEndStats();
 	return true;
 }
@@ -1384,47 +1384,47 @@ function bool SetEndCams(string Reason) {
 defaultproperties {
       ZombieStartUpMessage="Infect all humans!"
       HumansStartUpMessage="Survive against the zombies!"
-	  bSpawnInTeamArea=True
+	  	bSpawnInTeamArea=True
       bHasPlayedIntro=False
       bHasInitAnyHUDMutators=False
-	  GameStarted=False
+	  	GameStarted=False
 
       GlobalIndicatorTargets=None
       InfRepInfo=None
       MaxAllowedTeams=2
       TeamChangeMessage="No team changing is allowed!"
-	  StartUpTeamMessage="You are a "
+	  	StartUpTeamMessage="You are a "
       TeamChangeMessage=""
 
       StartUpMessage="A battle against the infected and survivors!"
       BeaconName="Inf"
       GameName="Infection"
       GameReplicationInfoClass=Class'Infection.InfectionGameReplicationInfo'
-	  MutatorClass=Class'Infection.InfectionGameTypeMutator'
-	  RulesMenuType="Infection.InfectionGameOptionsMenu"
-	  ScoreBoardType=Class'Infection.InfectionScoreBoard'
-	  HUDType=Class'Infection.InfectionGameHUD'
+	  	MutatorClass=Class'Infection.InfectionGameTypeMutator'
+	  	RulesMenuType="Infection.InfectionGameOptionsMenu"
+	  	ScoreBoardType=Class'Infection.InfectionScoreBoard'
+	  	HUDType=Class'Infection.InfectionGameHUD'
 
       DMMessageClass=Class'Infection.InfectionGameMessage'
-	  MinimumZombies=1
-	  ShowZombieIndicators=true
-	  ShowHumanIndicators=false
-	  ShowSameTeamIndicators=true
-	  ZombieMovementModifier=3.0
-	  ZombieJumpModifier=3.0
-	  
-	  ZombieDamageMod=3.0,
-	  HumanDamageMod=0.75,
-	  
-	  HumansPickupWeapons=false,
-	  ZombiesPickupWeapons=false,
-	  InfiniteAmmo=true,
-	  AnyDeathInfects=true,
-	  
-	  ZombieTeam=2//green
-	  HumanTeam=1//blue
+	  	MinimumZombies=1
+	  	ShowZombieIndicators=true
+	  	ShowHumanIndicators=false
+	  	ShowSameTeamIndicators=true
+	  	ZombieMovementModifier=3.0
+	  	ZombieJumpModifier=3.0
 
-	  NeutralTeam=3//gold -- used for undecided team of a player / before game as begun
-	  GoalTeamScore=0,
-	  bScoreTeamKills=False
+	  	ZombieDamageMod=3.0,
+	  	HumanDamageMod=0.75,
+
+	  	HumansPickupWeapons=false,
+	  	ZombiesPickupWeapons=false,
+	  	InfiniteAmmo=true,
+	  	AnyDeathInfects=true,
+
+	  	ZombieTeam=2//green
+	  	HumanTeam=1//blue
+
+	  	NeutralTeam=3//gold -- used for undecided team of a player / before game as begun
+	  	GoalTeamScore=0,
+	  	bScoreTeamKills=False
 }

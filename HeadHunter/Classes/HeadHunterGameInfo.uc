@@ -170,9 +170,9 @@ function Killed(Pawn killer, Pawn Other, name damageType) {
 			Level.Game.WorldLog.LogSpecialEvent("headshot", Killer.PlayerReplicationInfo.PlayerID, Other.PlayerReplicationInfo.PlayerID);
 		Killer.ReceiveLocalizedMessage(class'DecapitationMessage');
 	}
-	
+
 	Super(GameInfo).Killed(killer, Other, damageType);
-	
+
 	if (Other.Spree > 4) {
 		EndSpree(Killer, Other);
 	}
@@ -439,7 +439,7 @@ function AdvanceSkullCollectCountdown() {
 	} else if(SkullsCollectedCountdown <= 0) {
 	    //send message to collect all skulls
 		BroadcastLocalizedMessage(class'HeadHunter.HeadHunterMessage', 6);
-		
+
 		For (pp=Level.PawnList; pp!=None; pp=pp.NextPawn) {
 			if(pp.IsA('PlayerPawn')) {
 				class'LGDUtilities.SoundHelper'.static.ClientPlaySound(PlayerPawn(pp), SkullCollectedSound,, true, 32);
@@ -715,12 +715,12 @@ defaultproperties {
       bHasPlayedIntro=False
       SkullCollectGoal=4
       SkullCarryLimit=10
-      SkullCollectTimeInterval=900
+      SkullCollectTimeInterval=180
       SkullsCollectedCountdown=0
       bHasInitAnyHUDMutators=False
       ShowDroppedSkullIndicators=True
       ShowPlayersWithSkullThreshold=True
-      SkullThresholdToShowPlayers=0
+      SkullThresholdToShowPlayers=4
       GlobalIndicatorTargets=None
       gamegoal="skulls wins the match."
       ScoreBoardType=Class'HeadHunter.HHScoreBoard'
