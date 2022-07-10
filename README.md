@@ -1581,10 +1581,10 @@ Below are sections for various objects, and extra information on them / their us
     </details>
 
     <details>
-      <summary>:warning: PlayerModifier :warning:</summary>
+      <summary>PlayerModifier</summary>
       An Actor meant to test modifying player variables during a match / on a map.
 
-      This is incomplete and is a **test**.
+      Is a config object used for setting up 'LGDUtilities.TestPlayerModifierMutator'.
     </details>
 
     <details>
@@ -1824,6 +1824,110 @@ Below are sections for various objects, and extra information on them / their us
       5. RemovePackageNameFromQualifiedClass(string ClassNameStr)
         * Returns **String**
         * Given a fully qualified class name, will **REMOVE** the package name
+    </details>
+
+    <details>
+      <summary>StringObj</summary>
+      A subclass of `LGDUtilities.ValueContainer`, which is a wrapper class for non-object values to be used in `LGDUtilities.LinkedList` and `LGDUtilities.ListElement`. This subclass is for **String** values.
+    </details>
+
+    <details>
+      <summary>StringToNameHelper</summary>
+      An `Actor` that is used to convert a **String** value to a **Name** type.
+
+      This uses a "hack" by `Actor.SetPropertyText()` and setting a **Name** type variable of an instance of an **Actor**.
+    </details>
+
+    <details>
+      <summary>Tester</summary>
+      A class to be used for setting up tests, in a test map, for mods, scripts, interactions, etc. 
+
+      Is meant to be subclassed, and invokes tests in the following methods, and in the order:
+
+      1. PreBeginPlay
+        * `StandUp()` is executed here
+        * `PreBeginPlayTests()` is executed next
+      2. BeginPlay
+        * `BeginPlayTests()` is executed here
+      3. PostBeginPlay
+        * `PostBeginPlayTests()` is executed here
+      
+      ## When **Actor** is destroyed, `Destroyed()` is called and then `Teardown()` is invoked to cleanup tests
+
+    </details>
+
+    <details>
+      <summary>Tester1</summary>
+      A tester class in use on the mod map `1HH-TestBox-Large.unr` for basic tests. 
+
+      Is meant to demonstrate basic usage of the `LGDUtilities.Tester` class.
+    </details>
+
+    <details>
+      <summary>TesterCache</summary>
+      Is a singleton class meant to cache and be aware of test class instances. Is meant for easy signaling / instance management during testing. 
+
+      **Static Functions**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.TesterCache'.static.functionName();`
+
+      1. GetRef(Actor referenceToUseForSpawn)
+        * Returns **`LGDUtilities.TesterCache`**
+        * Gets and manages the instance of this classs in a game match
+        * Ensures only one instance is available at one time
+      2. HasATesterLoaded(Actor context)
+        * Returns **bool**
+        * Checks if a tester has been found on the map
+        * Is meant for logic to check if it's in a testing context (so it can know to avoid certain actions / affect the game state)
+
+    </details>
+    
+    <details>
+      <summary>TestMatchMessage</summary>
+      Is the game message class for 'LGDUtilities.TestMatchPlus'.
+    </details>
+
+    <details>
+      <summary>:warning: TestMatchPlus :warning:</summary>
+      A copy of `Botpack.DeathMatchPlus` that is used for testing out different ideas.
+
+      :x: Is not currently different than `Botpack.DeathMatchPlus`, and is meant as a starting point for future testing-oriented gametypes.
+    </details>
+    
+    <details>
+      <summary>TestMessagePlus</summary>
+      Is the player death message class for `LGDUtilities.TestMatchPlus`.
+    </details>
+
+    <details>
+      <summary>TestPlayerModifierMutator</summary>
+      Is a player mutator for testing purposes. Can modify damage between players, bots and various scenarios.
+
+      Uses an instance of 'LGDUtilities.PlayerModifier' as settings for what behavior to modify about p[layers in the match.
+
+      **Static Functions**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.TestPlayerModifierMutator'.static.functionName();`
+
+      1. SpawnAndRegister(Actor context, PlayerModifier modifierActor)
+        * Returns **`LGDUtilities.TestPlayerModifierMutator`**
+        * Is to be used programmafically (eg: in a gametype / mutator / in an Actor's `PreBeginPlay()`) to instantiate and register this mutator. 
+        * Instantiate `LGDUtilities.PlayerModifier` and change its variables to configure how this mutator behaves.
+
+        ## :warning: Be aware that it can get tricky if you register multiple of this mutator -- **This is NOT a Singleton**
+    </details>
+
+    <details>
+      <summary>TimeFunction</summary>
+      A class meant to be **subclassed** and used with `LGDUtilities.PatternLight`.
+
+      Represents a function, if given an X input, which is represented via a time value, and outputs a Y value.
+
+      The function should be **continuous** or issues can arise.
+
+      ## The time function's output should be in the range of: [0.0, 1.0]. 
+
+      ## :warning: Values outside of this rangfe can yield odd results. Be wary of that when creating functions.
     </details>
 
     <details>
