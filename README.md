@@ -1356,6 +1356,477 @@ Below are sections for various objects, and extra information on them / their us
     </details>
 
     <details>
+      <summary>ManualTrigger</summary>
+      A trigger actor that is meant to be subclassed and used for other triggers, and activated programmatically. 
+
+      ## How to subclass
+      1. Override `Touch()` and `UnTouch()` to execute code when an `Actor` collides with this trigger and leaves the collider.
+
+      2. Call `ActivateTrigger()` programmatically when you want the trigger activated.
+        * This calls `CanActivateTrigger()` before activating
+
+      3. Override `CanActivateTrigger()` to change what logic is used to determine if the trigger can be activated.
+        * Call `Super.CanActivateTrigger()` to also check `bTriggerOnceOnly` and `ReTriggerDelay`
+      4. Set `CanBeTriggeredExternally` accordingly
+        * This determines if external actors can trigger this actor (or if **ONLY** the logic of this trigger can)
+
+      ## Subclasses
+      1. ActorNearbyTrigger
+      2. InventoryTrigger
+      3. LookTrigger
+      4. RandomTrigger
+      5. UseTrigger
+      6. WaitTrigger
+    </details>
+
+    <details>
+      <summary>MatchBeginMutator</summary>
+      A mutator used to register code to execute when a match is considered to have been started. This class is meant to be used with unique subclasses of `LGDUtilities.MatchBeginMutatorCallback`.
+
+      **Static Helper Functions**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.MatchBeginMutator'.static.functionName();`
+
+      1. RegisterToMatchBegin(Actor context, MatchBeginMutatorCallback callback)
+        * Returns **`LGSUtilities.MatchBeginMutator`**
+        * Registers the mutator, and thr associated `LGDUtilities.MatchBeginMutatorCallback` instance -- a callback object -- to be ran when the match begins
+    </details>
+
+    <details>
+      <summary>MatchBeginMutatorCallback</summary>
+      A callback to be used for executing code when a match begins. Subclass this to create your own function to be passed to `LGDUtilities.MatchBeginMutator.RegisterToMatchBegin()`
+    </details>
+
+    <details>
+      <summary>MathHelper</summary>
+      **Static Helper Class**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.MathHelper'.static.functionName();`
+
+      ## Available Functions
+      1. acos(float x)
+        * Returns **float**
+        * The math function of arccosine.
+      2. asin(float a)
+        * Returns **float**
+        * The math function of arcsine.
+      3. atan2(float y, float x)
+        * Returns **float**
+        * The math function of atan2.
+      4. UUtoMeters(float unrealUnits)
+        * Returns **float**
+        * Converts a given numeric value of **UnrealUnits**, to real-world **meters**
+      5. GetNumberEquadistantPointsAroundCircleCenter(Vector CircleCenter, float Radius, int NumPoints, Vector alignToDir)
+        * Returns **'LGDUtilities.LinkedList'**
+        * Calculates a circle with given radius, and then positions a set number of points, given by the parameter `NumPoints`, at the circle radius, equally-spaced apart. 
+        * The given parameter `alignToDir` will ensure the points get created, with the circle rotated perpindicular to given vector (a vector extending from the circle cneter will point in this direction)
+      6. Get3DigitTimerPartsFromSeconds(int TotalSeconds, out int ResultMinutes, out int ResultTens, out int ResultOnes)
+        * Calculates 3 parts of a timer (mins, # of tens, and # of ones) given a number of seconds
+        * Output variables are used to return these three components
+        * These can be used to render a timer that has the format of: [MM]:[ss][s]
+      7. GetDigitsOfInteger(int TargetInteger, out int DigitsArray[])
+        * Returns the digits of an integer into an array (up to 11 places)
+        * Used for formatting or "binning" of an integer
+      8. Round(float val, optional float midpoint)
+        * Returns **int**
+        * Rounds a given float, based on the midpoint (if decimal part of float above/equal, round up, otherwise round down)
+        * The midpoint is a float within the range of [0.0 -> 1.0]
+      9. RoundGivenLimits(float val, optional float roundUpLimit, optional float roundDownLimit)
+        * Returns **int**
+        * Rounds a given float, based on each rounding limit (if decimal part of float above/equal to `roundUpLimit` round up, otherwise if below `roundDownLimit` then round down -- if between these, then don't round)
+        * Each rounding limit is a float within the range of [0.0 -> 1.0]
+        * This is the same as `LGDUtilities.MathHelper.Round()` if you supplied the same value for each limit
+      
+      ## Useful Conversion Constants
+      To use these constants, use this code: `class'LGDUtilities.MathHelper.default.constantName'`.
+
+      These constants convert from one unit to another merely by multiplying them to the source unit value. 
+
+      EG: 100 degrees as radians is: `100 * class'LGDUtilities.MathHelper.default.DegToRad'`
+
+      1. RadToDeg
+      2. DegToRad
+      3. UnrRotToRad
+      4. RadToUnrRot
+      5. DegToUnrRot
+      6. UnrRotToDeg
+      7. UnrSizeToMeters
+      8. MetersToUnrSize
+    </details>
+    
+    <details>
+      <summary>Matrix3x3</summary>
+      Represents a 3x3 matrix of **float** values.
+
+      Supports the * operator between a **Matrix3x3** and a **vector** type.
+    </details>
+
+    <details>
+      <summary>MutatorHelper</summary>
+      **Static Helper Class**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.MutatorHelper'.static.functionName();`
+
+      ## Available Functions
+      1. GetHUDMutatorFromActivePlayerPawnByClass(Actor context, name className)
+        * Returns **Mutator**
+        * Gets an instance of a mutator, via class name comparison using `Actor.IsA()`
+      2. GetGameMutatorByClass(Actor context, class<Mutator> mutatorClass)
+        * Returns **Mutator**
+        * Gets a mutator from the game mutator chain
+        * Uses `Actor.Level.Game.BaseMutator`
+      3. GetGameDamageMutatorByClass(Actor context, class<Mutator> mutatorClass)
+        * Returns **Mutator**
+        * Gets a mutator from the game damage mutator chain
+        * Uses `Actor.Level.Game.DamageMutator`
+      4. GetGameMessageMutatorByClass(Actor context, class<Mutator> mutatorClass)
+        * Returns **Mutator**
+        * Gets a mutator from the game message mutator chain
+        * Uses `Actor.Level.Game.MessageMutator`
+      5. GetMutatorBeforeMutatorInChain(Mutator mut)
+        * Returns **Mutator**
+        * Gets a mutator that is registered before this one from the game  mutator chain
+        * Uses `Actor.Level.Game.BaseMutator`
+    </details>
+
+    <details>
+      <summary>MyFontsSingleton</summary>
+      A singleton class that initializes and caches an instance of `Botpack.FontInfo`.
+
+      ## Static Functions
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.MyFontsSingleton'.static.functionName();`
+
+      1. GetRef(Actor referenceToUseForSpawn)
+        * Returns **`Botpack.FontInfo`**
+        * Gets a singleton reference without instantiating multiple
+    </details>
+
+    <details>
+      <summary>NameObj</summary>
+      A subclass of `LGDUtilities.ValueContainer`, which is a wrapper class for non-object values to be used in `LGDUtilities.LinkedList` and `LGDUtilities.ListElement`. This subclass is for **Name** values.
+    </details>
+
+    <details>
+      <summary>NetworkHelper</summary>
+      **Static Helper Class**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.NetworkHelper'.static.functionName();`
+
+      ## Available Functions
+      1. GetNMT(float f)
+        * Returns **float**
+        * Used to get NETWORK MOVE TIME for a given mover, given an input amount of time to move a particular mover
+        * FETCHED from: https://ut99.org/viewtopic.php?f=15&t=12985&sid=ac656310d36baab639b0fd591518ae17
+    </details>
+
+    <details>
+      <summary>PawnHelper</summary>
+      **Static Helper Class**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.PawnHelper'.static.functionName();`
+
+      ## Available Functions
+      1. GetEyeHeight(Pawn Other)
+        * Returns **float**
+        * Calculates the eye-height of a given `Pawn`
+      2. GetOffsetAbovePawn(Pawn p)
+        * Returns **Vector**
+        * Calculates the position **ABOVE** a given pawn based on colliders (relative to the pawn location)
+      3. GetAbovePawn(Pawn p)
+        * Returns **Vector**
+        * Calculates the position **ABOVE** a given pawn based on colliders in **global** space
+      4. HealPawn(Pawn p, int HealingAmount, sound HealSound, string HealMessage)
+        * Heals a given `Pawn` by the given `HealingAmount`, and plays a sound with a given message when healed
+        * Based o code from `Botpack.TournamentHealth[State=Pickup].Touch`
+      5. IsBoss(Pawn p)
+        * Returns **bool**
+        * Determines if the given `Pawn` is a considered a **BOSS** by ut99.
+        * This is generally used to check for **XAN**
+      6. PredictDamageToPawn(Pawn Target,
+    int Damage, Pawn InstigatedBy, Vector HitLocation,
+    Vector Momentum, name DamageType)
+      * Returns **int**
+      * Using given variables, will **PREDICT** damage a pawn will take
+      * Generally used to see if a particular damage conext will kill a pawn
+      * Based on code from `Pawn.TakeDamage()`
+    7. GetPawnFromPlayerID(Actor context, int PlayerID)
+      * Returns **Pawn**
+      * Iterates through all pawns, looking for one with the given PlayerID
+    8. GetRandomPlayerPawnOrBot(Actor context, optional LinkedList PlayerIDsToExclude)
+      * Returns **Pawn**
+      * Randomly selects a pawn / bot amongst all currently in the match
+      * Can **EXCLUDE** specific pawns from consideration based on a list of PlayerIDs (denoted by the parameter `PlayerIDsToExclude`)
+    9. GetAllPawnsOfTeam(Actor context, byte Team)
+      * Returns **`LGDUtilities.LinkedList`**
+      * Gets all pawns with a given team byte value (checked using: PlayerReplicationInfo.Team)
+    10. GetBestScoringPawnOfTeam(Actor context, byte Team, optional bool limitByIsPlayer)
+      * Returns **Pawn**
+      * Gets the pawn on a given team, with the highest score
+      * Can optionally limit all p[awns by `Pawn.bIsPlayer`
+    11. GetAllPlayeIDsOfTeam(Actor context, byte Team)
+      * Returns **`LGDUtilities.LinkedList`**
+      * Gets every PlayerID of all `Pawns` on a given team (checked using: PlayerReplicationInfo.Team)
+    12. IsPawnDead(Pawn p)
+      * Returns **bool**
+      * Returns whether the pawn is considered dead
+      * Is useful for when a pawn isn't deleted, but is hidden / is a spectator
+    </details>
+
+    <details>
+      <summary>PlayerDeathLocationMarker</summary>
+      A class that will be spawned by `LGDUtilities.PlayerDeathLocationMutator` when a player dies.
+
+      This will use `LGDUtilities.IndicatorHUD` to display this marker to others.
+    </details>
+
+    <details>
+      <summary>:warning: PlayerModifier :warning:</summary>
+      An Actor meant to test modifying player variables during a match / on a map.
+
+      This is incomplete and is a **test**.
+    </details>
+
+    <details>
+      <summary>PlayerSpawnMutatorCallback</summary>
+      A callback object used for `LGDUtilities.PlayerSpawnMutator` to execute code based on login / spawn of a player in a match.
+
+      Is meant to be subclassed. 
+    </details>
+
+    <details>
+      <summary>PlayerSpawnNotify</summary>
+      An actor that is meant to be used programmatically to listen for spawn events of `Engine.PlayerPawn`.
+
+      **Static Fuctions**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.PlayerSpawnNotify'.static.functionName();`
+
+      ## Available Functions
+      1. RegisterForPlayerSpawnEvent(Actor context, PlayerSpawnNotifyCallback callback)
+        * Registers the given callback object to be executed when a `PlayerPawn` is spawned
+    </details>
+
+    <details>
+      <summary>PlayerSpawnNotifyCallback</summary>
+      A callback for `LGDUtilities.PlayerSpawnNotify` for executing code when a `PlayerPawn` spawns.
+
+      Is meant to be subclassed.
+    </details>
+
+    <details>
+      <summary>PracticeBot</summary>
+      A test bot to be able to spawn with custom behaviors.
+
+      Not much is different from `Botpack.TMale2Bot`.
+    </details>
+
+    <details>
+      <summary>ProjectileHelper</summary>
+      **Static Helper Class**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.ProjectileHelper'.static.functionName();`
+
+      ## Available Functions
+      1. DeleteProjectilesOfClass(Actor context, name projClass)
+        * Returns **int**
+        * Destroys all projectiles of a given class using `Actor.IsA()`
+        * Is generally used for cleanup of projectiles that are not wanted for a weapon
+        * Used also for `HeadHunter.HeadHunterGameInfo` to clean up 'HeadHunter.SkullItemProj'
+    </details>
+
+    <details>
+      <summary>Quat</summary>
+      An object that represents a Quaternion.
+    </details>
+
+    <details>
+      <summary>QuatHelper</summary>
+      **Static Helper Class**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.QuatHelper'.static.functionName();`
+
+      ## Available Functions
+      1. RotationToQuat(Vector Axis, float Theta)
+        * Returns **`LGDUtilities.Quat`**
+        * Converts an UnrealRotation to a Quaternion
+    </details>
+
+    <details>
+      <summary>RandomHelper</summary>
+      **Static Helper Class**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.RandomHelper'.static.functionName();`
+
+      ## Available Functions
+      1. fRandom_Seed(float Scale, out int RandomSeed)
+        * Returns **float**
+        * Generates a semi random number based on a given seed
+        * The seed is updated
+        * Range is from -1 to 1
+      2. GetRandomRotation()
+        * Returns **Rotation**
+        * Generates a random UnrealRotation.
+      3. GetRandomRotationWithLimits(optional int maxPitch, optional int maxYaw, optional int maxRoll)
+        * Returns **Rotation**
+        * Generates a random UnrealRotation.
+        * Limits the rotation based in given max values for pitch, yaw, and roll
+    </details>
+
+    <details>
+      <summary>RandomTrigger</summary>
+      A custom trigger for randomly activating itself given configured variables for the ratio of `Successes` out of `OutOfTotal`.
+    </details>
+
+    <details>
+      <summary>:warning: RedTrigger :warning:</summary>
+      Is merely a test of `LGDUtilities.CallbackFnObject` for use in the test map `1HH-TestBox-Large.unr`.
+    </details>
+
+    <details>
+      <summary>RicochetShockProj</summary>
+      The alt-fire projectile class of `LGDUtilities.WeaponStealingShockRifle`.
+    </details>
+
+    <details>
+      <summary>RotatorHelper</summary>
+      **Static Helper Class**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.RotatorHelper'.static.functionName();`
+
+      ## Available Functions
+      1. AlphaRotation(Rotator End, Rotator Start, float Alpha)
+        * Returns **Rotator**
+        * Calculates a mid-point rotation between 2 given rotations
+        * The alpha value ranges from 0.0 -> 1.0 and is a blend variable of what percentage to go from `Start` and to `End` (similar to other Lerp functions)
+      2. RandomlyVaryRotation(Rotator RotationToVary, float VaryYawByDegrees, float VaryPitchByDegrees, float VaryRollByDegrees)
+        * Returns **Rotator**
+        * Will randomly vary a given rotation by a certain amount of degrees for each pitch, yaw, and roll
+      3. RandomRotationByDegrees(float MaxYawByDegrees, float MaxPitchByDegrees, float MaxRollByDegrees)
+        * Returns **Rotator**
+        * Creates a random rotation, limited by maximum degrees of pitch, yaw and roll
+      4. RotatorToString(Rotator r, optional bool convertToDegrees)
+        * Returns **string**
+        * Converts a given rotator to a string representation
+      5. LerpRotation(Rotator From, Rotator To, float Percent)
+        * Returns **Rotator**
+        * Linearly Interpolates a given rotator `From` a % closer to `To` based on `Percent`
+      6. rTurn(Rotator rHeading, Rotator rTurnAngle)
+        * Returns **Rotator**
+        * Rotates one rotator by another.
+      7. RotateActorUpDownLeftRightByDegrees(Actor Target, int DegreesUp, int DegreesRight)
+        * Rotates a given Actor denoted by `Target` up/down by given degrees
+      8. RotatorFromVectorOfDegrees(Vector VectorOfDegrees)
+        * Returns **Rotator**
+        * Constructs a **Rotator** given a **Vector**
+        * Uses the vector components in the order of (X, Y, Z) as a Rotators components (Pitch, Roll, and Yaw) -- In that order.
+
+      ## Also defines operators string concatenations of Rotators
+        * $=, @=, $ and @
+    </details>
+
+    <details>
+      <summary>SawtoothFunction</summary>
+      A subclass of `LGDUtilities.TimeFunction` for use with `LGDUtilities.PatternLight`.
+
+      This function is a standard sawtooth function: /| /| /|
+    </details>
+
+    <details>
+      <summary>ServerHelper</summary>
+      **Static Helper Class**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.ServerHelper'.static.functionName();`
+
+      ## Available Functions
+      1. IsPackageNameInServerPackages(Actor context, string PackageNameToLookFor)
+        * Returns **bool**
+        * Checks if a given package name, given by `PackageNameToLookFor` is available in ServerPackages.
+      2. GetAllWeaponClasses(Actor context, optional bool OnlyIncludeBaseWeapons, optional bool ExcludeChaosUTWeapons, optional bool bLogToGameLogfile)
+        * Returns **`LGDUtilities.LinkedList`**
+        * Gets a list of all weapon classes the game is aware of
+      3. GetClassesLoadedFromIntFiles(Actor context, string IntMetaClassToCompareTo, optional bool LoadClasses, optional int MaxClassIntNum, optional bool bLogToGameLogfile)
+        * Returns **`LGDUtilities.LinkedList`**
+        * Gets classes that are defined in Unreal **.int** files
+    </details>
+
+    <details>
+      <summary>SinFunction</summary>
+      A subclass of `LGDUtilities.TimeFunction` for use with `LGDUtilities.PatternLight`.
+
+      This function is a standard sign function
+    </details>
+
+    <details>
+      <summary>SingletionActor</summary>
+      An actor that can be used as a singleton (ensures **ONLY ONE** instance exists at one time).
+
+      This actor takes advantage of a "hack" by modifying the **DEFAULT** value of a variable.
+
+      **Static Methods**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.SingletionActor'.static.functionName();`
+
+      ## Available Functions
+      1. GetRef(Actor referenceToUseForSpawn)
+        * Returns **`LGDUtilities.SingletionActor`**
+        * Gets s reference to this singleton, and ensures only one instance is active at one time.
+    </details>
+
+    <details>
+      <summary>SoundHelper</summary>
+      **Static Helper Class**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.SoundHelper'.static.functionName();`
+
+      ## Available Functions
+      1. DynamicLoadSound (out Sound SoundObj, string SoundPackage, string SoundName)
+        * Returns **Sound**
+        * Loads a sound given a package name and sound name as a string
+      2. ClientPlaySound(PlayerPawn pp, sound ASound, optional bool bInterrupt, optional bool bVolumeControl, optional float VolumeLevel)
+        * Play a sound client side (so only client will hear it) -- this is forced due to this function being simulated
+      3. GlobalPlaySound(PlayerPawn pp, sound ASound, optional bool bInterrupt, optional bool bVolumeControl, optional float VolumeLevel)
+        * Play a sound that can be replicated (so ALL clients will hear it)
+    </details>
+
+    <details>
+      <summary>SqWaveFunction</summary>
+      A subclass of `LGDUtilities.TimeFunction` for use with `LGDUtilities.PatternLight`.
+
+      This function is a square wave function: |-|_|-|_
+    </details>
+
+    <details>
+      <summary>StealShockBeam</summary>
+      A primary-fire projectile for the weapon `LGDUtilities.WeaponStealingShockRifle`.
+    </details>
+
+    <details>
+      <summary>StringHelper</summary>
+      **Static Helper Class**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.StringHelper'.static.functionName();`
+
+      ## Available Functions
+      1. ReplaceText(out string Text, string Replace, string With)
+        * Replaces text in the given string `Text` that matches `Replace` with the string value of `With`
+      2. Split(string str, string div, bool bDiv)
+        * Returns **array<string>**
+        * Splits a given string along dividers, and conditionally removes the dividers
+        * Fetched from: https://wiki.beyondunreal.com/Legacy:Useful_String_Functions
+      3. ClearSpaces(string Text)
+        * Returns **String**
+        * Removes spaces from the given string
+        * Fetched from: https://github.com/CacoFFF/SiegeIV-UT99/blob/master/Classes/SiegeStatics.uc
+      4. GetPackageNameFromQualifiedClass(string ClassNameStr)
+        * Returns **String**
+        * Given a fully qualified class name, will return the package name
+      5. RemovePackageNameFromQualifiedClass(string ClassNameStr)
+        * Returns **String**
+        * Given a fully qualified class name, will **REMOVE** the package name
+    </details>
+
+    <details>
       <summary></summary>
 
     </details>
@@ -1537,6 +2008,11 @@ Below are sections for various objects, and extra information on them / their us
       * How long a player needs to look at the indicator to activate the trigger
     18. BaseAlphaValue
       * The base / default alpha value for the indicator the player is supposed to look at
+  </details>
+
+  <details>
+    <summary>PatternLight</summary>
+    An actor that is used to blink a light based upon a pattern specified by a `LGDUtilities.TimeFunction` object.
   </details>
 
   <details>
