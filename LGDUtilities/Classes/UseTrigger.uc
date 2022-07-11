@@ -22,6 +22,8 @@ var() bool ShowIndicator;
 
 var() float BaseAlphaValue;
 
+var(UseCallback) class<UseTriggerHUDWeaponCallback> UseCallback;
+
 function PostBeginPlay() {
     Super.PostBeginPlay();
 }
@@ -96,5 +98,6 @@ defaultproperties {
       ShowIndicator=True
       BaseAlphaValue=0.300000
       Message="Activated the trigger!"
-      Texture=Texture'LGDUtilities.UseTrigger'
+      Texture=Texture'LGDUtilities.UseTrigger',
+      UseCallback=class<UseTriggerHUDWeaponCallback>
 }

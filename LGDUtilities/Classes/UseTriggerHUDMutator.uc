@@ -30,6 +30,8 @@ var() texture IndicatorTexture;//the normal indicator texture when the use trigg
 
 var() float BaseAlphaValue;
 
+var() class<UseTriggerHUDWeaponCallback> UseCallback;
+
 var bool AimWasPreviouslyInIndicator;
 
 function PreBeginPlay() {
@@ -212,6 +214,7 @@ function SetTrigger(UseTrigger trigger) {
     UseHudColorForIndicator = TriggerActor.UseHudColorForIndicator;
     StaticIndicatorPercentOfMinScreenDimension = TriggerActor.StaticIndicatorPercentOfMinScreenDimension;
     ScaleIndicatorSizeToTarget = TriggerActor.ScaleIndicatorSizeToTarget;
+    UseCallback = TriggerActor.UseCallback;
 }
 
 function float GetDistanceToTrigger(UseTrigger trigger){
@@ -252,6 +255,7 @@ function WeaponEventListenerWeapon GiveOwnerHUDWeapon(){
     local Inventory inv;
     local WeaponEventListenerWeapon wep;
     local UseTriggerHUDWeaponCallback callback;
+    local class<UseTriggerHUDWeaponCallback> callbackClass;
 
     if(PlayerOwner != None){
         inv = PlayerOwner.FindInventoryType(class'LGDUtilities.WeaponEventListenerWeapon');
@@ -262,11 +266,17 @@ function WeaponEventListenerWeapon GiveOwnerHUDWeapon(){
         } else {
             wep = WeaponEventListenerWeapon(inv);
         }
-
-        if((wep.fireCallback != None) && (wep.fireCallback.IsA('UseTriggerHUDWeaponCallback')) ) {
-            callback = UseTriggerHUDWeaponCallback(wep.fireCallback);
+            
+        if(UseCallback != None) {
+            callbackClass = UseCallback;
         } else {
-            callback = new class'LGDUtilities.UseTriggerHUDWeaponCallback';
+            callbackClass = class'LGDUtilities.UseTriggerHUDWeaponCallback';
+        }
+
+        if((wep.fireCallback == None) || (wep.fireCallback.class != callbackClass)) {
+            callback = new callbackClass;
+        } else {//not empty and equal, so cast
+            callback = UseTriggerHUDWeaponCallback(wep.fireCallback);
         }
 
         callback.hudMutator = self;

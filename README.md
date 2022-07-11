@@ -1879,7 +1879,6 @@ Below are sections for various objects, and extra information on them / their us
         * Returns **bool**
         * Checks if a tester has been found on the map
         * Is meant for logic to check if it's in a testing context (so it can know to avoid certain actions / affect the game state)
-
     </details>
     
     <details>
@@ -1921,7 +1920,7 @@ Below are sections for various objects, and extra information on them / their us
       <summary>TimeFunction</summary>
       A class meant to be **subclassed** and used with `LGDUtilities.PatternLight`.
 
-      Represents a function, if given an X input, which is represented via a time value, and outputs a Y value.
+      Represents a function, if given an X input, which is represented via a time value, and outputs a Y value. This value is used to "lerp" between a start / end value.
 
       The function should be **continuous** or issues can arise.
 
@@ -1931,13 +1930,214 @@ Below are sections for various objects, and extra information on them / their us
     </details>
 
     <details>
-      <summary></summary>
+      <summary>ToolbeltInvItem</summary>
+      A class to be used as a wrapper around `Inventory` classes, so they can be used with `LGDUtilities.InventoryToolbelt` to render icons on the player HUD.
 
+      1. GetInstanceForInvItem(Inventory inv)
+        * Return **`LGDUtilities.ToolbeltInvItem`**
+        * Creates an instance of this class with a reference to the `Inventory` item.
     </details>
 
     <details>
-      <summary></summary>
+      <summary>TypeHelper</summary>
+      **Static Helper Class**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.TypeHelper'.static.functionName();`
 
+      ## Available Functions
+      1. classIsRelatedTo(class firstClass, class secondClass, optional bool bNoSubClass)
+        * Returns **int**
+        * Returns how the classes `firstClass` and `secondClass` are related to each other
+          * -1 - if firstClass is not relationed to secondClass
+          * 0 - if firstClass is the same class as secondClass
+          * 1 - if firstClass is a child of secondClass
+          * 2 - if firstClass is a parent of secondClass
+      2. StringToName(Actor context, string str)
+        * Returns **Name**
+        * An easy method to convert a **String** type to a **Name** type
+        * Is a convenience method for `LGDUtilities.StringToNameHelper.StringToName()`
+    </details>
+
+    <details>
+      <summary>UseTriggerHUDMutator</summary>
+      The `HUDMutator` for `LGDUtilities.UseTrigger` being able to show the look target indicator. The trigger will set up this mutator for you, so this shouldn't need to be interacted with.
+
+      **Static Functions**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.UseTriggerHUDMutator'.static.functionName();`
+
+      1. GetCurrentPlayerUseTriggerHudInstance(Actor context, PlayerPawn pp)
+        * Returns **`LGDUtilities.UseTriggerHUDMutator`**
+        * Used to get the current `UseTriggerHUDMutator` for the given player pawn
+      2. SpawnAndRegister(Actor context)
+        * Returns **`LGDUtilities.UseTriggerHUDMutator`**
+        * Spawns and registers this HUDMutator with the player's HUD (so it receives draw calls)
+    </details>
+
+    <details>
+      <summary>UseTriggerHUDWeaponCallback</summary>
+      A callback object to be used with `LGDUtilities.UseTrigger`.
+
+      This callback object **CAN** be subclassed to change logic for activating the trigger when a Player tries using it.
+
+      :warning: If you subclass this, ensure you have this code somewhere:
+      `Super.CallbackFunc()`. Without this code, the trigger will never be activated.
+    </details>
+
+    <details>
+      <summary>ValueContainer</summary>
+      An object used as a wrapper for various value types. It's meant to allow the ability to store a primitive as an object.
+
+      This is used with `LGDUtilities.ListElement` and is subclassed to acomodate primitive types of the UnrealEngine.
+    </details>
+
+    <details>
+      <summary>VectorHelper</summary>
+      **Static Helper Class**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.VectorHelper'.static.functionName();`
+
+      ## Available Functions
+      1. VectorFromComponents(float x, float y, float z)
+        * Returns **Vector**
+        * Constructs a **Vector** from given x, y and z float values.
+      2. RandomVelocity(vector ExistingVelocity, bool bWaterZone)
+        * Returns **Vector**
+        * Randomly varies a given velocity `ExistingVelocity` by magnitude and direction.
+        * If `bWaterZone` is **TRUE** then the velocity magnitude is reduced by 50%.
+      3. GetBounceVelocity(vector CurrentVelocity, vector HitNormal, float CoefOfRestitution)
+        * Returns **Vector**
+        * Calculates a resulting velocity that is "bounced" along the normal, and accounts for the `CoefOfRestitution` parameter.
+      4. isBehind(vector position, vector forward, vector target)
+        * Returns **bool**
+        * Determines if a given position (denoted by `target`) is considered **BEHIND** the given position (and the direction `forward`)
+      5. IsDistanceLessThan(vector a, vector b, float distance) 
+        * Returns **bool**
+        * Determines if a given distance between 2 **Vector**s is strictly less than the given distance
+        * This is meant to skip the normal SquareRoot operation, and instead squares magnitudes instead.
+      6. VSizeSq(Vector a)
+        * Returns **float**
+        * Calculates the **SQUARE** magnitude of a given vector
+      7. WallFacing(Actor A)
+        * Returns **bool**
+        * Calculates if a given `Actor` is facing wall geometry or not
+      8. VectorToString(Vector v)
+        * Returns **String**
+        * Constructs a string representation of a given vector
+      9. RotateVector(out vector A, vector B, float Degree)
+        * Rotate vector A towards vector B, an amount of degrees.
+        * Fetched from: https://wiki.beyondunreal.com/Legacy:Useful_Maths_Functions
+      10. RotBetweenVect(Vector A, Vector B)
+        * Returns **Rotator**
+        * Calculates the **Rotator** that is needed to go from vector `A` to vector `B`
+        * Fetched from: https://wiki.beyondunreal.com/Legacy:Useful_Maths_Functions
+      11. LerpVector(Vector From, Vector To, float PercentDecimal)
+        * Returns **Vector**
+        * Lerps from one vector (`From`) to the vector `To`, given a percentage.
+        * Fetched from: https://keithmaggio.wordpress.com/2011/02/15/math-magician-lerp-slerp-and-nlerp/
+      12. SLerpVector(Vector From, Vector To, float PercentDecimal)
+        * Returns **Vector**
+        * Fetched from: https://keithmaggio.wordpress.com/2011/02/15/math-magician-lerp-slerp-and-nlerp/
+      13. GetRadiansBetweenNormalizedVectors(Vector A, Vector B)
+        * Returns **float**
+        * Calculates the number of **RADIANS** between 2 given vectors
+      14. GetDegreesBetweenNormalizedVectors(Vector A, Vector B)
+        * Returns **float**
+        * Calculates the number of **DEGREES** between 2 given vectors
+      15. GetAnglesBetweenVectorsAsRotator(Vector A, Vector B)
+        * Returns **Rotator**
+        * Calculates the number of **DEGREES** between 2 given vectors
+        * Constructs a **ROTATOR** of the given degrees
+      16. GetAnglesBetweenVectorsAsVector(Vector A, Vector B)
+        * Returns **Vector**
+        * Gets the number of **DEGREES** between 2 vectors
+        * Constructs a **VECTOR** of the given degrees
+      17. isPointCLeftOfLinePointsAB(float PointAX, float PointAY, float PointBX, float PointBY, float PointCX, float PointCY)
+        * Returns **bool**
+        * Given Points A,B and C (where A & B are points for a line) determines if Point C is on the left side of the line (Line is FROM point A TOWARDS point B)
+      18. TwoDimensionalVectorBRelationToA(Vector A, Vector B)
+        * Returns **int**
+        * Calculates if a vector is left or right (ignoring the Z dimension) of another vector
+        * < 0 : left side
+        * > 0 : right side
+        * == 0 : in front of
+      19. ClampNormalVectorAxisAnglesInRelationToAnother(Vector A, Vector B, float MaxXAngleDeviation, float MaxYAngleDeviation, float MaxZAngleDeviation, optional bool bLogToGameFile)
+        * Returns **Vector**
+        * Ensures the B vector is constrained within +- the degress in relation to the first vector A
+      20. ClockwisePerpindicular2D(Vector A)
+        * Returns **Vector**
+        * Calculates the 2D clockwise perindicular vector to the given vector (ignoring the Z value)
+      21. CounterClockwisePerpindicular2D(Vector A)
+        * Returns **Vector**
+        * Calculates the 2D clockwise perindicular vector to the given vector (ignoring the Z value)
+      22. RoundValuesOfVector(Vector v, optional float upperLimit, optional float lowerLimit)
+        * Returns **Vector**
+        * Rounds each component of the given vector `v` based on the upper/lower limits
+        * Used to assist with floating point rounding/conversion errors
+
+      ## Also defines operators string concatenations of Rotators
+        * $=, @=, $ and @
+    </details>
+    
+    <details>
+      <summary>VectorObj</summary>
+      A subclass of `LGDUtilities.ValueContainer`, which is a wrapper class for non-object values to be used in `LGDUtilities.LinkedList` and `LGDUtilities.ListElement`. This subclass is for **Vector** values.
+    </details>
+
+    <details>
+      <summary>WaitTrigger/summary>
+      A custom trigger that requires the colliding player to **WAIT** before the trigger activates.
+    </details>
+
+    <details>
+      <summary>WaitTriggerHUDMutator</summary>
+      The HUD Mutator that the custom trigger `LGDUtilities.WaitTrigger` uses to show messages on the colliding player's HUD.
+
+      **Static Functions**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.WaitTriggerHUDMutator'.static.functionName();`
+
+      1. GetCurrentPlayerWaitTriggerHudInstance(Actor context, PlayerPawn pp)
+        * Returns **`LGDUtilities.WaitTriggerHUDMutator`**
+        * Used to get the current `WaitTriggerHUDMutator` for the given player pawn
+      2. SpawnAndRegister(Actor context)
+        * Returns **`LGDUtilities.WaitTriggerHUDMutator`**
+        * Spawns and registers this HUDMutator with the player's HUD (so it receives draw calls)
+    </details>
+
+    <details>
+      <summary>WeaponHelper</summary>
+      **Static Helper Class**
+      To access functions in this class use the following syntax:
+      `class'LGDUtilities.WeaponHelper'.static.functionName();`
+
+      ## Available Functions
+      1. SwitchPlayerPawnWeapon(Pawn p, Weapon wep)
+        * Returns **bool**
+        * Switches the given Pawn's weapon to the given weapon
+      2. StealWeapon(Pawn thief, Pawn victim, out Weapon PreviouslyHeldWeapon, out Weapon WeaponStolen)
+        * Returns **bool**
+        * Transfers a weapon (and current ammo) from the Pawn denoted  by `victim` to the `thief`.
+        * Output variables keep track of the previous weapon the `thief` held and the weapon that was stolen
+      3. FindBasedWeapon(Pawn Other, class<Weapon> WC)
+        * Returns **Weapon**
+        * Finds a weapon from the Pawn `Other` based on the superclass `WC`
+        * Fetched from: https://github.com/CacoFFF/LCWeapons-UT99/blob/master/classes/LCStatics.uc
+      4. FindTracePointsOfWeapon(Weapon wep, float TraceLength, out Vector TraceStartLoc, out Vector TraceEndLoc)
+        * Calculates positions in **GLOBAL** space for a weapon's trace
+        * Uses output variables to return the resulting start and end positions
+    </details>
+
+    <details>
+      <summary>WeaponStolenMessage</summary>
+      The message class used by 'LGDUtilities.WeaponStealingShockRifle' to display a message when a weapon is stolen.
+    </details>
+
+    <details>
+      <summary>WeaponUseCallback</summary>
+      A callback object used by `LGDUtilities.WeaponEventListenerWeapon` for responding to primary, alt, activate and use events.
+
+      This class is meant to be subclassed for custom callbacks to respond to the above mentioned events.
     </details>
   </details>
 
@@ -2117,6 +2317,40 @@ Below are sections for various objects, and extra information on them / their us
   <details>
     <summary>PatternLight</summary>
     An actor that is used to blink a light based upon a pattern specified by a `LGDUtilities.TimeFunction` object.
+  </details>
+
+  <details>
+    <summary>UseTrigger</summary>
+    A custom trigger where the `PlayerPawn` who collides has an option to **USE** the trigger, which activates it. 
+
+    The `PlayerPawn`'s weapon is lowered, and replaced with a unique weapon without a model, where if you "fire" this wepaon and are aimed at the target, the trigger is considered "used" and activates.
+
+    ## Actor Variables
+    1. ScaleIndicatorSizeToTarget
+      * Whether to scale the look indicator to the target
+      * Same as `LGDUtilities.IndicatorSettings.ScaleIndicatorSizeToTarget`
+    2. StaticIndicatorPercentOfMinScreenDimension
+      * Used to ensure the scale of the indicator is a **STATIC** percentage of the screen's **MINIMUM/SMALLEST** dimension.
+      * Same as `LGDUtilities.IndicatorSettings.StaticIndicatorPercentOfMinScreenDimension`
+    3. UseHudColorForIndicator
+      * Whether to use the player's HUD for the indicator color
+    4. ShowIndicatorWhenObscured
+      * Whether to show the indicator if the target is not in line of site
+    5. IndicatorOffsetFromTriggerActor
+      * The offset from the target that the indicator should be displayed
+    6. IndicatorColor
+      * The color of the indicator (unless overridden by `UseHudColorForIndicator`)
+    7. ShowUseMessage
+      * Whether to show a message to explain / help the user the trigger
+    8. UseMessage
+      * The message to show if `ShowUseMessage` is true
+    9. ShowIndicator
+      * Whether to show an indicator for the user to aim at to use this trigger
+    10. BaseAlphaValue
+      * The base / default alpha value for the indicator the player is supposed to look at
+    11. TriggerCallback
+      * A use callback object to execute when a use attempt is attempted
+      * Defaults to `LGDUtilities.UseTriggerHUDWeaponCallback`
   </details>
 
   <details>
