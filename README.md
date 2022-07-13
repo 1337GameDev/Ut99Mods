@@ -427,6 +427,19 @@ A special shock rifle that shoots energy orbs (modeled after the alt-fire of the
 
 </details>
 
+<details>
+<summary><span style="font-size:20px">&#128683;</span> Energy Sword (Weapon) <span style="font-size:20px">&#128683;</span></summary>
+
+<blockquote>
+
+A custom weapon based on `ChaosUT.Sword` and inspired by the Energy Sword from the Halo series.
+
+## <span style="font-size:20px">&#128683;</span> This class is unfinished and is a work in progress.
+
+</blockquote>
+
+</details>
+
 </details>
 
 </blockquote>
