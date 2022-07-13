@@ -1,10 +1,11 @@
-<h1 align="center">
-[![Stargazers][stars-shield]][stars-url]
-[![MIT License][license-shield]][license-url]
-[![Version ][version-shield]][version-url]
-</h1>
+<p align="center">
+    <a href="https://github.com/1337GameDev/Ut99Mods/stargazers" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/1337GameDev/Ut99Mods.svg" alt="Stars" /></a>
+    <a href="https://github.com/1337GameDev/Ut99Mods/blob/main/LICENSE.md" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" /></a>
+    <a href="https://github.com/1337GameDev/Ut99Mods" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/latest-v1.0.0-green.svg" alt="Version" /></a>
+</p>
 
-# <img src="https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true" width="100" height="100" title="Ut99 Logo" alt="Ut99 Logo" height="35px" width="35px"> Ut99Mods <img src="https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true" width="100" height="100" title="Ut99 Logo" alt="Ut99 Logo" height="35px" width="35px">
+# <p align="center"> <img src="https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true" width="100" height="100" title="Ut99 Logo" alt="Ut99 Logo" height="35px" width="35px"> Ut99Mods <img src="https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true" width="100" height="100" title="Ut99 Logo" alt="Ut99 Logo" height="35px" width="35px"></p>
+
 A collection of my hand-made mods for one of my my favorite games - Unreal Tournament '99!
 
 # Setup :wrench:
@@ -3258,16 +3259,3 @@ The `PlayerPawn`'s weapon is lowered, and replaced with a unique weapon without 
 </blockquote>
 
 </details>
-
-<!-- MARKDOWN LINKS & IMAGES -->
-[stars-shield]: https://img.shields.io/github/stars/1337GameDev/Ut99Mods
-
-[stars-url]: https://github.com/1337GameDev/Ut99Mods/stargazers
-
-[license-shield]: https://img.shields.io/badge/license-MIT-blue
-
-[license-url]: https://github.com/1337GameDev/Ut99Mods/blob/main/LICENSE.md
-
-[version-shield]: https://img.shields.io/badge/latest-v1.0.0-green
-
-[version-url]: https://github.com/1337GameDev/Ut99Mods
