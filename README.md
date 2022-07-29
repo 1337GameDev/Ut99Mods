@@ -1,7 +1,7 @@
 <p align="center">
     <a href="https://github.com/1337GameDev/Ut99Mods/stargazers" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/1337GameDev/Ut99Mods.svg" alt="Stars" /></a>
     <a href="https://github.com/1337GameDev/Ut99Mods/blob/main/LICENSE.md" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" /></a>
-    <a href="https://github.com/1337GameDev/Ut99Mods" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/latest-v1.0.0-green.svg" alt="Version" /></a>
+    <a href="https://github.com/1337GameDev/Ut99Mods/releases/tag/v1.0" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/latest-v1.0.0-green.svg" alt="Version" /></a>
 </p>
 
 # <p align="center"> <img src="https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true" width="100" height="100" title="Ut99 Logo" alt="Ut99 Logo" height="35px" width="35px"> Ut99Mods <img src="https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true" width="100" height="100" title="Ut99 Logo" alt="Ut99 Logo" height="35px" width="35px"></p>
