@@ -1,7 +1,8 @@
 <p align="center">
+    <a href="https://github.com/OldUnreal/UnrealTournamentPatches" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/game%20version-v469b-orange.svg" alt="Game Version" /></a>
     <a href="https://github.com/1337GameDev/Ut99Mods/stargazers" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/1337GameDev/Ut99Mods.svg" alt="Stars" /></a>
     <a href="https://github.com/1337GameDev/Ut99Mods/blob/main/LICENSE.md" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" /></a>
-    <a href="https://github.com/1337GameDev/Ut99Mods/releases/tag/v1.0" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/latest-v1.0.0-green.svg" alt="Version" /></a>
+    <a href="https://github.com/1337GameDev/Ut99Mods/releases/" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/latest-v1.0.0-green.svg" alt="Version" /></a>
 </p>
 
 # <p align="center"> <img src="https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true" width="100" height="100" title="Ut99 Logo" alt="Ut99 Logo" height="35px" width="35px"> Ut99Mods <img src="https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true" width="100" height="100" title="Ut99 Logo" alt="Ut99 Logo" height="35px" width="35px"></p>
@@ -10,11 +11,7 @@ A collection of my hand-made mods for one of my my favorite games - Unreal Tourn
 
 # Useage :video_game:
 
-To merely use the pre-compiled packages, copy the following files:
-
-1. Ut99Mods/System/**.u**, **.ini**, and **.int** files to your Ut99/System directory.
-2. Ut99Mods/Sounds/**HaloAnnouncer.uax** to your Ut99/Sounds folder
-3. `Optional` Ut99Mods/Maps/**1HH-TestBox-Large.unr** to your Ut99/Maps folder (a demo map)
+To merely use the pre-compiled packages, navigate to <a href="https://github.com/1337GameDev/Ut99Mods/releases">Releases</a> and download tyhe latest `zip` and extra it over the top of your UT99 directory. If you're asked to merge any folders, answer yes. 
 
 Then load up the game, and look at the relevant test map, as well as the included mutators. The mutators should appear in the normal mutator list and be available to play with as you would any other mutator.
 
