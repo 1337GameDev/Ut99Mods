@@ -11,7 +11,7 @@ A collection of my hand-made mods for one of my my favorite games - Unreal Tourn
 
 # Useage :video_game:
 
-To merely use the pre-compiled packages, navigate to <a href="https://github.com/1337GameDev/Ut99Mods/releases">Releases</a> and download tyhe latest `zip` and extra it over the top of your UT99 directory. If you're asked to merge any folders, answer yes. 
+To merely use the pre-compiled packages, navigate to <a href="https://github.com/1337GameDev/Ut99Mods/releases">Releases</a> and download the latest `zip` and extra it over the top of your UT99 directory. If you're asked to merge any folders, answer yes. 
 
 :warning: This has been tested / compiled on v469b of Ut99, but **LIKELY** would work on prior versions just fine (such as the latest official version of `v436`).
 
