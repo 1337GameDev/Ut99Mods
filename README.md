@@ -13,6 +13,8 @@ A collection of my hand-made mods for one of my my favorite games - Unreal Tourn
 
 To merely use the pre-compiled packages, navigate to <a href="https://github.com/1337GameDev/Ut99Mods/releases">Releases</a> and download tyhe latest `zip` and extra it over the top of your UT99 directory. If you're asked to merge any folders, answer yes. 
 
+:warning: This has been tested / compiled on v469b of Ut99, but **LIKELY** would work on prior versions just fine (such as the latest official version of `v436`).
+
 Then load up the game, and look at the relevant test map, as well as the included mutators. The mutators should appear in the normal mutator list and be available to play with as you would any other mutator.
 
 To use them in your own custom maps, they need to be in **EditPackages** or loaded manually in the editor (or embedded into the map using MyLevel).
