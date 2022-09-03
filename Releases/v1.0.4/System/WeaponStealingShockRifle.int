@@ -1,0 +1,3 @@
+[Public]
+; the weapon
+Object=(Name=LGDUtilities.WeaponStealingShockRifle,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="Weapon Stealing ShockRifle")

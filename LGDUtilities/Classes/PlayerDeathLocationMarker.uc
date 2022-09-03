@@ -35,7 +35,7 @@ static function PlayerDeathLocationMarker SpawnAtPlayerLocation(Actor context, P
 
     //register globally with indicator hud
     listElement = new class'LGDUtilities.IndicatorHudTargetListElement';
-	  listElement.IndicatorSource = class'LGDUtilities.PlayerDeathLocationMarker';
+	listElement.IndicatorSource = class'LGDUtilities.PlayerDeathLocationMarker';
     settings = new class'LGDUtilities.IndicatorSettings';
     settings.UseTargetNameForLabel = false;
     settings.IndicatorLabel = string(Player.Name);
@@ -58,7 +58,7 @@ static function PlayerDeathLocationMarker SpawnAtPlayerLocation(Actor context, P
     listElement.IndicatorSettings = settings;
 
     ih = class'LGDUtilities.IndicatorHud'.static.GetCurrentPlayerIndicatorHudInstance(context);
-    ih.AddAdvancedTarget(listElement, true);
+    ih.AddAdvancedTarget(listElement, true, false, true);
 
     return marker;
 }

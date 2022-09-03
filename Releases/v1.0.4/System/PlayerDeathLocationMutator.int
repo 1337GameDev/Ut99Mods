@@ -1,0 +1,2 @@
+[Public]
+Object=(Name=LGDUtilities.PlayerDeathLocationMutator,Class=Class,MetaClass=Engine.Mutator,Description="Player Death Marker, Show death markers for enemies / teammates.")

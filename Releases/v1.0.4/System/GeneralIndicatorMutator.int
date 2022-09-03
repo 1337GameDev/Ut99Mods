@@ -1,0 +1,2 @@
+[Public]
+Object=(Name=LGDUtilities.GeneralIndicatorMutator,Class=Class,MetaClass=Engine.Mutator,Description="HUD Indicators, Enable HUD indicators for enemies, allies, weapons, powerups and objectives.")

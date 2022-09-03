@@ -1,0 +1,2 @@
+[Public]
+Object=(Name=LGDUtilities.FiestaMapWeaponsMutator,Class=Class,MetaClass=Engine.Mutator,Description="Fiesta Map Weapons,Replace map weapons with random ones loaded by UT. Also removes Ammo  pickups.")

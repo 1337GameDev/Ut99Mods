@@ -1,0 +1,2 @@
+[Public]
+Object=(Name=C4.C4GiveWeaponMutator,Class=Class,MetaClass=Engine.Mutator,Description="C4 Explosive,Give players/bots a C4 explosive to start with (in the 0h weapon slot).")

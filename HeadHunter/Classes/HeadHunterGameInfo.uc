@@ -530,7 +530,8 @@ function AddPlayerIndicator(Pawn player){
     local IndicatorHudTargetListElement le;
     local IndicatorSettings settings;
     local HeadHunterPlayerIndicatorModifierFn indicatorMod;
-
+	local IndicatorHud ih;
+	
     if((player == None) || !(player.IsA('Bot') || player.IsA('PlayerPawn')) ){
         return;
     }
@@ -557,28 +558,35 @@ function AddPlayerIndicator(Pawn player){
     le.IndicatorSettingsModifier = indicatorMod;
     le.Value = player;
 
-    //should exist at this stage as we init the reference at the earlier stage of game execution
-    GlobalIndicatorTargets.GlobalIndicatorTargets.Push(le);
+	ih = class'LGDUtilities.IndicatorHud'.static.GetCurrentPlayerIndicatorHudInstance(self);
+	ih.AddAdvancedTarget(le, true, true, true);
 }
 
 function RemovePlayerIndicator(Pawn player) {
+	local IndicatorHud ih;
+	
     if(player != None){
-        //should exist at this stage as we init the reference at the earlier stage of game execution
-        GlobalIndicatorTargets.GlobalIndicatorTargets.RemoveElementByValue(player);
+		ih = class'LGDUtilities.IndicatorHud'.static.GetCurrentPlayerIndicatorHudInstance(self);
+		ih.RemoveTargetFromAllLists(player, self);		
     }
 }
 
 function AddSkullItemIndicator(SkullItem skull){
     local IndicatorHudTargetListElement le;
     local IndicatorSettings settings;
+	local HeadHunterSkullIndicatorModifierFn indicatorMod;
     local IndicatorTextureVariations texVars;
-
+	local IndicatorHud ih;
+	
     if(skull == None){
         return;
     }
 
     le = new class'LGDUtilities.IndicatorHudTargetListElement';
 	le.IndicatorSource = self;
+	indicatorMod = new class'HeadHunter.HeadHunterSkullIndicatorModifierFn';
+    indicatorMod.Context = Self;
+	
     settings = new class'LGDUtilities.IndicatorSettings';
     settings.UseCustomColor = true;
     settings.IndicatorColor = class'LGDUtilities.ColorHelper'.default.RedColor;
@@ -588,6 +596,8 @@ function AddSkullItemIndicator(SkullItem skull){
     //settings.BuiltinIndicatorTexture = 73;//HudIndicator_Skull
     settings.MaxViewDistance = 0;
     settings.ShowIndicatorWhenOffScreen = true;
+	settings.ShowIndicatorIfInventoryDropped = true;
+	settings.ShowIndicatorIfInventoryNotHeld = true;
 
     settings.TextureVariations = class'LGDUtilities.IndicatorHud'.static.GetTexturesForBuiltInOption(64);//HudIndicator_DownTriangle_Solid
     settings.TextureVariations.BehindViewTex = None;
@@ -596,21 +606,26 @@ function AddSkullItemIndicator(SkullItem skull){
     settings.TextureVariations.InViewTex = texVars.InViewTex;
 
     le.IndicatorSettings = settings;
+	le.IndicatorSettingsModifier = indicatorMod;
     le.Value = skull;
-
-    //should exist at this stage as we init the reference at the earlier stage of game execution
-    GlobalIndicatorTargets.GlobalIndicatorTargets.Push(le);
+	
+	ih = class'LGDUtilities.IndicatorHud'.static.GetCurrentPlayerIndicatorHudInstance(self);
+	ih.AddAdvancedTarget(le, true, true, true);
 }
 function RemoveSkullItemIndicator(SkullItem skull){
+	local IndicatorHud ih;
+		
     if(skull != None){
-        //should exist at this stage as we init the reference at the earlier stage of game execution
-        GlobalIndicatorTargets.GlobalIndicatorTargets.RemoveElementByValue(skull);
+		ih = class'LGDUtilities.IndicatorHud'.static.GetCurrentPlayerIndicatorHudInstance(self);
+		ih.RemoveTargetFromAllLists(skull, self);
     }
 }
 function AddSkullItemProjIndicator(SkullItemProj skullProj){
     local IndicatorHudTargetListElement le;
     local IndicatorSettings settings;
+	local HeadHunterSkullIndicatorModifierFn indicatorMod;
     local IndicatorTextureVariations texVars;
+	local IndicatorHud ih;
 
     if(skullProj == None){
         return;
@@ -618,6 +633,9 @@ function AddSkullItemProjIndicator(SkullItemProj skullProj){
 
     le = new class'LGDUtilities.IndicatorHudTargetListElement';
 	le.IndicatorSource = self;
+	indicatorMod = new class'HeadHunter.HeadHunterSkullIndicatorModifierFn';
+    indicatorMod.Context = Self;
+	
     settings = new class'LGDUtilities.IndicatorSettings';
     settings.UseCustomColor = true;
     settings.IndicatorColor = class'LGDUtilities.ColorHelper'.default.RedColor;
@@ -635,15 +653,18 @@ function AddSkullItemProjIndicator(SkullItemProj skullProj){
     settings.TextureVariations.InViewTex = texVars.InViewTex;
 
     le.IndicatorSettings = settings;
+	le.IndicatorSettingsModifier = indicatorMod;
     le.Value = skullProj;
-
-    //should exist at this stage as we init the reference at the earlier stage of game execution
-    GlobalIndicatorTargets.GlobalIndicatorTargets.Push(le);
+	
+	ih = class'LGDUtilities.IndicatorHud'.static.GetCurrentPlayerIndicatorHudInstance(self);
+	ih.AddAdvancedTarget(le, true, true, true);
 }
-function RemoveSkullItemProjIndicator(SkullItemProj skullProj){
+function RemoveSkullItemProjIndicator(SkullItemProj skullProj) {
+	local IndicatorHud ih;
+	
     if(skullProj != None){
-        //should exist at this stage as we init the reference at the earlier stage of game execution
-        GlobalIndicatorTargets.GlobalIndicatorTargets.RemoveElementByValue(skullProj);
+		ih = class'LGDUtilities.IndicatorHud'.static.GetCurrentPlayerIndicatorHudInstance(self);
+		ih.RemoveTargetFromAllLists(skullProj, self);
     }
 }
 
@@ -664,7 +685,7 @@ function AddAllSkullIndicators(){
 function RemoveAllSkullIndicators(){
     local SkullItem skull;
     local SkullItemProj skullProj;
-
+	
     ForEach AllActors(class'HeadHunter.SkullItem', skull) {
         RemoveSkullItemIndicator(skull);
     }

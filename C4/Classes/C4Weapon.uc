@@ -202,7 +202,7 @@ simulated function UpdateGhostLocation(bool bFiring){
      local float HitActorCollisionSize, C4CollisionSize;
      local C4Proj c4Projectile;
 
-     if(PlaceC4Ghost == None){
+     if((PlaceC4Ghost == None) && IsInState('Active')) {
          PlaceC4Ghost = Spawn(class'C4.C4WeaponGhost');
          PlaceC4Ghost.C4WeaponOwner = Self;
      }
@@ -211,9 +211,12 @@ simulated function UpdateGhostLocation(bool bFiring){
          if((AmmoType != None) && (AmmoType.AmmoAmount > 0)){
 	         ShowWeapon();
          } else {
-             HideWeapon();
-             PlaceC4Ghost.HideGhost();
-             return;
+            HideWeapon();
+			 
+			if(PlaceC4Ghost != None){
+				PlaceC4Ghost.HideGhost();
+			}
+            return;
          }
      }
 
@@ -227,7 +230,9 @@ simulated function UpdateGhostLocation(bool bFiring){
 
      if(HitActor != None){
 	     //ensure ghost is viisble
-		 PlaceC4Ghost.ShowGhost();
+		 if(PlaceC4Ghost != None){
+			PlaceC4Ghost.ShowGhost();
+		 }
 		 HideWeapon();
 
          HitLevel = LevelInfo(HitActor);
@@ -241,9 +246,11 @@ simulated function UpdateGhostLocation(bool bFiring){
              //Use hit position, and current weapon rotation to "walk back" a distance the length of the collider size
              NewGhostPos = HitLocation - (Vector(Rotation) * (C4CollisionSize + HitActorCollisionSize) );
          }
-
-		 PlaceC4Ghost.SetRotation(Rotator(-HitNormal));
-
+		
+		 if(PlaceC4Ghost != None) {
+			PlaceC4Ghost.SetRotation(Rotator(-HitNormal));
+		 }
+		 
 		 if(bFiring) {
 		    //ensure we aren't colliding with our "ghost" - and if so, ignore the placement
 		    if(!HitActor.IsA('C4WeaponGhost') ){
@@ -257,7 +264,9 @@ simulated function UpdateGhostLocation(bool bFiring){
 		 }
      } else {
          //hit nothing, so hide ghost
-		 PlaceC4Ghost.HideGhost();
+		 if(PlaceC4Ghost != None) {
+			PlaceC4Ghost.HideGhost();
+		 }
 		 ShowWeapon();
 
 		 if(bFiring) {
@@ -265,8 +274,10 @@ simulated function UpdateGhostLocation(bool bFiring){
 		 }
      }
 
-     PlaceC4Ghost.SetLocation(NewGhostPos);
-     PlaceC4Ghost.UpdateTimer(TimerSeconds);
+	 if(PlaceC4Ghost != None) {
+		PlaceC4Ghost.SetLocation(NewGhostPos);
+		PlaceC4Ghost.UpdateTimer(TimerSeconds);
+	 }
 }
 
 /* Included to avoid exception - as the C4 model does not have a 'Select' animation. */
@@ -307,7 +318,15 @@ simulated function Tick(float DeltaTime) {
 				if(PlaceC4Ghost != None){
 					PlaceC4Ghost.HideGhost();
 				}
+				
+				Disable('Tick');
 			}
+		}
+	}
+	
+	if(!IsInState('Active')) {
+		if(PlaceC4Ghost != None){
+			PlaceC4Ghost.HideGhost();
 		}
 	}
 }
@@ -357,22 +376,30 @@ function ShowWeapon(){
 }
 function bool HandlePickupQuery(Inventory Item) {
 	local bool WillBePickedUp;
-	local Ammo c4Ammo;
 
 	WillBePickedUp = Super.HandlePickupQuery(Item);
-
-	if(Item.IsA('C4Ammo')){
-	    c4Ammo = Ammo(Item);
-
-	    if(AmmoType == None){
-	        GiveAmmo(Pawn(Owner));
-	    }
-
-	    if(WillBePickedUp && (c4Ammo.AmmoAmount + AmmoType.AmmoAmount) > 0) {
-	        ShowWeapon();
-	    } else {
-	        HideWeapon();
-	    }
+	if(AmmoType == None) {
+		GiveAmmo(Pawn(Owner));
+		AmmoType.AmmoAmount = 0;
+	}
+	
+	if(AmmoType.AmmoAmount > 0) {
+		Enable('Tick');
+		ShowWeapon();
+		
+		if(PlaceC4Ghost == None) {
+			PlaceC4Ghost = Spawn(class'C4.C4WeaponGhost');
+			PlaceC4Ghost.C4WeaponOwner = Self;
+		}
+		PlaceC4Ghost.HideGhost();
+	} else {
+		HideWeapon();
+			
+		if(PlaceC4Ghost != None) {
+			PlaceC4Ghost.HideGhost();
+		}
+		
+		Disable('Tick');
 	}
 
 	return WillBePickedUp;
@@ -385,6 +412,10 @@ function GiveTo(Pawn Other) {
     if(!Other.IsA('Bot')){
 	    Super.GiveTo(Other);
 	    Disable('Tick');
+		
+		if(PlaceC4Ghost != None) {
+			PlaceC4Ghost.HideGhost();
+		}
 	} else {
 	    Destroy();
     }
@@ -467,8 +498,8 @@ defaultproperties {
       FireOffset=(X=15.000000,Y=-13.000000,Z=-7.000000)
       AIRating=0.000000
       DeathMessage="%k blew up %o!"
-      AutoSwitchPriority=0
-      InventoryGroup=0,
+      AutoSwitchPriority=1
+      InventoryGroup=1,
       bRotatingPickup=False
       PickupMessage="You got the C4."
       ItemName="C4"

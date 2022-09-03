@@ -1,0 +1,2 @@
+[Public]
+Object=(Name=GuidedEnergyLance.GuidedEnergyLanceWeaponReplaceMutator,Class=Class,MetaClass=Engine.Mutator,Description="Guided Energy Lance,Replace the Eightball rocket launcher with the Guided Energy Lance.")

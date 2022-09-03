@@ -851,9 +851,9 @@ function bool RemoveExtraPlayerPRI(int PlayerID) {
 //------------------------------------------------------------------------------
 //adds an indicator to every player / bot that gets passed to this
 function AddPlayerIndicator(Pawn player){
-    local IndicatorHudGlobalTargets globalTargets;
 	local IndicatorHudTargetListElement le;
     local IndicatorSettings settings;
+	local IndicatorHud ih;
 
     if((player == None) || !(player.IsA('Bot') || player.IsA('PlayerPawn')) ){
         return;
@@ -881,18 +881,16 @@ function AddPlayerIndicator(Pawn player){
     le.IndicatorSettings = settings;
     le.Value = player;
 
-	//should exist at this stage as we init the reference at the earlier stage of game execution
-	globalTargets = class'LGDUtilities.IndicatorHudGlobalTargets'.static.GetRef(self);
-    globalTargets.GlobalIndicatorTargets.Enqueue(le);
+	ih = class'LGDUtilities.IndicatorHud'.static.GetCurrentPlayerIndicatorHudInstance(self);
+	ih.AddAdvancedTarget(le, true, true, true);
 }
 
 function RemovePlayerIndicator(Pawn player) {
-	local IndicatorHudGlobalTargets globalTargets;
+	local IndicatorHud ih;
 
     if(player != None) {
-        //should exist at this stage as we init the reference at the earlier stage of game execution
-		globalTargets = class'LGDUtilities.IndicatorHudGlobalTargets'.static.GetRef(self);
-        globalTargets.GlobalIndicatorTargets.RemoveElementByValue(player);
+		ih = class'LGDUtilities.IndicatorHud'.static.GetCurrentPlayerIndicatorHudInstance(self);
+		ih.RemoveTargetFromAllLists(player, self);
     }
 }
 

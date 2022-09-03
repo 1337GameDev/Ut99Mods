@@ -142,7 +142,7 @@ simulated function HitWall(Vector HitNormal, Actor Wall) {
 
             if(skull != None){
 		        skull.NumCopies = 1;
-
+								
 		        if((HHGameInfo != None) && (HHGameInfo.HHRepInfo != None) && HHGameInfo.HHRepInfo.ShowDroppedSkullIndicators) {
                     HHGameInfo.AddSkullItemIndicator(skull);
                 }

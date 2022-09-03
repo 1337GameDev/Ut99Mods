@@ -1,0 +1,3 @@
+[Public]
+Object=(Name=LGDUtilities.TestMatchPlus,Class=Class,MetaClass=Botpack.TournamentGameInfo)
+Preferences=(Caption="Testing Match",Parent="Game Types",Class=LGDUtilities.TestMatchPlus,Immediate=True)

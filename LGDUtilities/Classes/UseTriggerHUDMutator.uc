@@ -30,7 +30,7 @@ var() texture IndicatorTexture;//the normal indicator texture when the use trigg
 
 var() float BaseAlphaValue;
 
-var() class<UseTriggerHUDWeaponCallback> UseCallback;
+var() class<UseTriggerHUDWeaponCallback> TriggerCallback;
 
 var bool AimWasPreviouslyInIndicator;
 
@@ -214,7 +214,7 @@ function SetTrigger(UseTrigger trigger) {
     UseHudColorForIndicator = TriggerActor.UseHudColorForIndicator;
     StaticIndicatorPercentOfMinScreenDimension = TriggerActor.StaticIndicatorPercentOfMinScreenDimension;
     ScaleIndicatorSizeToTarget = TriggerActor.ScaleIndicatorSizeToTarget;
-    UseCallback = TriggerActor.UseCallback;
+    TriggerCallback = TriggerActor.TriggerCallback;
 }
 
 function float GetDistanceToTrigger(UseTrigger trigger){
@@ -267,8 +267,8 @@ function WeaponEventListenerWeapon GiveOwnerHUDWeapon(){
             wep = WeaponEventListenerWeapon(inv);
         }
             
-        if(UseCallback != None) {
-            callbackClass = UseCallback;
+        if(TriggerCallback != None) {
+            callbackClass = TriggerCallback;
         } else {
             callbackClass = class'LGDUtilities.UseTriggerHUDWeaponCallback';
         }

@@ -1,8 +1,8 @@
 <p align="center">
-    <a href="https://github.com/OldUnreal/UnrealTournamentPatches" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/game%20version-v469b-orange.svg" alt="Game Version" /></a>
+    <a href="https://github.com/OldUnreal/UnrealTournamentPatches" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/game%20version-GOTY v469b-orange.svg" alt="Game Version" /></a>
     <a href="https://github.com/1337GameDev/Ut99Mods/stargazers" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/1337GameDev/Ut99Mods.svg" alt="Stars" /></a>
     <a href="https://github.com/1337GameDev/Ut99Mods/blob/main/LICENSE.md" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" /></a>
-    <a href="https://github.com/1337GameDev/Ut99Mods/releases/" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/latest-v1.0.0-green.svg" alt="Version" /></a>
+    <a href="https://github.com/1337GameDev/Ut99Mods/releases/" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/latest-v1.0.4-green.svg" alt="Version" /></a>
 </p>
 
 # <p align="center"> <img src="https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true" width="100" height="100" title="Ut99 Logo" alt="Ut99 Logo" height="35px" width="35px"> Ut99Mods <img src="https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true" width="100" height="100" title="Ut99 Logo" alt="Ut99 Logo" height="35px" width="35px"></p>
@@ -13,7 +13,9 @@ A collection of my hand-made mods for one of my my favorite games - Unreal Tourn
 
 To merely use the pre-compiled packages, navigate to <a href="https://github.com/1337GameDev/Ut99Mods/releases">Releases</a> and download the latest `zip` and extract it over the top of your UT99 directory. If you're asked to merge any folders, answer yes. 
 
-:warning: This has been tested / compiled on v469b of UT99, but **LIKELY** would work on prior versions just fine (such as the latest official version of `v436`).
+:warning: This has been tested / compiled on v469b GOTY of UT99, but **LIKELY** would work on prior versions just fine (such as the latest official version of `v436`).
+
+<span style="font-size:20px;color:#eb7d34">&#9888;</span> **NOTE:** <span style="font-size:20px;color:#eb7d34">&#9888;</span> These mods require ChaosUT and Relics to work properly. These are included with the GOTY version of the game. If you have a different version, please download and install these
 
 Then load up the game, and look at the relevant test map, as well as the included mutators. The mutators should appear in the normal mutator list and be available to play with, as you would any other mutator.
 
@@ -1198,6 +1200,9 @@ To access functions in this class use the following syntax:
 2. isInsideTriangle(int vertex1x, int vertex1y, int vertex2x, int vertex2y, int vertex3x, int vertex3y, int testPointX, int testPointY);
   * Returns **bool**
   * Given 3 points of a triangle, and a test point, determines if the test point is contained inside the triangle.
+3. RectanglesOverlap(Vector RectATopLeft, Vector RectABottomRight, Vector RectBTopLeft, Vector RectBBottomRight);
+  * Returns **bool**
+  * Given 2 Rectangles, Rectangle A and Rectangle B, this method checks if the rectangles overlap. The rectangles are defined by their Top-Left and Bottom-Right coordinates. Rectangles overlap if either rectangle are not explicitly above, or to the side of the other.
 
 </blockquote>
 
@@ -1327,14 +1332,23 @@ To access functions in this class use the following syntax:
   * Returns **float**
   * Given a texture, and a desired max dimension, calculates which dimension is the maximum for the texture and what scale is needed to get the size wanted.
   * Useful for fitting an arbitrary texture into a given space on screen, as a constraint for the texture
-24. getValueFromActor(UWindowRootWindow context, Actor actor, string prop);
+24. HUDCanvasRectanglesOverlap(Canvas C, Vector RectATopLeft, Vector RectABottomRight, Vector RectBTopLeft, Vector RectBBottomRight, optional bool DisplayDebugPoints);
+* Returns **bool**
+* Given 2 Rectangles (via HUD Canvas coordinates), Rectangle A and Rectangle B, this method checks if the rectangles overlap.
+The rectangles are defined by their Top-Left and Bottom-Right coordinates.
+This will RETAIN the current canvas's color and position (it'll store, modify and then set them to their prior values). This will use the canvas's CURRENT values for FONT and STYLE (value from ENUM of Actor.ERenderStyle). 
+* The coordinates are `translated` by subtracting the Y-coordinate of each given coordinate from Canvas.ClipY. This essentially re-orients the coordinate's origin from the **top-left** to the **bottom-left** as normal coordinate systems use.
+* **DisplayDebugPoints** - This determines if debug text is drawn on the given cordinates for debug reasons.
+* If these debug points don't render correctly, these are likely incorrectly set. Rectangles overlap if either rectangle are not explicitly above, or to the side of the other.
+* Useful for checking if 2 rectangles (defined by Canvas screen cordinates) overlap or not. Good for checking if HUD components overlap and need adjustment.
+25. getValueFromActor(UWindowRootWindow context, Actor actor, string prop);
   * Returns **string**
   * Gets a value from an `Actor`, in a context of rendering an Unreal window, with respect to network replication reliability
-25. PlayerHasHUDMutator(PlayerPawn p, name mutClass);
+26. PlayerHasHUDMutator(PlayerPawn p, name mutClass);
   * Returns **Mutator**
   * Determines if the given `PlayerPawn` has the given class, by a **NAME** variable
   * Uses `Actor.IsA()` for comparison to avoid needing class references at compile time
-26. RenderLEDTimerToHUD(Canvas c, float xPos, float yPos, Color col, byte drawStyle, float hudScale, int timerSeconds);
+27. RenderLEDTimerToHUD(Canvas c, float xPos, float yPos, Color col, byte drawStyle, float hudScale, int timerSeconds);
   * Renders a LED-Style timer on screen, such as the **ASSAULT** countdown
   * An example of this can be found in `HeadHunter.HeadHunterGameInfo` and `Infection.InfectionGameInfo`
 
@@ -2153,13 +2167,15 @@ Vector Momentum, name DamageType)
 7. GetPawnFromPlayerID(Actor context, int PlayerID)
 * Returns **Pawn**
 * Iterates through all pawns, looking for one with the given PlayerID
-8. GetRandomPlayerPawnOrBot(Actor context, optional LinkedList PlayerIDsToExclude)
+8. GetRandomPlayerPawnOrBot(Actor context, optional LinkedList PlayerIDsToExclude, optional bool IncludeSpectators)
 * Returns **Pawn**
 * Randomly selects a pawn / bot amongst all currently in the match
 * Can **EXCLUDE** specific pawns from consideration based on a list of PlayerIDs (denoted by the parameter `PlayerIDsToExclude`)
-9. GetAllPawnsOfTeam(Actor context, byte Team)
+* Can specify an **optional** boolean to indicate whether spectators (checked using `Pawn.PlayerReplicationInfo.bIsSpectator`)
+9. GetAllPawnsOfTeam(Actor context, byte Team, optional bool IncludeSpectators)
 * Returns **`LGDUtilities.LinkedList`**
 * Gets all pawns with a given team byte value (checked using: PlayerReplicationInfo.Team)
+* Can specify an **optional** boolean to indicate whether spectators (checked using `Pawn.PlayerReplicationInfo.bIsSpectator`)
 10. GetBestScoringPawnOfTeam(Actor context, byte Team, optional bool limitByIsPlayer)
 * Returns **Pawn**
 * Gets the pawn on a given team, with the highest score

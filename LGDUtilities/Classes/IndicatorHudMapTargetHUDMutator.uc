@@ -19,7 +19,7 @@ function PlayerSpawnedCallback(){
                 hudTargetListEl = IndicatorHudTargetListElement(el);
 
                 if(hudTargetListEl != None){
-                    ih.AddAdvancedTarget(hudTargetListEl, self.GlobalIndicator);
+                    ih.AddAdvancedTarget(hudTargetListEl, self.GlobalIndicator, false, true);
                 }
                 el = elementsToAdd.Pop();
             }

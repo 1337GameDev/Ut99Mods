@@ -508,7 +508,7 @@ static simulated function DrawTextAtXY(Canvas canvas, Actor context, string text
       }
       canvas.SetPos(screenX, screenY);
       canvas.Style = context.ERenderStyle.STY_Normal;
-      canvas.DrawColor = class'LGDUtilities.ColorHelper'.static.GetWhiteColor();;
+      canvas.DrawColor = class'LGDUtilities.ColorHelper'.static.GetWhiteColor();
       canvas.DrawTextClipped(text);
 }
 
@@ -607,6 +607,72 @@ static simulated function float getScaleForTextureFromMaxTextureDimension(Textur
      }
 
      return resultingScale;
+}
+
+/*
+Given 2 Rectangles (via HUD Canvas coordinates), Rectangle A and Rectangle B, this method checks if the rectangles overlap.
+The rectangles are defined by their Top-Left and Bottom-Right coordinates.
+
+DisplayDebugPoints - This determines if debug text is drawn on the given cordinates for debug reasons.
+This will RETAIN the current canvas's color and position (it'll store, modify and then set them to their prior values).
+
+This will use the canvas's CURRENT values for FONT and STYLE (value from ENUM of Actor.ERenderStyle).
+If these debug points don't render correctly, these are likely incorrectly set.
+
+Modified from: https://www.baeldung.com/java-check-if-two-rectangles-overlap
+
+Rectangles overlap if either rectangle are not explicitly above, or to the side of the other.
+
+Checks: 
+above/below
+1. Rect A is UNDER rect B
+2. Rect A is ABOVE rect B
+
+left/right
+1. Rect A to the LEFT of rect B
+2. Rect A to the RIGHT of rect B
+*/
+static final function bool HUDCanvasRectanglesOverlap(Canvas C, Vector RectATopLeft, Vector RectABottomRight, Vector RectBTopLeft, Vector RectBBottomRight, optional bool DisplayDebugPoints) {
+	local Vector TranslatedRectATopLeft,TranslatedRectABottomRight     ,TranslatedRectBTopLeft,TranslatedRectBBottomRight;
+	
+	//Previous Values of the canvas
+	local Color PrevColor;
+	local Vector PrevPosition;
+	
+	TranslatedRectATopLeft.X = RectATopLeft.X;
+	TranslatedRectATopLeft.Y = C.ClipY - RectATopLeft.Y;
+	
+	TranslatedRectABottomRight.X = RectABottomRight.X;
+	TranslatedRectABottomRight.Y = C.ClipY - RectABottomRight.Y;
+	
+	TranslatedRectBTopLeft.X = RectBTopLeft.X;
+	TranslatedRectBTopLeft.Y = C.ClipY - RectBTopLeft.Y;
+	
+	TranslatedRectBBottomRight.X = RectBBottomRight.X;
+	TranslatedRectBBottomRight.Y = C.ClipY - RectBBottomRight.Y;
+	
+	if(DisplayDebugPoints) {
+		PrevColor = C.DrawColor;
+		PrevPosition.X = C.CurX;
+		PrevPosition.Y = C.CurY;
+		
+	    C.DrawColor = class'LGDUtilities.ColorHelper'.default.GreenColor;
+		C.SetPos(RectATopLeft.X, RectATopLeft.Y);
+		C.DrawText("A_TL");
+		C.SetPos(RectABottomRight.X, RectABottomRight.Y);
+		C.DrawText("A_BR");
+		
+		C.SetPos(RectBTopLeft.X, RectBTopLeft.Y);
+		C.DrawText("B_TL");
+		C.SetPos(RectBBottomRight.X, RectBBottomRight.Y);
+		C.DrawText("B_BR");
+		
+		C.DrawColor = PrevColor;
+		C.CurX = PrevPosition.X;
+		C.CurY = PrevPosition.Y;
+	}
+		
+	return class'LGDUtilities.GeometryHelper'.static.RectanglesOverlap(TranslatedRectATopLeft,TranslatedRectABottomRight, TranslatedRectBTopLeft,TranslatedRectBBottomRight);
 }
 
 /*

@@ -22,16 +22,19 @@ simulated function DrawFragCount(Canvas C){
 
     SkullIconScale = 2.0 * Scale;
     TimerPadding = 5;
-    PlayerStatusHudWidth = 256;
+    PlayerStatusHudWidth = 128;
     TimerWidth = 125;//5 sliced textures -- [0][0][:][0][0]
     if(gameInfo.SkullCollectTimeInterval >= 600){
          TimerWidth += 25;//add an extra 0
     }
 	TimerWidth *= Scale;
 
-    TimerXPos = C.ClipX - ((PlayerStatusHudWidth + TimerWidth + (2*TimerPadding)) * Scale);
+	//first set x position to the status HUD x position
+    TimerXPos = C.ClipX - (PlayerStatusHudWidth * StatusScale * Scale);
+	//then subtract our wanted width for the timer
+	TimerXPos -= (TimerWidth + (2*TimerPadding));
 
-	DrawTimeAt(C, TimerXPos, 25);
+	DrawTimeAt(C, TimerXPos, 2);
 
     PrevRenderStyle = C.Style;
     PrevDrawColor = C.DrawColor;
@@ -40,9 +43,6 @@ simulated function DrawFragCount(Canvas C){
     C.DrawColor = SkullIconColor;
 
     SkullIconXPos = TimerXPos - (32*SkullIconScale) - TimerPadding;
-    //if(gameInfo.SkullsCollectedCountdown >= 600){
-    //     SkullIconXPos -= 25;
-    //}
 
     C.SetPos(SkullIconXPos, 16);
     C.DrawIcon(Texture'UnrealShare.Icons.ICONSKULL', SkullIconScale);

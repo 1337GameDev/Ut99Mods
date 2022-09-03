@@ -1,0 +1,2 @@
+[Public]
+Object=(Name=LGDUtilities.FiestaPlayerWeaponsMutator,Class=Class,MetaClass=Engine.Mutator,Description="Fiesta Player Weapons,Replace player starting weapons with random ones loaded by UT.")

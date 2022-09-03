@@ -104,8 +104,6 @@ static function LinkedList GetAllWeaponClasses(Actor context, optional bool Only
     return FoundClasses;
 }
 
-
-
 static function LinkedList GetClassesLoadedFromIntFiles(Actor context, string IntMetaClassToCompareTo, optional bool LoadClasses, optional int MaxClassIntNum, optional bool bLogToGameLogfile){
     local LinkedList FoundClasses;
     local int ClassIntNum;

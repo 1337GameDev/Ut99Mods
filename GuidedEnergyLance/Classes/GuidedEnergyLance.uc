@@ -262,6 +262,8 @@ State DownWeapon {
 			PawnOwner.DesiredFOV = PawnOwner.DefaultFOV;
 			PawnOwner.bZooming = false;
 		}
+		
+		Disable('Tick');
 	}
 }
 

@@ -54,7 +54,12 @@ simulated function PostRender(Canvas C) {
     local ChallengeHUD PlayerHUD;
     local float PlayerHUDScale;
     local int PlayerOwnerTeam;
-    local Vector RadarHUDPositionCenter;
+    local Vector RadarHUDPositionCenter, RadarHUDPositionTopLeft;
+	
+	//extra coordinate for prediction of the rendering of the radar on the HUD
+	local Vector RadarHUDPositionBottomRight;
+	local float RadarHalfHeight;
+	
     local color RadarColor, RadarBlipColor;
     local float RadarGuiScale;
 
@@ -80,6 +85,20 @@ simulated function PostRender(Canvas C) {
 
     local float HalfRadarHudTexHeight, HalfRadarHudTexWidth;
 
+	//detect problem cases of overlap with standard UI
+	local bool IsOverlappingAnotherElement;
+	
+	//AssaultHUD
+	local bool IsAssault;
+	local float AssaultTimerX, AssaultTimerY;
+	local Vector AssaultTimerTopLeft, AssaultTimerBottomRight;
+	
+	//DeathMatchPlus
+	local bool IsDeathmatch;
+	local float DMSpreadX, DMSpreadY, SpreadTextXL, SpreadTextYL;
+	local Vector DMSpreadTopLeft, DMSpreadBottomRight;
+	local Font PrevCanvasFont;
+	
     Super.PostRender(C);
 
     HalfRadarHudTexHeight = RadarBackgroundTex.VSize / 2.0;
@@ -87,33 +106,115 @@ simulated function PostRender(Canvas C) {
 
     PlayerHUD = ChallengeHUD(PlayerOwner.myHUD);
     PlayerOwnerTeam = -1;
+	
     if(PlayerOwner.PlayerReplicationInfo != None){
         PlayerOwnerTeam = PlayerOwner.PlayerReplicationInfo.Team;
     }
 
     PlayerHUDScale = PlayerHUD.Scale;
     RadarGuiScale = class'LGDUtilities.HUDHelper'.static.getScaleForTextureToGetDesiredWidth(RadarBackgroundTex, RadarHudGuiWidth);
-
-    C.Style = ERenderStyle.STY_Translucent;
+	
+	RadarHalfHeight = (HalfRadarHudTexWidth * RadarGuiScale * PlayerHUDScale);
+	
     RadarColor = PlayerHUD.HUDColor;
     RadarCenterDotColor =  class'ColorHelper'.default.BlueColor;
 
-    C.DrawColor = RadarColor * RadarAlpha;
+	//get values for UI overlp issues
+	IsAssault = (Level.Game.Class == class'Botpack.Assault');
+	IsDeathmatch = (Level.Game.Class == class'Botpack.DeathMatchPlus');
+	
+	if(IsAssault) {
+		AssaultTimerX = 2;
+		
+		//Copied from AssaultHUD.uc - DrawFragCount()
+		if (PlayerHUD.bHideAllWeapons  || ((PlayerHUD.HudScale * PlayerHUD.WeaponScale * C.ClipX) <= (C.ClipX - 256 * PlayerHUD.Scale))){
+			AssaultTimerY = C.ClipY - (128 * PlayerHUD.Scale);
+		} else {
+			AssaultTimerY = C.ClipY - (192 * PlayerHUD.Scale);
+		}
+		
+		AssaultTimerTopLeft.X = AssaultTimerX;
+		AssaultTimerTopLeft.Y = AssaultTimerY;
+		
+		AssaultTimerBottomRight.X = ((25 * 5) + 20) * PlayerHUD.Scale;
+		AssaultTimerBottomRight.Y = AssaultTimerTopLeft.Y + (32 * PlayerHUD.Scale);
+		
+	} else if(IsDeathmatch) {
+		PrevCanvasFont = C.Font;
+		C.StrLen("TEST", SpreadTextXL, SpreadTextYL);
+		DMSpreadX = SpreadTextXL;
+		
+		//Copied from ChallengeHUD.uc - DrawGameSynopsis()
+		if (PlayerHUD.bHideAllWeapons) {
+			DMSpreadY = C.ClipY - (SpreadTextYL*2);
+		} else if ((PlayerHUD.HudScale * PlayerHUD.WeaponScale * C.ClipX) <= (C.ClipX - 255 * PlayerHUD.Scale)) {
+			DMSpreadY = C.ClipY - (64*PlayerHUD.Scale) - (SpreadTextYL*2);
+		} else {
+			DMSpreadY = C.ClipY - (128*PlayerHUD.Scale) - (SpreadTextYL*2);
+		}
+				
+		DMSpreadTopLeft.X = 0;
+		DMSpreadTopLeft.Y = DMSpreadY;
+		
+		DMSpreadBottomRight.X = DMSpreadTopLeft.X + SpreadTextXL;
+		DMSpreadBottomRight.Y = DMSpreadTopLeft.Y + SpreadTextYL;
+	}
 
     //get position of target on HUD
     RadarHUDPositionCenter = Vect(0,0,0);
+	
     if(InitiallyPositionAbovePlayerHUDOnLowerLeft) {
         RadarHUDPositionCenter.Y = -64 * PlayerHUDScale;//offset vertically upwards by 128 units -- the height of the player frag count HUD element
-    }
+    }	
+	
+    RadarHUDPositionCenter.X = RadarHUDPositionCenter.X + RadarHalfHeight + RadarHUDOffsetX;
+    RadarHUDPositionCenter.Y = RadarHUDPositionCenter.Y + (C.ClipY + RadarHUDOffsetY) - RadarHalfHeight;
+	
+	RadarHUDPositionTopLeft.X = RadarHUDPositionCenter.X - RadarHalfHeight;
+	RadarHUDPositionTopLeft.Y = RadarHUDPositionCenter.Y - RadarHalfHeight;
+	
+	RadarHUDPositionBottomRight.X = RadarHUDPositionCenter.X + RadarHalfHeight;
+	RadarHUDPositionBottomRight.Y = RadarHUDPositionCenter.Y + RadarHalfHeight;
+	
+	C.Style = ERenderStyle.STY_Normal;
+	C.Font = PlayerHUD.MyFonts.GetBigFont(C.ClipX);
+	C.DrawColor = class'ColorHelper'.default.GreenColor;
+		
+	if(IsAssault) {			
+		IsOverlappingAnotherElement = class'LGDUtilities.HUDHelper'.static.HUDCanvasRectanglesOverlap(C, AssaultTimerTopLeft,AssaultTimerBottomRight, RadarHUDPositionTopLeft,RadarHUDPositionBottomRight);		
+		
+		if(IsOverlappingAnotherElement) {
+			//move radar ABOVE assault timer
+			RadarHUDPositionCenter.Y -= (C.ClipY - AssaultTimerY);
+			
+			if(InitiallyPositionAbovePlayerHUDOnLowerLeft) {
+				RadarHUDPositionCenter.Y += (64*PlayerHUD.Scale);
+			}
+		}
+	} else if(IsDeathmatch) {		
+		IsOverlappingAnotherElement = class'LGDUtilities.HUDHelper'.static.HUDCanvasRectanglesOverlap(C, DMSpreadTopLeft,DMSpreadBottomRight, RadarHUDPositionTopLeft,RadarHUDPositionBottomRight);
+		
+		if(IsOverlappingAnotherElement) {
+			//move radar to the ABOVE of the spread text info
+			RadarHUDPositionCenter.Y -= (C.ClipY - DMSpreadY);
+			
+			if(InitiallyPositionAbovePlayerHUDOnLowerLeft) {
+				RadarHUDPositionCenter.Y += (64*PlayerHUD.Scale);
+			}
+		}
+		
+	}
 
-    RadarHUDPositionCenter.X = RadarHUDPositionCenter.X + (HalfRadarHudTexWidth * RadarGuiScale * PlayerHUDScale) + RadarHUDOffsetX;
-    RadarHUDPositionCenter.Y = RadarHUDPositionCenter.Y + (C.ClipY + RadarHUDOffsetY) - (HalfRadarHudTexHeight * RadarGuiScale * PlayerHUDScale);
-
+	C.Style = ERenderStyle.STY_Translucent;
+    C.DrawColor = RadarColor * RadarAlpha;
+	
     class'LGDUtilities.HUDHelper'.static.DrawTextureAtXY(C, RadarBackgroundTex, RadarHUDPositionCenter.X, RadarHUDPositionCenter.Y, RadarGuiScale, PlayerHUDScale, True, False);
 
     RadarBlipScale = class'LGDUtilities.HUDHelper'.static.getScaleForTextureToGetDesiredWidth(Indicator_SameLevel, RadarBlipSize);
-    C.DrawColor = RadarCenterDotColor * RadarAlpha;
-    class'LGDUtilities.HUDHelper'.static.DrawTextureAtXY(C, Indicator_SameLevel, RadarHUDPositionCenter.X+RadarGUICircleOffsetX, RadarHUDPositionCenter.Y+RadarGUICircleOffsetY, RadarBlipScale, PlayerHUDScale, True, False);
+    
+	C.DrawColor = RadarCenterDotColor * RadarAlpha;
+    
+	class'LGDUtilities.HUDHelper'.static.DrawTextureAtXY(C, Indicator_SameLevel, RadarHUDPositionCenter.X+RadarGUICircleOffsetX, RadarHUDPositionCenter.Y+RadarGUICircleOffsetY, RadarBlipScale, PlayerHUDScale, True, False);
 
     if(RadarTargets.Count > 0) {
         element = RadarTargets.Head;

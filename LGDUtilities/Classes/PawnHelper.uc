@@ -155,7 +155,7 @@ static function Pawn GetPawnFromPlayerID(Actor context, int PlayerID) {
 	return p;
 }
 
-static function Pawn GetRandomPlayerPawnOrBot(Actor context, optional LinkedList PlayerIDsToExclude) {
+static function Pawn GetRandomPlayerPawnOrBot(Actor context, optional LinkedList PlayerIDsToExclude, optional bool IncludeSpectators) {
     local int NumChosen;
 	local Bot b;
 	local PlayerPawn pp;
@@ -164,22 +164,42 @@ static function Pawn GetRandomPlayerPawnOrBot(Actor context, optional LinkedList
 	local LinkedList allPlayersAndBots;
 	local bool excludeSomePlayerIDs;
 	local IntObj playerIDToCheckInExcludeList;
-
+	local bool IncludeThisAsPossibleToBeSelected;
+	
     excludeSomePlayerIDs = (PlayerIDsToExclude != None) && (PlayerIDsToExclude.Count > 0);
 	allPlayersAndBots = new class'LGDUtilities.LinkedList';
     playerIDToCheckInExcludeList = new class'LGDUtilities.IntObj';
 
 	foreach context.AllActors(class'PlayerPawn', pp) {
+		IncludeThisAsPossibleToBeSelected = false;
+		
 	    if(excludeSomePlayerIDs){
             if(pp.PlayerReplicationInfo != None) {
                 playerIDToCheckInExcludeList.Value = pp.PlayerReplicationInfo.PlayerID;
 
                 if(!PlayerIDsToExclude.ContainsValue(playerIDToCheckInExcludeList) ) {
-	                allPlayersAndBots.Push(pp);
+					IncludeThisAsPossibleToBeSelected = true;
 	            }
 	        }
 		} else {
-		    allPlayersAndBots.Push(pp);
+			IncludeThisAsPossibleToBeSelected = true;
+		}
+		
+		//if we aren't to be excluded
+		if(IncludeThisAsPossibleToBeSelected) {
+			if(pp.PlayerReplicationInfo != None) {
+				//if we are to exclude spectators
+				if(IncludeSpectators || !pp.PlayerReplicationInfo.bIsSpectator) {
+					IncludeThisAsPossibleToBeSelected = true;
+				} else {
+					//we don't want to include spectators and the player is marked as a spectator
+					IncludeThisAsPossibleToBeSelected = false;
+				}
+			}
+		}
+		
+		if(IncludeThisAsPossibleToBeSelected) {
+			allPlayersAndBots.Push(pp);
 		}
 	}
 
@@ -209,13 +229,13 @@ static function Pawn GetRandomPlayerPawnOrBot(Actor context, optional LinkedList
 	return PawnChosen;
 }
 
-static function LinkedList GetAllPawnsOfTeam(Actor context, byte Team) {
+static function LinkedList GetAllPawnsOfTeam(Actor context, byte Team, optional bool IncludeSpectators) {
 	local Pawn P;
 	local LinkedList ll;
 	ll = new class'LGDUtilities.LinkedList';
 	
 	For (P=context.Level.PawnList; P!=None; P=P.NextPawn) {
-		if((P.PlayerReplicationInfo != None) && (P.PlayerReplicationInfo.Team == Team)) {
+		if((P.PlayerReplicationInfo != None) && (P.PlayerReplicationInfo.Team == Team) && (IncludeSpectators || !P.PlayerReplicationInfo.bIsSpectator)) {
 			ll.Push(P);
 		}
 	}
@@ -241,13 +261,13 @@ static function Pawn GetBestScoringPawnOfTeam(Actor context, byte Team, optional
 	return Best;
 }
 
-static function LinkedList GetAllPlayeIDsOfTeam(Actor context, byte Team) {
+static function LinkedList GetAllPlayeIDsOfTeam(Actor context, byte Team, optional bool IncludeSpectators) {
 	local Pawn P;
 	local LinkedList ll;
 	ll = new class'LGDUtilities.LinkedList';
 	
 	For (P=context.Level.PawnList; P!=None; P=P.NextPawn) {
-		if((P.PlayerReplicationInfo != None) && (P.PlayerReplicationInfo.Team == Team)) {
+		if((P.PlayerReplicationInfo != None) && (P.PlayerReplicationInfo.Team == Team) && (!IncludeSpectators || !P.PlayerReplicationInfo.bIsSpectator)) {
 			class'LGDUtilities.IntObj'.static.PushIntOntoLinkedList(ll, p.PlayerReplicationInfo.PlayerID);
 		}
 	}

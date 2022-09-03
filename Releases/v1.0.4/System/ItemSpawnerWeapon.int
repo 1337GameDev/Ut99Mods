@@ -1,0 +1,3 @@
+[Public]
+; the weapon
+Object=(Name=ItemSpawnerWeapon.ItemSpawnerWeapon,Class=Class,MetaClass=Botpack.TournamentWeapon,Description="Item Spawner")

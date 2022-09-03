@@ -622,7 +622,8 @@ function AddPlayerIndicator(Pawn player){
     local IndicatorHudTargetListElement le;
     local IndicatorSettings settings;
     local JuggernautPlayerIndicatorModifierFn indicatorMod;
-
+	local IndicatorHud ih;
+	
     if((player == None) || !(player.IsA('Bot') || player.IsA('PlayerPawn')) ){
         return;
     }
@@ -650,15 +651,17 @@ function AddPlayerIndicator(Pawn player){
     le.IndicatorSettings = settings;
     le.IndicatorSettingsModifier = indicatorMod;
     le.Value = player;
-
-    //should exist at this stage as we init the reference at the earlier stage of game execution
-    GlobalIndicatorTargets.GlobalIndicatorTargets.Push(le);
+	
+	ih = class'LGDUtilities.IndicatorHud'.static.GetCurrentPlayerIndicatorHudInstance(self);
+    ih.AddAdvancedTarget(le, true, false, true);
 }
 
 function RemovePlayerIndicator(Pawn player) {
+	local IndicatorHud ih;
+	
     if(player != None){
-        //should exist at this stage as we init the reference at the earlier stage of game execution
-        GlobalIndicatorTargets.GlobalIndicatorTargets.RemoveElementByValue(player);
+		ih = class'LGDUtilities.IndicatorHud'.static.GetCurrentPlayerIndicatorHudInstance(self);
+        ih.RemoveTargetFromAllLists(player, self);
     }
 }
 

@@ -139,7 +139,7 @@ function AddConfiguredTargets() {
 
                 if(DoAddTargetIndicator) {
                     listElement = new class'LGDUtilities.IndicatorHudTargetListElement';
-					          listElement.IndicatorSource = self;
+				    listElement.IndicatorSource = self;
                     indicatorSettings = new class'LGDUtilities.IndicatorSettings';
 
                     listElement.Value = tournamentPlayer;
@@ -158,7 +158,9 @@ function AddConfiguredTargets() {
 
                     IndicatorHudInstance.AddAdvancedTarget(
                         listElement,
-                        false
+                        false,
+						false,
+						true
                     );
                 }
             }
@@ -208,11 +210,11 @@ function AddConfiguredTargets() {
                         indicatorSettings.BuiltinIndicatorTexture = BuiltinIndicatorTextureToUse;
                         listElement.IndicatorSettings = indicatorSettings;
 
-						Log("GeneralIndicatorMutator - Adding bot - name:"$bot.Name);
-
                         IndicatorHudInstance.AddAdvancedTarget(
                             listElement,
-                            false
+							false,
+                            false,
+							true
                         );
                     }
                 }
@@ -272,7 +274,9 @@ function AddConfiguredTargets() {
 
                         IndicatorHudInstance.AddAdvancedTarget(
                             listElement,
-                            false
+                            false,
+							false,
+							true
                         );
                     }
                 }
@@ -324,7 +328,9 @@ function AddConfiguredTargets() {
 
 						IndicatorHudInstance.AddAdvancedTarget(
 							listElement,
-							false
+							false,
+							false,
+							true
 						);
 					}
 				}
@@ -396,7 +402,9 @@ function AddConfiguredTargets() {
 
 						IndicatorHudInstance.AddAdvancedTarget(
 							listElement,
-							false
+							false,
+							false,
+							true
 						);
 					}
 				}
@@ -467,7 +475,9 @@ function AddConfiguredTargets() {
 
 						IndicatorHudInstance.AddAdvancedTarget(
 							listElement,
-							false
+							false,
+							false,
+							true
 						);
 					}
 				}
@@ -528,7 +538,9 @@ function AddConfiguredTargets() {
 
                     IndicatorHudInstance.AddAdvancedTarget(
                         listElement,
-                        false
+                        false,
+						false,
+						true
                     );
                 }
             }
@@ -583,7 +595,9 @@ function AddConfiguredTargets() {
 
                     IndicatorHudInstance.AddAdvancedTarget(
                         listElement,
-                        false
+                        false,
+						false,
+						true
                     );
                 }
             }

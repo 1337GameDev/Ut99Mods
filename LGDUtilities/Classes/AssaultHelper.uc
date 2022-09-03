@@ -80,7 +80,7 @@ static final function bool IsFortNameFriendly(string fortName) {
     InStr(fortNameCap, "FUELING") > -1
     ||
     InStr(fortNameCap, "FUELD") > -1
-    ||
+	||
     InStr(fortNameCap, "FUELED") > -1
     ||
     InStr(fortNameCap, "FORTSTANDARD") > -1

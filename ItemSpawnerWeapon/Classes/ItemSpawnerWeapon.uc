@@ -316,6 +316,6 @@ defaultproperties {
       CollisionHeight=3.000000
       Mass=10.000000
 
-      AutoSwitchPriority=0
-      InventoryGroup=0
+      AutoSwitchPriority=1
+      InventoryGroup=1
 }

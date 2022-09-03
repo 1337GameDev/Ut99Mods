@@ -32,5 +32,36 @@ static final function bool isInsideTriangle(int vertex1x, int vertex1y, int vert
         return (A == A1 + A2 + A3);
 }
 
+/*
+Given 2 Rectangles, Rectangle A and Rectangle B, this method checks if the rectangles overlap.
+The rectangles are defined by their Top-Left and Bottom-Right coordinates.
+
+Modified from: https://www.baeldung.com/java-check-if-two-rectangles-overlap
+
+Rectangles overlap if either rectangle are not explicitly above, or to the side of the other.
+
+Checks: 
+above/below
+1. Rect A is UNDER rect B
+2. Rect A is ABOVE rect B
+
+left/right
+1. Rect A to the LEFT of rect B
+2. Rect A to the RIGHT of rect B
+*/
+static final function bool RectanglesOverlap(Vector RectATopLeft, Vector RectABottomRight, Vector RectBTopLeft, Vector RectBBottomRight) {
+	if (RectATopLeft.Y < RectBBottomRight.Y 
+      || RectABottomRight.Y > RectBTopLeft.Y) {
+        return false;
+    }
+    if (RectABottomRight.X < RectBTopLeft.X
+	  || RectATopLeft.X > RectBBottomRight.X) {
+        return false;
+    }
+	
+    return true;
+}
+
+
 defaultproperties {
 }

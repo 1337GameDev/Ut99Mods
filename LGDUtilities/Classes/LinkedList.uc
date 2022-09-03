@@ -254,7 +254,7 @@ function bool RemoveElementByValue(object val) {
     local ListElement listElement;
     if(val != None){
         listElement = GetElementByValue(val);
-
+		
         if(listElement != None){
             listElement.RemoveFromList();
         }
@@ -266,7 +266,7 @@ function bool RemoveElementByValue(object val) {
 function int RemoveAll(){
    local int numRemoved;
    local ListElement removed;
-
+   
    if(self.Count > 0) {
        While(self.Head != None){
            removed = self.Pop();
