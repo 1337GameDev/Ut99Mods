@@ -15,7 +15,7 @@ To merely use the pre-compiled packages, navigate to <a href="https://github.com
 
 :warning: This has been tested / compiled on v469b GOTY of UT99, but **LIKELY** would work on prior versions just fine (such as the latest official version of `v436`).
 
-<span style="font-size:20px;color:#eb7d34">&#9888;</span> **NOTE:** <span style="font-size:20px;color:#eb7d34">&#9888;</span> These mods require ChaosUT and Relics to work properly. These are included with the GOTY version of the game. If you have a different version, please download and install these
+<span style="font-size:20px;color:#eb7d34">&#9888;</span> **NOTE:** <span style="font-size:20px;color:#eb7d34">&#9888;</span> These mods require ChaosUT and Relics to work properly. These are included with the GOTY version of the game. If you have a different version, please download and install these. These can be found <a href="https://chaoticdreams.org/chaosut-download/">here (ChaosUT)</a> and <a href="https://community.pcgamingwiki.com/files/file/133-unreal-tournament-bonus-pack-1/">here (Relics - Epic Bonus Pack #1)</a>. These are also included in the `Dependencies` folder for convenience.
 
 Then load up the game, and look at the relevant test map, as well as the included mutators. The mutators should appear in the normal mutator list and be available to play with, as you would any other mutator.
 
