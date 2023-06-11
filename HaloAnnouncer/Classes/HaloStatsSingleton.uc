@@ -35,9 +35,9 @@ function HaloStatsPlayerReplicationInfo GetHaloStatsPlayerReplicationInfo(Pawn P
 	    PlayerHaloStats = new class'LGDUtilities.LinkedList';
 	}
 	
-	if((PawnOwner != None) && (PawnOwner.PlayerReplicationInfo != None)){
+	if((PawnOwner != None) && (PawnOwner.PlayerReplicationInfo != None)) {
 		PlayerID = PawnOwner.PlayerReplicationInfo.PlayerID;
-		
+				
 		le = PlayerHaloStats.Head;
 		while(le != None) {
 			stats = HaloStatsPlayerReplicationInfo(le.Value);
@@ -51,9 +51,10 @@ function HaloStatsPlayerReplicationInfo GetHaloStatsPlayerReplicationInfo(Pawn P
 		}
 
 		if(!foundInfo) {
-			stats = new class'HaloAnnouncer.HaloStatsPlayerReplicationInfo';
+			stats = Spawn(class'HaloAnnouncer.HaloStatsPlayerReplicationInfo');
 			stats.PlayerID = PlayerID;
 			stats.PawnOwner = PawnOwner;
+			stats.Init();
 			
 			PlayerHaloStats.Push(stats);
 		}

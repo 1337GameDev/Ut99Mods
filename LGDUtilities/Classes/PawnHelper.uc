@@ -261,6 +261,43 @@ static function Pawn GetBestScoringPawnOfTeam(Actor context, byte Team, optional
 	return Best;
 }
 
+static function LinkedList GetBestScoringPawns(Actor context, optional bool limitByIsPlayer) {
+	return class'PawnHelper'.static.GetBestScoringPawnsInScoreRange(context, limitByIsPlayer, -1, -1);
+}
+
+static function LinkedList GetBestScoringPawnsInScoreRange(Actor context, bool limitByIsPlayer, int minimumScore, int maximumScore) {
+	local LinkedList pawnList;
+	local Pawn P;
+	local int BestScore;
+	
+	BestScore = -1;
+	pawnList = new class'LGDUtilities.LinkedList';
+	
+	//find best score within range
+	For (P=context.Level.PawnList; P!=None; P=P.NextPawn) {
+		if(!limitByIsPlayer || P.bIsPlayer) {
+			if((minimumScore == -1) || (P.PlayerReplicationInfo.Score >= minimumScore)) {
+				if((maximumScore == -1) || (P.PlayerReplicationInfo.Score <= maximumScore)) {
+					if((BestScore == -1) || (P.PlayerReplicationInfo.Score >= BestScore)) {
+						BestScore = P.PlayerReplicationInfo.Score;
+					}
+				}
+			}
+		}
+	}
+	
+	//now add all pawns with this score to the list (if they match the isPlayer check)
+	For (P=context.Level.PawnList; P!=None; P=P.NextPawn) {
+		if(!limitByIsPlayer || P.bIsPlayer) {
+			if(P.PlayerReplicationInfo.Score == BestScore) {
+				pawnList.Push(P);
+			}
+		}
+	}
+	
+	return pawnList;
+}
+
 static function LinkedList GetAllPlayeIDsOfTeam(Actor context, byte Team, optional bool IncludeSpectators) {
 	local Pawn P;
 	local LinkedList ll;
@@ -281,6 +318,18 @@ static function bool IsPawnDead(Pawn p) {
     } else {
         return (p.bIsPlayer && p.bHidden && (p.Health <= 0) && p.IsInState('Dying') );
     }
+}
+
+simulated static function PlayerPawn GetActivePlayerPawn(Actor context){
+    local PlayerPawn P;
+
+    ForEach context.AllActors(class'PlayerPawn', P) {
+        if (P.myHUD != None) {
+            return P;
+        }
+    }
+
+    return None;
 }
 
 defaultproperties {

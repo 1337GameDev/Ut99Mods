@@ -12,13 +12,14 @@ var int SkullsCollectedCountdown;//countdown until skulls will be collected
 var bool ShowDroppedSkullIndicators;
 var bool ShowPlayersWithSkullThreshold;
 var int SkullThresholdToShowPlayers;
+var bool UseHaloAnnouncer;
 
 var bool bHasInitAnyHUDMutators;
 var bool bHasPlayedIntro;
 
 replication {
 	reliable if(Role == ROLE_Authority)
-		SkullCarryLimit, SkullCollectTimeInterval, SkullsCollectedCountdown, ShowDroppedSkullIndicators, ShowPlayersWithSkullThreshold, SkullThresholdToShowPlayers, SkullCollectGoal, bHasInitAnyHUDMutators, bHasPlayedIntro;
+		SkullCarryLimit, SkullCollectTimeInterval, SkullsCollectedCountdown, ShowDroppedSkullIndicators, ShowPlayersWithSkullThreshold, SkullThresholdToShowPlayers, SkullCollectGoal, bHasInitAnyHUDMutators, bHasPlayedIntro, UseHaloAnnouncer;
 }
 
 simulated function PostBeginPlay() {

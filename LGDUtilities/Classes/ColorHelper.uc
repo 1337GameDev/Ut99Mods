@@ -1,7 +1,7 @@
 class ColorHelper extends Actor nousercreate;
 
 var() editconst const color WhiteColor, RedColor, GreenColor,
-GoldColor, TurqColor, GrayColor, BlueColor;
+GoldColor, TurqColor, GrayColor, BlackColor, BlueColor;
 
 //=============================================================================
 // function SColor.
@@ -149,6 +149,7 @@ final static function color hsbToColor(byte hue, byte saturation, byte brightnes
 }
 
 defaultproperties {
+      BlackColor=(R=0,G=0,B=0,A=0)
       WhiteColor=(R=255,G=255,B=255,A=0)
       RedColor=(R=255,G=0,B=0,A=0)
       GreenColor=(R=0,G=255,B=0,A=0)

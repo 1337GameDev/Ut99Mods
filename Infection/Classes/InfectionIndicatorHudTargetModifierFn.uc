@@ -15,7 +15,7 @@ function IndicatorSettings ModifierFunc(IndicatorHudTargetListElement indicatorL
        HudOwnerTeam = indicatorHud.PlayerOwner.PlayerReplicationInfo.Team;
    }
    
-   igi = InfectionGameInfo(indicatorHud.Level.Game);
+   igi = InfectionGameInfo(Self.Context);
 
    settings = indicatorListElement.IndicatorSettings;
    target = Actor(indicatorListElement.Value);

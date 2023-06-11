@@ -19,18 +19,19 @@ var bool InfiniteAmmo;
 var bool AnyDeathInfects;
 
 var UWindowCheckBox ShowZombieIndicatorCheckbox, ShowHumanIndicatorCheckbox, ShowSameTeamIndicatorsCheckbox,
-		HumansPickupWeaponsCheckbox, ZombiesPickupWeaponsCheckbox, InfiniteAmmoCheckbox, AnyDeathInfectsCheckbox;
+		HumansPickupWeaponsCheckbox, ZombiesPickupWeaponsCheckbox, InfiniteAmmoCheckbox, AnyDeathInfectsCheckbox,
+		UseHaloAnnouncerCheckbox;
 
 var UWindowEditControl MinimumZombiesEdit, ZombieJumpModifierEdit, ZombieMovementMultiplierEdit,
 		ZombieDamageModEdit, HumanDamageModEdit;
 
 var string ShowZombieIndicatorText, ShowHumanIndicatorText, ShowSameTeamIndicatorsText, MinimumZombiesText,
 		ZombieJumpModifierText, ZombieMovementMultiplierText, HumansPickupWeaponsText, ZombiesPickupWeaponsText,
-		InfiniteAmmoText, AnyDeathInfectsText, ZombieDamageModText, HumanDamageModText;
+		InfiniteAmmoText, AnyDeathInfectsText, ZombieDamageModText, HumanDamageModText, UseHaloAnnouncerText;
 
 var string ShowZombieIndicatorHelp, ShowHumanIndicatorHelp, ShowSameTeamIndicatorsHelp, MinimumZombiesHelp,
 		ZombieJumpModifierHelp, ZombieMovementMultiplierHelp, HumansPickupWeaponsHelp, ZombiesPickupWeaponsHelp,
-		InfiniteAmmoHelp, AnyDeathInfectsHelp, ZombieDamageModHelp, HumanDamageModHelp;
+		InfiniteAmmoHelp, AnyDeathInfectsHelp, ZombieDamageModHelp, HumanDamageModHelp, UseHaloAnnouncerHelp;
 
 function Created() {
 	local int ControlWidth, ControlLeft, ControlRight, ControlOffsetRightSideTop;
@@ -165,6 +166,14 @@ function Created() {
 	AnyDeathInfectsCheckbox.bChecked = class'Infection.InfectionGameInfo'.default.AnyDeathInfects;
 	AnyDeathInfectsCheckbox.Align = TA_Right;
 	ControlOffsetRightSideTop += 20;
+	
+	UseHaloAnnouncerCheckbox = UWindowCheckBox(CreateControl(class'UWindowCheckBox', ControlRight+32, ControlOffsetRightSideTop, ControlWidth+36, 1));
+	UseHaloAnnouncerCheckbox.SetText(UseHaloAnnouncerText);
+	UseHaloAnnouncerCheckbox.SetHelpText(UseHaloAnnouncerHelp);
+	UseHaloAnnouncerCheckbox.SetFont(F_Normal);
+	UseHaloAnnouncerCheckbox.bChecked = class'Infection.InfectionGameInfo'.default.UseHaloAnnouncer;
+	UseHaloAnnouncerCheckbox.Align = TA_Right;
+	ControlOffsetRightSideTop += 20;
 }
 
 function LoadCurrentValues() {
@@ -206,6 +215,7 @@ function LoadCurrentValues() {
 	ZombieDamageModEdit.SetValue(string(Class<InfectionGameInfo>(BotmatchParent.GameClass).Default.ZombieDamageMod));
 	HumanDamageModEdit.SetValue(string(Class<InfectionGameInfo>(BotmatchParent.GameClass).Default.HumanDamageMod));
 
+	UseHaloAnnouncerCheckbox.bChecked = Class<InfectionGameInfo>(BotmatchParent.GameClass).Default.UseHaloAnnouncer;
 }
 
 function Notify(UWindowDialogControl C, byte E) {
@@ -263,8 +273,9 @@ function Notify(UWindowDialogControl C, byte E) {
 				case HumanDamageModEdit:
 					class'Infection.InfectionGameInfo'.default.HumanDamageMod = Float(HumanDamageModEdit.GetValue());
 					matchedAControl = true;
-
-					break;
+				case UseHaloAnnouncerCheckbox:
+					class'Infection.InfectionGameInfo'.default.UseHaloAnnouncer = UseHaloAnnouncerCheckbox.bChecked;
+					matchedAControl = true;
 			}
 			break;
 	}
@@ -279,7 +290,7 @@ function Notify(UWindowDialogControl C, byte E) {
 
 defaultproperties {
     ShowZombieIndicatorCheckbox=None
-	  ShowHumanIndicatorCheckbox=None
+	ShowHumanIndicatorCheckbox=None
 
     MinimumZombiesEdit=None
 
@@ -288,19 +299,20 @@ defaultproperties {
 
     ShowZombieIndicatorText="Zombie Indicator?"
     ShowHumanIndicatorText="Human Indicators?"
-	  ShowSameTeamIndicatorsText="Ally Indicators?"
+	ShowSameTeamIndicatorsText="Ally Indicators?"
     MinimumZombiesText="Min Zombies"
     ZombieJumpModifierText="Zombie Jump Mod"
     ZombieMovementMultiplierText="Zombie Move Mod"
-	  HumansPickupWeaponsText="Human Weapon Pickup?"
-	  ZombiesPickupWeaponsText="Zombie Weapon Pickup?"
-	  InfiniteAmmoText="Infinite Ammo?"
-	  ZombieDamageModText="Zombie Dmg Mod"
-	  HumanDamageModText="Human Dmg Mod"
-	  AnyDeathInfectsText="Any Death Infects?"
+	HumansPickupWeaponsText="Human Weapon Pickup?"
+	ZombiesPickupWeaponsText="Zombie Weapon Pickup?"
+	InfiniteAmmoText="Infinite Ammo?"
+	ZombieDamageModText="Zombie Dmg Mod"
+	HumanDamageModText="Human Dmg Mod"
+	AnyDeathInfectsText="Any Death Infects?"
+	UseHaloAnnouncerText="Use HaloAnnouncer?"
 
-	  ZombieDamageMod=3.0,
-	  HumanDamageMod=0.75,
+	ZombieDamageMod=3.0,
+	HumanDamageMod=0.75,
 
     ShowZombieIndicatorHelp="Whether to show an indicator (for all to see) of the zombies."
     ShowHumanIndicatorHelp="Whether to show an indicator (for all to see) of the humans."
@@ -308,12 +320,13 @@ defaultproperties {
     MinimumZombiesHelp="Minimum number of zombies to start the game with"
     ZombieJumpModifierHelp="The multiplier for the zombies related to jumping. (3 = Jump Boots)"
     ZombieMovementMultiplierHelp="The multiplier for movement speed of the zombies."
-	  HumansPickupWeaponsHelp="Whether humans can pick up weapons."
-	  ZombiesPickupWeaponsHelp="Whether zombies can pick up weapons."
-	  InfiniteAmmoHelp="Do weapons have infinite ammo?"
-	  AnyDeathInfectsHelp="Does any human death cause them to become a zombie? (eg: suicide, trap on map, etc)"
-	  ZombieDamageModHelp="The damage multiplier for zombies."
-	  HumanDamageModHelp="The damage multiplier for humans."
+	HumansPickupWeaponsHelp="Whether humans can pick up weapons."
+	ZombiesPickupWeaponsHelp="Whether zombies can pick up weapons."
+	InfiniteAmmoHelp="Do weapons have infinite ammo?"
+	AnyDeathInfectsHelp="Does any human death cause them to become a zombie? (eg: suicide, trap on map, etc)"
+	UseHaloAnnouncerHelp="Whether to use the HaloAnnouncer mutator for the game announcer."
+	ZombieDamageModHelp="The damage multiplier for zombies."
+	HumanDamageModHelp="The damage multiplier for humans."
 
     FragHelp="The number of kills to win the game."
 }

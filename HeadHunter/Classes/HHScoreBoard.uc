@@ -307,7 +307,7 @@ defaultproperties {
       LightGreenColor=(R=0,G=136,B=0,A=0)
       DarkGreenColor=(R=0,G=255,B=128,A=0)
       SkullTex=Texture'UnrealShare.Icons.IconSkull'
-      Restart="You have been killed.  Hit [Fire] to resapwn!"
+      Restart="You have been killed.  Hit [Fire] to respawn!"
       Continue="Hit [Fire] to begin the next match!"
       Ended="The game has ended."
       FragsString="Skulls Collected"

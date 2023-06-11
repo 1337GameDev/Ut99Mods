@@ -1,3 +1,7 @@
+//--------------------------------------------------
+// Handles dispatching messages via gametypes when players die
+//--------------------------------------------------
+
 //
 // An Unreal Tournament Death Message.
 //
@@ -104,6 +108,13 @@ static function ClientReceive(
 	optional Object OptionalObject
 	)
 {
+	local HaloAnnouncerCustomMessagesSingleton messageSingleton;
+	local ListElement le;
+	local class<LocalMessagePlus> messageClass;
+	local class<HaloAnnouncerVictimMessage> victimMessageClass;
+	
+	Log("HaloDeathMessagePlus - ClientReceive - P.PlayerReplicationInfo.PlayerName: "$P.PlayerReplicationInfo.PlayerName$" - Switch: "$Switch);
+	
 	if (RelatedPRI_1 == P.PlayerReplicationInfo) {
 		// Interdict and send the child message instead.
 		if (TournamentPlayer(P).myHUD != None) {
@@ -119,6 +130,21 @@ static function ClientReceive(
 			if ( (TournamentPlayer(P).Level.TimeSeconds - TournamentPlayer(P).LastKillTime < 3) && (Switch != 1) ) {
 				TournamentPlayer(P).MultiLevel++;
 				TournamentPlayer(P).ReceiveLocalizedMessage(class'HaloAnnouncer.HaloMultiKillMessage', TournamentPlayer(P).MultiLevel);
+				
+				messageSingleton = class'HaloAnnouncer.HaloAnnouncerCustomMessagesSingleton'.static.GetRef(P);
+				if((messageSingleton != None) && (messageSingleton.CustomMultiKillMessages != None)) {
+					le = messageSingleton.CustomMultiKillMessages.Head;
+					
+					while(le != None) {
+						messageClass = class<LocalMessagePlus>(le.Value);
+						
+						if(messageClass != None) {
+							TournamentPlayer(P).ReceiveLocalizedMessage(messageClass, TournamentPlayer(P).MultiLevel);
+						}
+						
+						le = le.Next;
+					}
+				}
 			} else {
 				TournamentPlayer(P).MultiLevel = 0;
 			}
@@ -133,6 +159,22 @@ static function ClientReceive(
 		}
 	} else if (RelatedPRI_2 == P.PlayerReplicationInfo) {
 		TournamentPlayer(P).ReceiveLocalizedMessage(class'VictimMessage', 0, RelatedPRI_1);
+		
+		messageSingleton = class'HaloAnnouncer.HaloAnnouncerCustomMessagesSingleton'.static.GetRef(P);
+		if((messageSingleton != None) && (messageSingleton.CustomVictimMessages != None)) {
+			le = messageSingleton.CustomVictimMessages.Head;
+			
+			while(le != None) {
+				victimMessageClass = class<HaloAnnouncerVictimMessage>(le.Value);
+				
+				if(victimMessageClass != None) {
+					TournamentPlayer(P).ReceiveLocalizedMessage(victimMessageClass, 0, RelatedPRI_1, RelatedPRI_2, P.Level.Game);
+				}
+				
+				le = le.Next;
+			}
+		}
+		
 		Super.ClientReceive(P, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
 	} else {
 		Super.ClientReceive(P, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);

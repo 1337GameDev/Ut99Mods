@@ -35,6 +35,7 @@ var LinkedList ExtraPRIList;
 var bool bHasInitAnyHUDMutators;
 var bool bHasPlayedIntro;
 var bool GameStarted;
+var bool UseHaloAnnouncer;
 
 replication {
 	reliable if (Role == ROLE_Authority)
@@ -42,7 +43,7 @@ replication {
 	
 	//replicated on first update -- vars that don't change after initial replication	
 	reliable if ((Role == ROLE_Authority) && bNetInitial)
-		MinimumZombies, ShowZombieIndicators, ShowHumanIndicators, ShowSameTeamIndicators, ZombieMovementModifier, ZombieJumpModifier, ZombieTeam, HumanTeam, NeutralTeam, ZombieDamageMod, HumanDamageMod, HumansPickupWeapons, ZombiesPickupWeapons, InfiniteAmmo, AnyDeathInfects;
+		MinimumZombies, ShowZombieIndicators, ShowHumanIndicators, ShowSameTeamIndicators, ZombieMovementModifier, ZombieJumpModifier, ZombieTeam, HumanTeam, NeutralTeam, ZombieDamageMod, HumanDamageMod, HumansPickupWeapons, ZombiesPickupWeapons, InfiniteAmmo, AnyDeathInfects, UseHaloAnnouncer;
 }
 
 simulated function PostBeginPlay() {
@@ -79,6 +80,7 @@ defaultproperties {
 	
 	bHasInitAnyHUDMutators=false,
 	bHasPlayedIntro=false,
-	GameStarted=false
+	GameStarted=false,
+	UseHaloAnnouncer=true
 
 }

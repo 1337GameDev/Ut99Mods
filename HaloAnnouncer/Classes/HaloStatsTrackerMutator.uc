@@ -25,86 +25,185 @@ static function HaloStatsTrackerMutator RegisterMutator(Actor context) {
     return HaloStatsTrackerMutator(mut);
 }
 
-function ScoreKill(Pawn Killer, Pawn Victim) {
+function bool PreventDeath(Pawn Victim, Pawn Killer, name damageType, vector HitLocation) {
 	local HaloStatsSingleton haloStats;
 	local HaloStatsPlayerReplicationInfo killerStats, victimStats;
+	local string killerWeaponName;
+	local Enforcer killerWeaponEnforcer;
 	
-	//local InfectionGameInfo infectionGame;
-	//local JuggernautGameInfo juggernautGame;
-	
-	
+	local TournamentPlayer killerTP, victimTP;
 	local float CurrentLevelTime;
+	local bool OnlyInvolvedPlayers;//used to check if only "players" (Bots/Pawns involved in the game and scoring -- excludes spectators or other pawns)
+	local bool IsSuicide; 
+	local bool IsBetrayal;
 	
-	Super.ScoreKill(Killer, Victim);
+	local int CurrentKillCount;
 	
-	//prevent DeathMatchPlus.Killed -> GameInfo.Killed / DeathMatchPlus.NotifySpree from sending spree messages
-	Killer.Spree = 0;
-	CurrentLevelTime = Level.TimeSeconds;
+    local bool DeathPrevented;
+	DeathPrevented = Super.PreventDeath(Victim, Killer, damageType, HitLocation);
 	
-	if((Killer.PlayerReplicationInfo != None) && (Victim.PlayerReplicationInfo != None)) {
-		haloStats = class'HaloAnnouncer.HaloStatsSingleton'.static.GetRef(self);
+	if(!DeathPrevented) {
+		OnlyInvolvedPlayers = (Victim.bIsPlayer && ((Killer == None) || (Killer.bIsPlayer)) );
+		IsSuicide = (Killer == Victim) || (damageType == 'Suicided') || (Killer == None);
+		IsBetrayal = Level.Game.bTeamGame && (Killer != None) && (Killer.PlayerReplicationInfo != None) && (Victim != None) && (Victim.PlayerReplicationInfo != None) && (Victim.PlayerReplicationInfo.Team == Killer.PlayerReplicationInfo.Team);
 		
-		if(haloStats != None) {
-			killerStats = haloStats.GetHaloStatsPlayerReplicationInfo(Killer);
-			victimStats = haloStats.GetHaloStatsPlayerReplicationInfo(Victim);
-			
-			//log the kill, based on weapon / team / juggernaut
-			if(killerStats  != None) {
-				if((CurrentLevelTime - killerStats.LastKillTime) <= MaxTimeBetweenSpreeKills){
-					killerStats.SpreeCount++;
+		killerTP = TournamentPlayer(Killer);
+		victimTP = TournamentPlayer(Victim);
+		
+		Log("HaloStatsTrackerMutator - PreventDeath");
+		
+		if(OnlyInvolvedPlayers) {
+			if(Killer.Weapon != None) {
+				killerWeaponEnforcer = Enforcer(Killer.Weapon);
+				
+				if((killerWeaponEnforcer != None) && (killerWeaponEnforcer.SlaveEnforcer != None)) {
+					killerWeaponName = "Botpack.DoubleEnforcer";
+				} else {
+					killerWeaponName = string(Killer.Weapon.Class);
 				}
-				
-				killerStats.LastKillTime = CurrentLevelTime;
-				
-				
-				
-				if(Killer.Weapon != None) {
-					//shotgun check
-					if(Killer.Weapon.IsA('PrimaryShotOnlyFlakCannon')) {
-						killerStats.ShotgunKillSpreeCount++;
-					} else if(Killer.Weapon.IsA('EnergySword')) {//sword check
-						killerStats.SwordKillSpreeCount++;
-					}
-					
-					//gametype checks
-					/*
-					infectionGame = InfectionGameInfo(Level.Game);
-					if(infectionGame != None) {
-						//if killer was a zombie, and killed a human
-						if((Killer.PlayerReplicationInfo.Team == infectionGame.ZombieTeam) && (Victim.PlayerReplicationInfo.Team == infectionGame.HumanTeam)) {
-							killerStats.HumanKillSpreeCount++;
-						} else if((Killer.PlayerReplicationInfo.Team == infectionGame.HumanTeam) && (Victim.PlayerReplicationInfo.Team == infectionGame.ZombieTeam)) {//if killer was a human and killed a zombie
-							killerStats.InfectedKillSpreeCount++;
-						}
-					}
-					*/
-					
-					/*
-					juggernautGame = JuggernautGameInfo(Level.Game);
-					if(juggernautGame != None) {
-						//if killer is the current juggernaut
-						if((juggernautGame.JugRepInfo != None) && (juggernautGame.JugRepInfo.CurrentJuggernautPlayerID == Killer.PlayerReplicationInfo.PlayerID)){
-							killerStats.JuggernautKillSpreeCount++;
-						}
-					}
-					*/
-				}
-				
-				self.NotifySpree(Killer, killerStats.SpreeCount);
+			} else {
+				killerWeaponName = "NONE";
 			}
 			
-			//check for suicide? Killer == None?
+			//pawn was killed, track stats for killer and victim
+			CurrentLevelTime = Level.TimeSeconds;
 			
-			//reset counts for player who was killed
-			if(victimStats != None) {
-				victimStats.ResetAllCounts();
+			//prevent DeathMatchPlus.Killed -> GameInfo.Killed / DeathMatchPlus.NotifySpree from sending spree messages
+			//prevents invocation / use of Botpack.KillingSpreeMessage
+			Killer.Spree = 0;
+			
+			//now prevent first blood message - WE want control of this
+			Victim.Level.Game.SetPropertyText("bFirstBlood", "true");
+			
+			Log("HaloStatsTrackerMutator - Set player spree to 0.");
+			Log("HaloStatsTrackerMutator - killerWeaponName: "$killerWeaponName);
+						
+			if(Victim.PlayerReplicationInfo != None) {
+				//get the class that caches and holds the replication info objects for each player
+				haloStats = class'HaloAnnouncer.HaloStatsSingleton'.static.GetRef(self);
+				
+				if(haloStats != None) {
+					killerStats = haloStats.GetHaloStatsPlayerReplicationInfo(Killer);
+					victimStats = haloStats.GetHaloStatsPlayerReplicationInfo(Victim);
+					
+					//log the kill, based on weapon / team / etc
+					//not a suicide AND killer had halo stats and player replication info
+					if(!IsSuicide && (killerStats != None)) {
+						CurrentLevelTime = Level.TimeSeconds;
+						killerStats.CurrentSpreeSinceDeath++;
+						
+						//if the killer has never gotten a "last kill" (just spawned or game started) or we are within the spree time
+						if((killerTP.LastKillTime == 0) || ((CurrentLevelTime - killerTP.LastKillTime) <= MaxTimeBetweenSpreeKills)) {
+							//killer is within the kill time to continue their spree
+							//killer didn't commit suicide, and if this is a team game, the killer and victim aren't on the same team (no betrayals)
+							if (!IsBetrayal) {
+								killerStats.CurrentSpreeCount++;
+								killerTP.LastKillTime = CurrentLevelTime;
+								
+								if(Killer.Weapon != None) {
+									if(Killer.Weapon.Class == killerStats.CurrentSpreeWeapon) {
+										//increase spree
+										killerStats.CurrentSpreeCountWithWeapon++;
+										
+										Log("HaloStatsTrackerMutator - Continuing weapon spree for this kill for weapon:"$killerWeaponName);
+									} else {
+										killerStats.CurrentSpreeCountWithWeapon = 1;
+										killerStats.CurrentSpreeWeapon = Killer.Weapon.Class;
+										
+										Log("HaloStatsTrackerMutator - RESET weapon spree for kill");
+									}
+								} else {
+									killerStats.CurrentSpreeCountWithWeapon = 0;
+									killerStats.CurrentSpreeWeapon = None;
+									
+									Log("HaloStatsTrackerMutator - ENDED weapon kill spree");
+								}
+								
+							} else {
+								Log("HaloStatsTrackerMutator - Player was killed, and within spree time, but didn't pass player check (spree count not tracked)....");
+							}
+						} else {
+							Log("HaloStatsTrackerMutator - Not within spree time to increment spree counter");
+						}
+						
+						//track kills with this weapon
+						CurrentKillCount = killerStats.AddToKillCount(killerWeaponName, 1);
+																		
+						Log("HaloStatsTrackerMutator - Killer kill counts:");
+						killerStats.KillCounts.InOrderLog();
+						Log("HaloStatsTrackerMutator - Killer killed by counts:");
+						killerStats.KilledByCounts.InOrderLog();
+						
+					}//not suicide and killer had stats object
+					
+					//before resetting any, call any custom trackers
+					ExecuteCustomTrackerCallbacks(killerStats, victimStats);
+					Log("HaloStatsTrackerMutator - Called ExecuteCustomTrackerCallbacks");
+					
+					//get stats tracking for victim
+					
+					//reset counts for player who was killed
+					if(victimStats != None) {
+						victimStats.ResetSpree();
+						CurrentKillCount = victimStats.AddToKilledByCount(killerWeaponName, 1);
+						
+						Log("HaloStatsTrackerMutator - Victim kill counts:");
+						victimStats.KillCounts.InOrderLog();
+						Log("HaloStatsTrackerMutator - Victim killed By counts:");
+						victimStats.KilledByCounts.InOrderLog();
+						
+						if(IsSuicide) {
+							victimStats.SuicideCount++;
+						}
+						
+						if(IsBetrayal) {
+							victimStats.BetrayalCount++;
+						}
+					}//victim stats not empty
+					
+					//trigger any announcers based on new stats being updated
+					self.TriggerAnnouncementsFromStats(victimStats, killerStats, OnlyInvolvedPlayers, IsSuicide, IsBetrayal, damageType);
+				}
+			}//victim have replication info isn't empty
+		}//only involves players -- we don't track info on non-players / spectators
+	}//death not prevented
+	
+    return DeathPrevented;
+}
+
+function ScoreKill(Pawn Killer, Pawn Other) {
+    Super.ScoreKill(Killer, Other);
+	
+	//scorekill chain executed, so now process any score change events
+	//note currerent player rankings
+	
+}
+
+function ExecuteCustomTrackerCallbacks(HaloStatsPlayerReplicationInfo killerStats, HaloStatsPlayerReplicationInfo victimStats) {
+	local HaloAnnouncerCustomMessagesSingleton singleton;
+	local ListElement le;
+	local HaloStatsTrackerCallbackFn callback;
+	
+	singleton = class'HaloAnnouncer.HaloAnnouncerCustomMessagesSingleton'.static.GetRef(self);
+	
+	if((singleton != None) && (singleton.CustomStatTrackers != None)) {
+		le = singleton.CustomStatTrackers.Head;
+		
+		while(le != None) {
+			callback = HaloStatsTrackerCallbackFn(le.Value);
+			
+			if(callback != None) {
+				callback.TrackerCallbackFunc(killerStats, victimStats);
 			}
+			
+			le = le.Next;
 		}
 	}
 }
 
 function bool HandleRestartGame() {
 	// reset all counts
+	Log("HaloStatsTrackerMutator - HandleRestartGame");
 	ResetAllPawnHaloStats();
 	
 	return Super.HandleRestartGame();
@@ -112,6 +211,7 @@ function bool HandleRestartGame() {
 
 function bool HandleEndGame() {
 	// reset all counts
+	Log("HaloStatsTrackerMutator - HandleEndGame");
 	ResetAllPawnHaloStats();
 	
 	return Super.HandleEndGame();
@@ -174,22 +274,62 @@ function Timer() {
 	}
 }
 
-function NotifySpree(Pawn Other, int SpreeNum) {
+//invokes HaloAnnouncer.HaloKillingSpreeMessage
+function NotifySpree(Pawn Other, int KillerSpreeNum) {
 	local Sound SoundToPlay;
 	local string SpreeNote;
 	
 	if(Other.IsA('PlayerPawn')) {
+		Log("HaloStatsTrackerMutator - NotifySpree for: "$Other.PlayerReplicationInfo.PlayerName$" - KillerSpreeNum:"$KillerSpreeNum);
+	
 		//if spree was between 2 and 10, play normal announcer takes
-		if((SpreeNum < 11) && (SpreeNum > 1) ){
-			SoundToPlay = class'HaloAnnouncer.HaloKillingSpreeMessage'.Default.SpreeSound[SpreeNum];
-			SpreeNote = class'HaloAnnouncer.HaloKillingSpreeMessage'.Default.spreenote[SpreeNum];
+		if((KillerSpreeNum > 1) ){
+			SoundToPlay = class'HaloAnnouncer.HaloKillingSpreeMessage'.Default.SpreeSound[KillerSpreeNum];
+			SpreeNote = class'HaloAnnouncer.HaloKillingSpreeMessage'.Default.spreenote[KillerSpreeNum];
 			
-			PlayerPawn(Other).ClientPlaySound(SoundToPlay,, true);
+			//PlayerPawn(Other).ClientPlaySound(SoundToPlay,, true);
 			
 		}
 	}
 } 
 
+//this is called when somebody dies
+function TriggerAnnouncementsFromStats(HaloStatsPlayerReplicationInfo victimStats, HaloStatsPlayerReplicationInfo killerStats, bool OnlyInvolvedPlayers, bool IsSuicide, bool IsBetrayal, Name damageType) {
+	local HaloAnnouncerCustomMessagesSingleton singleton;
+	local ListElement le;
+	local HaloKillingSpreeMessageSender sender;
+	
+	singleton = class'HaloAnnouncer.HaloAnnouncerCustomMessagesSingleton'.static.GetRef(self);
+	
+	if((singleton != None) && (singleton.CustomKillingSpreeMessageSenders != None)) {
+		le = singleton.CustomKillingSpreeMessageSenders.Head;
+		
+		while(le != None) {
+			sender = HaloKillingSpreeMessageSender(le.Value);
+			
+			if(sender != None) {
+				sender.TriggerSendingMessages(killerStats, victimStats, OnlyInvolvedPlayers, IsSuicide, IsBetrayal, damageType);
+			}
+			
+			le = le.Next;
+		}
+	}
+}
+
+function Killed(pawn killer, pawn Other, name damageType) {
+	Log("HaloStatsTrackerMutator - Killed");
+}
+
+function bool MutatorBroadcastLocalizedMessage(Actor Sender, Pawn Receiver, out class<LocalMessage> Message, out optional int Switch, out optional PlayerReplicationInfo RelatedPRI_1, out optional PlayerReplicationInfo RelatedPRI_2, out optional Object OptionalObject ) {
+    Log("HaloStatsTrackerMutator - MutatorBroadcastLocalizedMessage - Message Class:"$Message.Class.Name);
+	return Super.MutatorBroadcastLocalizedMessage(Sender, Receiver, Message, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
+}
+
+function bool MutatorBroadcastMessage( Actor Sender, Pawn Receiver, out coerce string Msg, optional bool bBeep, out optional name Type ) {
+	Log("HaloStatsTrackerMutator - MutatorBroadcastMessage - Message:"$Msg$" - Type:"$Type);
+	return Super.MutatorBroadcastMessage(Sender, Receiver, Msg, bBeep, Type);
+}
+
 defaultproperties {
-	MaxTimeBetweenSpreeKills=5.00
+	MaxTimeBetweenSpreeKills=4.00
 }

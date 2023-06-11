@@ -79,7 +79,7 @@ function AltFire(float Value) {
 }
 
 defaultproperties {
-      WeaponDescription="Classification: Heavy Shrapnel\nPrimary Fire: White hot chunks of scrap metal are sprayed forth, shotgun style.\nSecondary Fire: DISABLED \nTechniques: The Primary Only Flak Cannon is the same as the original except it cannot ALT-FIRE."
+      WeaponDescription="Classification: Heavy Shrapnel\\nPrimary Fire: White hot chunks of scrap metal are sprayed forth, shotgun style.\\nSecondary Fire: DISABLED \\nTechniques: The Primary Only Flak Cannon is the same as the original except it cannot ALT-FIRE."
       PickupMessage="You got the Primary Only Flak Cannon."
       ItemName="Flak Cannon (Primary Fire Only)"
 	    PickupAmmoCount=30,//2x more than normal flak cannon

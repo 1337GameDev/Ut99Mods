@@ -6,6 +6,7 @@ class HeadHunterGameInfo extends DeathMatchPlus
 
 #exec AUDIO IMPORT FILE="Sounds\HeadHunter\HeadHunter.wav" NAME="HeadHunterIntro" GROUP="Announcer"
 #exec AUDIO IMPORT FILE="Sounds\HeadHunter\SkullsCollected.wav" NAME="SkullsCollected" GROUP="Announcer"
+#exec AUDIO IMPORT FILE="Sounds\HeadHunter\Skullamanjaro.wav" NAME="Skullamanjaro" GROUP="Spree"
 
 var Sound IntroSound;
 var Sound SkullCollectedSound;
@@ -24,6 +25,8 @@ var bool bHasInitAnyHUDMutators;
 var config bool ShowDroppedSkullIndicators;
 var config bool ShowPlayersWithSkullThreshold;
 var config int SkullThresholdToShowPlayers;
+
+var config bool UseHaloAnnouncer;
 
 var IndicatorHudGlobalTargets GlobalIndicatorTargets;
 
@@ -52,9 +55,24 @@ function PreCacheReferences() {
 }
 
 function PreBeginPlay() {
+	local HaloAnnouncerCustomMessagesSingleton customMessagesSingleton;
+	
 	Super.PreBeginPlay();
-
     GlobalIndicatorTargets = class'LGDUtilities.IndicatorHudGlobalTargets'.static.GetRef(self);
+	
+	if(UseHaloAnnouncer) {
+		class'HaloAnnouncer.HaloAnnouncerMutator'.static.RegisterMutator(self);
+		
+		//register any custom spree / kill count trackers
+		//register any custom announcer LocalMessagePlus references
+		customMessagesSingleton = class'HaloAnnouncer.HaloAnnouncerCustomMessagesSingleton'.static.GetRef(self);
+	
+		if(customMessagesSingleton != None) {
+			customMessagesSingleton.AddCustomStatTracker(new class'HeadHunter.HeadHunterCustomHaloAnnouncerCallbackFn');
+			customMessagesSingleton.AddCustomMultiKillMessage(class'HeadHunter.HeadHunterHaloAnnouncerMultiKillMessage');
+			//customMessagesSingleton.AddCustomCustomVictimMessages(class'HeadHunter.HeadHunterHaloAnnouncerMultiKillMessage');
+		}
+	}
 }
 
 function CheckReady() {
@@ -107,6 +125,11 @@ event InitGame(string Options, out string Error) {
     if(InOpt != ""){
         ShowPlayersWithSkullThreshold = bool(InOpt);
     }
+	
+	InOpt = ParseOption(Options, "UseHaloAnnouncer");
+    if(InOpt != ""){
+        UseHaloAnnouncer = bool(InOpt);
+    }
 }
 
 //
@@ -137,9 +160,13 @@ function ScoreKill(pawn Killer, pawn Other) {
     if(Killer != None){
         Killer.KillCount++;
     }
-
+	
     //we don't score normally, so ignore this call
 	//BaseMutator.ScoreKill(Killer, Other);
+}
+
+function NotifySpree(Pawn Other, int num) {
+	Super.NotifySpree(Other, num);
 }
 
 // Monitor killed messages for fraglimit
@@ -171,6 +198,7 @@ function Killed(Pawn killer, Pawn Other, name damageType) {
 		Killer.ReceiveLocalizedMessage(class'DecapitationMessage');
 	}
 
+	Log("HeadHunterGameInfo - Called GameInfo.Killed");
 	Super(GameInfo).Killed(killer, Other, damageType);
 
 	if (Other.Spree > 4) {
@@ -202,9 +230,12 @@ function Killed(Pawn killer, Pawn Other, name damageType) {
 	if ( Other.bIsPlayer && (Killer != None) && Killer.bIsPlayer && (Killer != Other)
 		&& (!bTeamGame || (Other.PlayerReplicationInfo.Team != Killer.PlayerReplicationInfo.Team)) )
 	{
+		Log("HeadHunterGameInfo - killer spree incrementing to:"$(Killer.Spree+1));
 		Killer.Spree++;
-		if ( Killer.Spree > 4 )
+		if (Killer.Spree > 4) {
+			Log("HeadHunterGameInfo - NotifySpree Called");
 			NotifySpree(Killer, Killer.Spree);
+		}
 	}
 
 	bAutoTaunt = (Killer != None) && ((TournamentPlayer(Killer) != None) && TournamentPlayer(Killer).bAutoTaunt);
@@ -234,6 +265,10 @@ function Killed(Pawn killer, Pawn Other, name damageType) {
 function Timer() {
 	local Pawn P;
 	local bool bReady;
+	
+	local IterativeSoundPlayer soundPlayer;
+	local SoundQueue q;
+	local SoundToPlaySettings soundSettings;
 
     //Code from GameInfo.Timer
 	SentText = 0;
@@ -353,8 +388,14 @@ function Timer() {
 
 		if(!bHasPlayedIntro) {
 			For (P=Level.PawnList; P!=None; P=P.NextPawn) {
-				if(P.IsA('PlayerPawn')) {
-					class'LGDUtilities.SoundHelper'.static.ClientPlaySound(PlayerPawn(P),IntroSound,, true, 100);
+				if(P.IsA('PlayerPawn')) {					
+					soundPlayer = class'LGDUtilities.IterativeSoundPlayer'.static.GetRef(self);
+					q = soundPlayer.GetSoundQueueForPlayerPawn(PlayerPawn(P) );
+					
+					soundSettings = new class'SoundToPlaySettings';
+					soundSettings.ASound = IntroSound;
+					
+					q.AddSoundToQueue(soundSettings);
 				}
 			}
 
@@ -362,42 +403,45 @@ function Timer() {
 		}
 
 	    //game has begun
-		if ( bAlwaysForceRespawn || (bForceRespawn && (Level.NetMode != NM_Standalone)) )
-			For ( P=Level.PawnList; P!=None; P=P.NextPawn )
-			{
-				if ( P.IsInState('Dying') && P.IsA('PlayerPawn') && P.bHidden )
+		if (bAlwaysForceRespawn || (bForceRespawn && (Level.NetMode != NM_Standalone)) ) {
+			For(P=Level.PawnList; P!=None; P=P.NextPawn) {
+				if(P.IsInState('Dying') && P.IsA('PlayerPawn') && P.bHidden) {
 					PlayerPawn(P).ServerReStartPlayer();
+				}
 			}
-		if ( Level.NetMode != NM_Standalone )
-		{
-			if ( NeedPlayers() )
+		}
+		
+		if (Level.NetMode != NM_Standalone) {
+			if (NeedPlayers()) {
 				AddBot();
-		}
-		else
-			while ( (RemainingBots > 0) && AddBot() )
+			}
+		} else {
+			while ((RemainingBots > 0) && AddBot()) {
 				RemainingBots--;
-
-
-		if ( bGameEnded )
-		{
-			if ( Level.TimeSeconds > EndTime + RestartWait )
-				RestartGame();
+			}
 		}
-		else if ( !bOverTime && (TimeLimit > 0) )//if not overtime, and timelimit isn't zero (zero means infinite)
+
+		if (bGameEnded) {
+			if (Level.TimeSeconds > EndTime + RestartWait) {
+				RestartGame();
+			}
+		} else if ( !bOverTime && (TimeLimit > 0) )//if not overtime, and timelimit isn't zero (zero means infinite) 
 		{
 
 			GameReplicationInfo.bStopCountDown = false;
 			RemainingTime--;
 			GameReplicationInfo.RemainingTime = RemainingTime;
-			if ( RemainingTime % 60 == 0 )
+			
+			if (RemainingTime % 60 == 0) {
 				GameReplicationInfo.RemainingMinute = RemainingTime;
-
+			}
+			
             AdvanceSkullCollectCountdown();
 
-			if ( RemainingTime <= 0 )
+			if (RemainingTime <= 0) {
 				EndGame("timelimit");
-		}
-		else//overtime or time limit is zero or less
+			}
+		} else//overtime or time limit is zero or less
 		{
 			ElapsedTime++;
 			GameReplicationInfo.ElapsedTime = ElapsedTime;
@@ -471,6 +515,12 @@ function ScoreSkulls(){
 			    PointsScored += existingSkull.NumCopies;
                 P.PlayerReplicationInfo.Score += existingSkull.NumCopies;
                 P.ReceiveLocalizedMessage(class'HeadHunter.HeadHunterScoredSkullsMessage',0,,, existingSkull);
+				
+				if((existingSkull.NumCopies >= 10) && (PlayerPawn(P) != None)) {
+					class'LGDUtilities.SoundHelper'.static.ClientPlaySound(PlayerPawn(P),Sound'HeadHunter.Spree.Skullamanjaro',, true, 100);
+					P.ReceiveLocalizedMessage(class'HeadHunter.HeadHunterSkullamanjaroMessage', 0);
+				}
+				
 				existingSkull.Destroy();
             }
         }
@@ -742,6 +792,7 @@ defaultproperties {
       ShowDroppedSkullIndicators=True
       ShowPlayersWithSkullThreshold=True
       SkullThresholdToShowPlayers=4
+	  UseHaloAnnouncer=true
       GlobalIndicatorTargets=None
       gamegoal="skulls wins the match."
       ScoreBoardType=Class'HeadHunter.HHScoreBoard'

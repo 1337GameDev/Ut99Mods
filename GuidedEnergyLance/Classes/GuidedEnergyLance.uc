@@ -302,12 +302,12 @@ Begin:
 }
 
 defaultproperties {
-      WeaponDescription="Classification: Energy Lance\nPrimary Fire: Instant hit laser beam that steals the targets weapon.\nSecondary Fire: Large, slow moving plasma balls, that ricochet off walls.\nTechniques: Hitting the secondary fire plasma balls with the regular fire's laser beam will cause an immensely powerful explosion. You can even aim the plasma balls around corners or bounce them in hallways to block a path."
-      PickupMessage="You got the Guided Energy Lance."
+      WeaponDescription="Classification: Energy Lance\\n\\nPrimary Fire: Instant hit laser beam that steals the targets weapon.\\n\\nSecondary Fire: Large, slow moving plasma balls, that ricochet off walls.\\n\\nTechniques: Hitting the secondary fire plasma balls with the regular fire's laser beam will cause an immensely powerful explosion. You can even aim the plasma balls around corners or bounce them in hallways to block a path."
+	  PickupMessage="You got the Guided Energy Lance."
       ItemName="Guided Energy Lance"
       DistanceFromCenterToSteer=10
       bAlwaysInstant=true
-	  	AltRefireRate=0.5
+	  AltRefireRate=0.5
 
       ControllingProjectile=false
 

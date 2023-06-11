@@ -9,7 +9,7 @@ class SoundHelper extends Actor nousercreate;
 // DynamicLoadSound ~ Load a sound from a package
 // =============================================================================
 
-function bool DynamicLoadSound (out Sound SoundObj, string SoundPackage, string SoundName) {
+function bool DynamicLoadSound(out Sound SoundObj, string SoundPackage, string SoundName) {
     SoundObj = Sound(DynamicLoadObject(SoundPackage$"."$SoundName, class'sound', true));
 
     if (SoundObj == None) {

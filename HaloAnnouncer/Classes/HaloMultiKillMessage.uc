@@ -1,3 +1,8 @@
+//--------------------------------------------------
+// Multi Kill HUD messages
+//        Shows messages for kill sprees a killer gets
+//--------------------------------------------------
+
 class HaloMultiKillMessage extends LocalMessagePlus;
 
 var(Messages)	localized string 	DoubleKillString;
@@ -26,6 +31,8 @@ static function string GetString(
 	optional Object OptionalObject 
 	)
 {
+	local Class<LocalMessage> PrevMultiKillMessageClass;
+	
 	switch (Switch) {
 		case 1:
 			return Default.DoubleKillString;
@@ -46,7 +53,14 @@ static function string GetString(
 			break;
 	}
 	
-	return "";
+	PrevMultiKillMessageClass = Class'HaloAnnouncer.HaloAnnouncerMutator'.default.OriginalDeathMessageClass;
+	
+	if((PrevMultiKillMessageClass != None) && (PrevMultiKillMessageClass == Class'Botpack.DeathMessagePlus')) {
+		//handle multi kill
+		return PrevMultiKillMessageClass.static.GetString(Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
+	} else {
+		return "";
+	}
 }
 
 static simulated function ClientReceive( 
@@ -57,17 +71,20 @@ static simulated function ClientReceive(
 	optional Object OptionalObject
 	)
 {
+	local Class<LocalMessage> PrevMultiKillMessageClass;
 	Super.ClientReceive(P, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
+
+	Log("HaloMultiKillMessage - Called ClientReceive for:"$P.PlayerReplicationInfo.Name$" - with switch:"$Switch);
 
 	switch (Switch) {
 		case 1:
-			P.ClientPlaySound(sound'Announcer.DoubleKill',, true);
+			//P.ClientPlaySound(sound'Announcer.DoubleKill',, true);
 			break;
 		case 2:
-			P.ClientPlaySound(sound'Announcer.MultiKill',, true);
+			//P.ClientPlaySound(sound'Announcer.MultiKill',, true);
 			break;
 		case 3:
-			P.ClientPlaySound(sound'Announcer.UltraKill',, true);
+			//P.ClientPlaySound(sound'Announcer.UltraKill',, true);
 			break;
 		case 4:
 		case 5:
@@ -75,8 +92,14 @@ static simulated function ClientReceive(
 		case 7:
 		case 8:
 		case 9:
-			P.ClientPlaySound(sound'Announcer.MonsterKill',, true);
+			//P.ClientPlaySound(sound'Announcer.MonsterKill',, true);
 			break;
+	}
+	
+	PrevMultiKillMessageClass = Class'HaloAnnouncer.HaloAnnouncerMutator'.default.OriginalDeathMessageClass;
+	
+	if((PrevMultiKillMessageClass != None) && (PrevMultiKillMessageClass == Class'Botpack.DeathMessagePlus')) {
+		//PrevMultiKillMessageClass.static.ClientReceive(P, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
 	}
 }
 

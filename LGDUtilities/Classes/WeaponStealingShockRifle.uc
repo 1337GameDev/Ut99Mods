@@ -164,7 +164,7 @@ defaultproperties {
       AllowStealingSword=False
       AllowStealingRedeemer=True
       AllowStealingTranslocator=False
-      WeaponDescription="Classification: Energy Rifle\nPrimary Fire: Instant hit laser beam that steals the targets weapon.\nSecondary Fire: Large, slow moving plasma balls, that ricochet off walls.\nTechniques: Hitting the secondary fire plasma balls with the regular fire's laser beam will cause an immensely powerful explosion. You can even aim the plasma balls around corners or bounce them in hallways to block a path."
+      WeaponDescription="Classification: Energy Rifle\\nPrimary Fire: Instant hit laser beam that steals the targets weapon.\\nSecondary Fire: Large, slow moving plasma balls, that ricochet off walls.\\nTechniques: Hitting the secondary fire plasma balls with the regular fire's laser beam will cause an immensely powerful explosion. You can even aim the plasma balls around corners or bounce them in hallways to block a path."
       AltProjectileClass=Class'LGDUtilities.RicochetShockProj'
       PickupMessage="You got the ASMD THIEF Shock Rifle."
       ItemName="THIEF Shock Rifle"

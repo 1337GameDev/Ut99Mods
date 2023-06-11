@@ -2,12 +2,12 @@
 // JuggernautGameOptionsMenu
 //=============================================================================
 class JuggernautGameOptionsMenu extends UTRulesCWindow;
-	var UWindowCheckBox ShowJuggernautIndicatorCheckbox, OnlyCountKillsAsJuggernautCheckbox;
+	var UWindowCheckBox ShowJuggernautIndicatorCheckbox, OnlyCountKillsAsJuggernautCheckbox, UseHaloAnnouncerCheckbox;
 	
 	var UWindowEditControl RegenSecondsEdit, ShieldRegenRateEdit, HealthRegenRateEdit, JugJumpModifierEdit, JugMovementMultiplierEdit;
 
-	var string ShowJuggernautIndicatorText, OnlyCountKillsAsJuggernautText, RegenSecondsText, ShieldRegenRateText, HealthRegenRateText, JugJumpModifierText, JugMovementMultiplierText;
-	var string ShowJuggernautIndicatorHelp, OnlyCountKillsAsJuggernautHelp, RegenSecondsHelp, ShieldRegenRateHelp, HealthRegenRateHelp, JugJumpModifierHelp, JugMovementMultiplierHelp;
+	var string ShowJuggernautIndicatorText, OnlyCountKillsAsJuggernautText, RegenSecondsText, ShieldRegenRateText, HealthRegenRateText, JugJumpModifierText, JugMovementMultiplierText, UseHaloAnnouncerText;
+	var string ShowJuggernautIndicatorHelp, OnlyCountKillsAsJuggernautHelp, RegenSecondsHelp, ShieldRegenRateHelp, HealthRegenRateHelp, JugJumpModifierHelp, JugMovementMultiplierHelp, UseHaloAnnouncerHelp;
 
 function Created() {
 	local int ControlWidth, ControlLeft, ControlRight, ControlOffsetRightSideTop;
@@ -95,6 +95,14 @@ function Created() {
 	JugMovementMultiplierEdit.EditBoxWidth = 25;
 	JugMovementMultiplierEdit.SetValue(String(class'Juggernaut.JuggernautGameInfo'.default.JugMovementMultiplier));
 	ControlOffsetRightSideTop += 25;
+	
+	UseHaloAnnouncerCheckbox = UWindowCheckBox(CreateControl(class'UWindowCheckBox', ControlRight+32, ControlOffsetRightSideTop, ControlWidth+36, 1));
+	UseHaloAnnouncerCheckbox.SetText(UseHaloAnnouncerText);
+	UseHaloAnnouncerCheckbox.SetHelpText(UseHaloAnnouncerHelp);
+	UseHaloAnnouncerCheckbox.SetFont(F_Normal);
+	UseHaloAnnouncerCheckbox.bChecked = class'Juggernaut.JuggernautGameInfo'.default.UseHaloAnnouncer;
+	UseHaloAnnouncerCheckbox.Align = TA_Right;
+	ControlOffsetRightSideTop += 20;
 }
 
 function LoadCurrentValues() {
@@ -127,6 +135,8 @@ function LoadCurrentValues() {
 	HealthRegenRateEdit.SetValue(string(Class<JuggernautGameInfo>(BotmatchParent.GameClass).Default.HealthRegenRate));
 	JugJumpModifierEdit.SetValue(string(Class<JuggernautGameInfo>(BotmatchParent.GameClass).Default.JugJumpModifier));
 	JugMovementMultiplierEdit.SetValue(string(Class<JuggernautGameInfo>(BotmatchParent.GameClass).Default.JugMovementMultiplier));
+	
+	UseHaloAnnouncerCheckbox.bChecked = Class<JuggernautGameInfo>(BotmatchParent.GameClass).Default.UseHaloAnnouncer;
 }
 
 function Notify(UWindowDialogControl C, byte E) {
@@ -165,6 +175,10 @@ function Notify(UWindowDialogControl C, byte E) {
 					class'Juggernaut.JuggernautGameInfo'.default.JugMovementMultiplier = Int(JugMovementMultiplierEdit.GetValue());
 					matchedAControl = true;
 					break;
+				case UseHaloAnnouncerCheckbox:
+					class'Juggernaut.JuggernautGameInfo'.default.UseHaloAnnouncer = UseHaloAnnouncerCheckbox.bChecked;
+					matchedAControl = true;
+					break;
 			}
 			break;
 	}
@@ -192,6 +206,7 @@ defaultproperties {
       HealthRegenRateText="Health Regen Rate"
       JugJumpModifierText="Juggernaut Jump Mod"
       JugMovementMultiplierText="Juggernaut Move Mod"
+	  UseHaloAnnouncerText="Use HaloAnnouncer?"
       ShowJuggernautIndicatorHelp="Whether to show an indicator (for all to see) of the current juggernaut."
       OnlyCountKillsAsJuggernautHelp="Whether kills ONLY count for the juggernaut or not."
       RegenSecondsHelp="How many seconds between each juggernaut regen."
@@ -199,5 +214,6 @@ defaultproperties {
       HealthRegenRateHelp="How many health points to regen."
       JugJumpModifierHelp="The multiplier for the juggernaut related to jumping. (3 = Jump Boots)"
       JugMovementMultiplierHelp="The multiplier for movement speed of the juggernaut."
+	  UseHaloAnnouncerHelp="Whether to use the HaloAnnouncer mutator for the game announcer."
       FragHelp="The number of kills to win the game."
 }

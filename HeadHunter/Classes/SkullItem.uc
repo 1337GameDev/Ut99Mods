@@ -97,7 +97,6 @@ function bool HandlePickupQuery(Inventory Item) {
                 Log("SkullItem["$Self.Name$"]: HandlePickupQuery-We already have the max skulls we can carry - "@NumCopies@" Max:"@MaxCount);
             }
 
-            //Log("SkullItem - HandlePickupQuery - Cannot pickup more skulls");
             Pawn(Owner).ReceiveLocalizedMessage(class'HeadHunter.HeadHunterMaxSkullsMessage', 0);
             return true;//if we are at the max skull count
         }
@@ -133,7 +132,6 @@ function bool HandlePickupQuery(Inventory Item) {
             }
 
              //otherSkull.SetRespawn();
-            //Log("SkullItem - HandlePickupQuery - Cannot pickup more skulls");
             Pawn(Owner).ReceiveLocalizedMessage(class'HeadHunter.HeadHunterMaxSkullsMessage', 0);
             return true;
         } else {

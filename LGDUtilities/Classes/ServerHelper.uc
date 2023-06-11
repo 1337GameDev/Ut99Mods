@@ -162,5 +162,21 @@ static function LinkedList GetClassesLoadedFromIntFiles(Actor context, string In
     return FoundClasses;
 }
 
+static function int GetPing(Actor context) {
+	if (context != None) {
+		return int(context.ConsoleCommand("GETPING"));
+	} else {
+		return -1;
+	}
+}
+
+static function byte GetPacketLoss(Actor context) {
+	if (context != None) {
+		return int(context.ConsoleCommand("GETLOSS"));
+	} else {
+		return -1;
+	}
+}
+
 defaultproperties {
 }

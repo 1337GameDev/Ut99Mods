@@ -20,9 +20,9 @@ simulated function ModifyPlayer(Pawn Other) {
 }
 
 simulated function MutatorTakeDamage(out int ActualDamage, Pawn Victim, Pawn InstigatedBy, out Vector HitLocation, out Vector Momentum, name DamageType){
-    local TournamentPlayer playerVictim, playerInsigator;
+    local TournamentPlayer playerVictim, playerInstigator;
     playerVictim = TournamentPlayer(Victim);
-    playerInsigator = TournamentPlayer(InstigatedBy);
+    playerInstigator = TournamentPlayer(InstigatedBy);
 
     if(playerVictim != None){//victim is a player
         ActualDamage *= playerModifierInstance.DamageMultiplierToPlayers;
@@ -32,25 +32,21 @@ simulated function MutatorTakeDamage(out int ActualDamage, Pawn Victim, Pawn Ins
         Momentum *= playerModifierInstance.MomentumMultiplierToNonPlayers;
     }
 
-    if(playerInsigator != None){//instigator is a player
+    if(playerInstigator != None){//instigator is a player
         ActualDamage *= playerModifierInstance.DamageMultiplierFromPlayers;
         Momentum *= playerModifierInstance.MomentumMultiplierFromPlayers;
     } else {//instigator is a NON player
         ActualDamage *= playerModifierInstance.DamageMultiplierFromNonPlayers;
         Momentum *= playerModifierInstance.MomentumMultiplierFromNonPlayers;
     }
-
-    if(NextMutator != None) {
-        NextMutator.MutatorTakeDamage(ActualDamage, Victim, InstigatedBy, HitLocation, Momentum, DamageType);
-    }
+	
+	Super.MutatorTakeDamage(ActualDamage, Victim, InstigatedBy, HitLocation, Momentum, DamageType);
 }
 
 function Mutate(string MutateString, PlayerPawn Sender) {
 	Sender.ClientMessage("Test mutate string mutator: string:"$MutateString$" - Sender:"$Sender.MenuName);
 
-	if(NextMutator != None) {
-        NextMutator.Mutate(MutateString, Sender);
-    }
+    Super.Mutate(MutateString, Sender);
 }
 
 defaultproperties {

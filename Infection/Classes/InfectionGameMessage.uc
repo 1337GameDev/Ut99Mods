@@ -26,7 +26,7 @@ var localized string NewTeamMessageTrailer;
 static function string GetString(
 	optional int Switch,
 	optional PlayerReplicationInfo RelatedPRI_1, 
-	optional PlayerReplicationInfo RelatedPRI_2,
+	optional PlayerReplicationInfo RelatedPRI_2,//is not provided
 	optional Object OptionalObject
 	) {
 	

@@ -360,6 +360,24 @@ function InOrderLog(){
     Log("]");
 }
 
+//inorder traversal and return as a string
+function string InOrderLogAsString() {
+	local string result;
+    local ListElement le;
+
+    le = self.Head;
+    result = "[\\n";
+
+    While(le != None) {
+        result $= "    ["@le.ToString()@"]\\n";
+        le = le.Next;
+    }
+
+    result $= "]";
+	
+	return result;
+}
+
 final operator(20) LinkedList + (LinkedList A, LinkedList B) {
     local LinkedList list;
     if(A != None) {

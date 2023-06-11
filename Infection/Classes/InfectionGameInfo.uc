@@ -4,7 +4,9 @@
 class InfectionGameInfo extends TeamGamePlus;
 
 // Sounds
-#exec OBJ LOAD FILE=..\Sounds\HaloAnnouncer.uax PACKAGE=HaloAnnouncer.Infection
+#exec AUDIO IMPORT FILE="Sounds\Infection.wav" NAME="JuggernautIntro" GROUP="Announcer"
+#exec AUDIO IMPORT FILE="Sounds\Infected.wav" NAME="JuggernautIntro" GROUP="Announcer"
+#exec AUDIO IMPORT FILE="Sounds\NewZombie.wav" NAME="NewJuggernaut" GROUP="Announcer"
 
 var string ZombieStartUpMessage;
 var string HumansStartUpMessage;
@@ -43,6 +45,8 @@ var bool AnyDeathInfects;
 var byte ZombieTeam;
 var byte HumanTeam;
 var byte NeutralTeam;
+
+var bool UseHaloAnnouncer;
 
 var bool GameStarted;
 
@@ -98,14 +102,29 @@ function InitGameReplicationInfo() {
 
 	InfRepInfo.bHasPlayedIntro = bHasPlayedIntro;
 	InfRepInfo.GameStarted = GameStarted;
+	InfRepInfo.UseHaloAnnouncer = UseHaloAnnouncer;
 
 	InfRepInfo.ExtraPRIList = new class'LGDUtilities.LinkedList';
 }
 
 function PreBeginPlay() {
+	local HaloAnnouncerCustomMessagesSingleton haloMessageSingleton;
+	
 	Super.PreBeginPlay();
 
     GlobalIndicatorTargets = class'LGDUtilities.IndicatorHudGlobalTargets'.static.GetRef(self);
+	
+	if(UseHaloAnnouncer) {
+		class'HaloAnnouncer.HaloAnnouncerMutator'.static.RegisterMutator(self);
+	
+		haloMessageSingleton = class'HaloAnnouncer.HaloAnnouncerCustomMessagesSingleton'.static.GetRef(self);
+		
+		if(haloMessageSingleton != None) {
+			haloMessageSingleton.AddCustomStatTracker(new class'Infection.InfectionStatsTrackerCallbackFn');
+			haloMessageSingleton.AddCustomMultiKillMessage(class'Infection.InfectionMultiKillMessage');
+			//customMessagesSingleton.AddCustomCustomVictimMessages(class'HeadHunter.HeadHunterHaloAnnouncerMultiKillMessage');
+		}
+	}
 }
 
 //
@@ -187,17 +206,32 @@ event InitGame(string Options, out string Error) {
 	if(InOpt != "") {
 		HumanDamageMod = float(InOpt);
 	}
+	
+	InOpt = ParseOption(Options, "UseHaloAnnouncer");
+    if(InOpt != ""){
+        UseHaloAnnouncer = bool(InOpt);
+    }
 
 	GameStarted = false;
 }
 
 function StartMatch() {
+	local Inventory inv;
 	ChangeAllPlayersToHuman();
 
     //pick zombie, and balance required # of zombies
 	ReBalance();
 
     Super.StartMatch();
+	
+	if(!Self.InfRepInfo.HumansPickupWeapons && !Self.InfRepInfo.ZombiesPickupWeapons) {
+		ForEach AllActors(class'Inventory', inv) {
+			inv.MaxDesireability = 0;
+		}
+		
+		//create SpawnNotify here for spawn events for inventory to set desirability
+		Spawn(class'Infection.NoInventoryPickupSpawnNotify');
+	}
 
 	GameStarted = true;
 }
@@ -270,7 +304,7 @@ function bool AddBot() {
 	return true;
 }
 
-function playerpawn Login (
+function PlayerPawn Login (
 	string Portal,
 	string Options,
 	out string Error,
@@ -644,7 +678,7 @@ function Timer() {
 		if(!bHasPlayedIntro) {
 			For (P=Level.PawnList; P!=None; P=P.NextPawn) {
 				if(P.IsA('PlayerPawn')) {
-					class'LGDUtilities.SoundHelper'.static.ClientPlaySound(PlayerPawn(P),Sound'HaloAnnouncer.Infection',, true, 100);
+					class'LGDUtilities.SoundHelper'.static.ClientPlaySound(PlayerPawn(P),Sound'Infection.Announcer.Infection',, true, 100);
 				}
 			}
 
@@ -715,7 +749,8 @@ function Timer() {
 
 //------------------------------------------------------------------------------
 // Level death message functions.
-function ScoreKill(pawn Killer, pawn Other) {
+function ScoreKill(Pawn Killer, Pawn Other) {
+	local TournamentPlayer tp;
 	local bool IsSuicide;
 	IsSuicide = (Killer == Other) || (Killer == None);
 
@@ -731,7 +766,13 @@ function ScoreKill(pawn Killer, pawn Other) {
 	//change killed player (if they are human) to a zombie (if they are killed by a zombie or kill themself)
 	if(Other.PlayerReplicationInfo.Team == InfRepInfo.HumanTeam) {//human being scrutinized
 		if((IsSuicide && InfRepInfo.AnyDeathInfects) || (Killer.PlayerReplicationInfo.Team == InfRepInfo.ZombieTeam)) {//if they comitted suicide OR a zombie killed them
-			ChangeToZombie(Other);
+			tp = TournamentPlayer(Other);
+					
+			if(tp != None) {
+				tp.ReceiveLocalizedMessage(class'Infection.InfectionVictimMessage', 1, Killer.PlayerReplicationInfo, Other.PlayerReplicationInfo, Self);
+			}
+			
+			ChangeToZombie(Other, true);
 		} else if(Killer.PlayerReplicationInfo.Team == InfRepInfo.HumanTeam) {
 			//should only happen if a human triggers a trap / friendly fire on another human -- ignore for now
 		}
@@ -860,8 +901,9 @@ function AddPlayerIndicator(Pawn player){
     }
 
     le = new class'LGDUtilities.IndicatorHudTargetListElement';
-	le.IndicatorSource = self;
+	le.IndicatorSource = Self;
 	le.IndicatorSettingsModifier = new class'LGDUtilities.InfectionIndicatorHudTargetModifierFn';
+	le.IndicatorSettingsModifier.Context = Self;
 
     settings = new class'LGDUtilities.IndicatorSettings';
 	settings.ReplaceExisting = true;
@@ -983,12 +1025,12 @@ function PlayStartUpMessage(PlayerPawn NewPlayer) {
 
 //----------------------- Team Changing Methods --------------------------------------------//
 //chooses a random zombie, excluding all current zombies
-function Pawn ChooseRandomZombie(optional bool SetTeamOfChosen) {
+function Pawn ChooseRandomZombie(optional bool SetTeamOfChosen, optional bool IncludeSpectators) {
 	local LinkedList excludePlayerIDsFromZombieSelection;
 	local Pawn p;
 
 	excludePlayerIDsFromZombieSelection = class'LGDUtilities.PawnHelper'.static.GetAllPlayeIDsOfTeam(self, Self.ZombieTeam);
-	p = class'LGDUtilities.PawnHelper'.static.GetRandomPlayerPawnOrBot(self, excludePlayerIDsFromZombieSelection);
+	p = class'LGDUtilities.PawnHelper'.static.GetRandomPlayerPawnOrBot(self, excludePlayerIDsFromZombieSelection, IncludeSpectators);
 
 	if(SetTeamOfChosen) {
 		ChangeToZombie(p, true);
@@ -1007,7 +1049,11 @@ function ChangeToZombie(Pawn pawnToChange, optional bool announceChange) {
 	if(announceChange) {
 		For (P=Level.PawnList; P!=None; P=P.NextPawn) {
 			if(P.IsA('PlayerPawn')) {
-				class'LGDUtilities.SoundHelper'.static.ClientPlaySound(PlayerPawn(P), Sound'HaloAnnouncer.Infection.NewZombie', true, true, 100);
+				if(P != pawnToChange) {
+					class'LGDUtilities.SoundHelper'.static.ClientPlaySound(PlayerPawn(P), Sound'Infection.Announcer.NewZombie', true, true, 100);
+				} else {
+					class'LGDUtilities.SoundHelper'.static.ClientPlaySound(PlayerPawn(P), Sound'Infection.Announcer.Infected', true, true, 100);
+				}
 			}
 		}
 	}
@@ -1111,7 +1157,7 @@ function ReBalance() {
 	NumNeededZombies = Self.MinimumZombies - ll.Count;
 
 	While(CurrentZombieCount < NumNeededZombies) {
-		ChooseRandomZombie(true);
+		ChooseRandomZombie(true, !GameStarted);
 		CurrentZombieCount++;
 	}
 
@@ -1382,47 +1428,48 @@ function bool SetEndCams(string Reason) {
 defaultproperties {
       ZombieStartUpMessage="Infect all humans!"
       HumansStartUpMessage="Survive against the zombies!"
-	  	bSpawnInTeamArea=True
+	  bSpawnInTeamArea=True
       bHasPlayedIntro=False
       bHasInitAnyHUDMutators=False
-	  	GameStarted=False
+	  GameStarted=False
 
       GlobalIndicatorTargets=None
       InfRepInfo=None
       MaxAllowedTeams=2
       TeamChangeMessage="No team changing is allowed!"
-	  	StartUpTeamMessage="You are a "
+	  StartUpTeamMessage="You are a "
       TeamChangeMessage=""
 
       StartUpMessage="A battle against the infected and survivors!"
       BeaconName="Inf"
       GameName="Infection"
       GameReplicationInfoClass=Class'Infection.InfectionGameReplicationInfo'
-	  	MutatorClass=Class'Infection.InfectionGameTypeMutator'
-	  	RulesMenuType="Infection.InfectionGameOptionsMenu"
-	  	ScoreBoardType=Class'Infection.InfectionScoreBoard'
-	  	HUDType=Class'Infection.InfectionGameHUD'
+	  MutatorClass=Class'Infection.InfectionGameTypeMutator'
+	  RulesMenuType="Infection.InfectionGameOptionsMenu"
+	  ScoreBoardType=Class'Infection.InfectionScoreBoard'
+	  HUDType=Class'Infection.InfectionGameHUD'
 
       DMMessageClass=Class'Infection.InfectionGameMessage'
-	  	MinimumZombies=1
-	  	ShowZombieIndicators=true
-	  	ShowHumanIndicators=false
-	  	ShowSameTeamIndicators=true
-	  	ZombieMovementModifier=3.0
-	  	ZombieJumpModifier=3.0
+	  MinimumZombies=1
+	  ShowZombieIndicators=true
+	  ShowHumanIndicators=false
+	  ShowSameTeamIndicators=true
+	  ZombieMovementModifier=3.0
+	  ZombieJumpModifier=3.0
 
-	  	ZombieDamageMod=3.0,
-	  	HumanDamageMod=0.75,
+	  ZombieDamageMod=3.0,
+	  HumanDamageMod=0.75,
 
-	  	HumansPickupWeapons=false,
-	  	ZombiesPickupWeapons=false,
-	  	InfiniteAmmo=true,
-	  	AnyDeathInfects=true,
+	  HumansPickupWeapons=false,
+	  ZombiesPickupWeapons=false,
+	  InfiniteAmmo=true,
+	  AnyDeathInfects=true,
 
-	  	ZombieTeam=2//green
-	  	HumanTeam=1//blue
+	  ZombieTeam=2//green
+	  HumanTeam=1//blue
 
-	  	NeutralTeam=3//gold -- used for undecided team of a player / before game as begun
-	  	GoalTeamScore=0,
-	  	bScoreTeamKills=False
+	  NeutralTeam=3//gold -- used for undecided team of a player / before game as begun
+	  GoalTeamScore=0,
+	  bScoreTeamKills=False,
+	  UseHaloAnnouncer=True
 }

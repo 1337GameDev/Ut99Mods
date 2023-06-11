@@ -1,0 +1,2 @@
+[Public]
+Object=(Name=DeveloperMutator.DeveloperMutator,Class=Class,MetaClass=Engine.Mutator,Description="Developer Mutator,A mutator to assist in developing mods or maps.")

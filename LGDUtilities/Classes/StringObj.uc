@@ -20,10 +20,9 @@ static function PushStringOntoLinkedList(LinkedList list, string stringToAdd) {
 
 function bool Equals(ValueContainer OtherValue){
     local StringObj stringObj;
-
+	
     if(ClassIsChildOf(OtherValue.class, class'LGDUtilities.StringObj')) {
         stringObj = StringObj(OtherValue);
-
         return Value == stringObj.Value;
     } else {
         return false;

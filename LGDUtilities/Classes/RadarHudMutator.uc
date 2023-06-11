@@ -65,6 +65,7 @@ simulated function PostRender(Canvas C) {
 
     local ListElement element;
     local Actor Target;
+    local bool TargetShooting;
     local bool TargetCrouching;
     local Vector TargetVelocity;
     local bool OnSameLevel;
@@ -227,6 +228,7 @@ simulated function PostRender(Canvas C) {
 
             if(Target != None){
                 TargetCrouching = false;
+				TargetShooting = false;
                 TargetVelocity = Vect(0,0,0);
                 //get target dir from player
                 TargetRadarDir = Target.Location - PlayerOwner.Location;
@@ -240,6 +242,7 @@ simulated function PostRender(Canvas C) {
                 if(Target.IsA('TournamentPlayer')) {
                     tournamentPlayer = TournamentPlayer(Target);
                     TargetCrouching = tournamentPlayer.bIsCrouching;
+					TargetShooting = tournamentPlayer.IsInState('RangedAttack') || tournamentPlayer.IsInState('Attacking') || tournamentPlayer.IsInState('ShootDecoration');
                     TargetVelocity = tournamentPlayer.Velocity;
                     if(tournamentPlayer.PlayerReplicationInfo != None){
                         IsEnemy = (PlayerOwnerTeam != tournamentPlayer.PlayerReplicationInfo.Team) || (tournamentPlayer.PlayerReplicationInfo.Team == 255);
@@ -247,8 +250,9 @@ simulated function PostRender(Canvas C) {
                 } else if(Target.IsA('Bot')){
                     bot = Bot(Target);
                     TargetCrouching = bot.bIsCrouching;
+					TargetShooting = bot.IsInState('RangedAttack') || bot.IsInState('Attacking') || bot.IsInState('ShootDecoration');
                     TargetVelocity = bot.Velocity;
-                    if(bot.PlayerReplicationInfo != None){
+                    if(bot.PlayerReplicationInfo != None) {
                         IsEnemy = (PlayerOwnerTeam != bot.PlayerReplicationInfo.Team) || (bot.PlayerReplicationInfo.Team == 255);
                     }
                 } else {
@@ -257,8 +261,8 @@ simulated function PostRender(Canvas C) {
                 }
 
                 //should we show this target on the radar?
-                ShowTarget = (ShowTargetsIfBelowVelocityThreshold || (VSize(TargetVelocity) >= RadarVelocityThreshold)) && (ShowTargetsIfCrouching || !TargetCrouching);
-
+                ShowTarget = (ShowTargetsIfBelowVelocityThreshold || (VSize(TargetVelocity) >= RadarVelocityThreshold)) && (ShowTargetsIfCrouching || !TargetCrouching) || TargetShooting;
+				
                 if(ShowTarget){
                     OnSameLevel = !IndicateTargetOnDifferentLevel || Abs(TargetRadarDir.Z) <= RadarSameLevelThreshold;
 
@@ -378,7 +382,7 @@ defaultproperties {
       RadarBackgroundTex=Texture'LGDUtilities.RadarHudBackground'
       Indicator_SameLevel=Texture'LGDUtilities.RadarIcon_SameLevel'
       Indicator_DiffLevel=Texture'LGDUtilities.RadarIcon_DiffLevel'
-      RadarVelocityThreshold=200.000000
+      RadarVelocityThreshold=180.000000
       RadarSameLevelThreshold=83.000000
       ShowTargetsIfBelowVelocityThreshold=False
       ShowTargetsIfCrouching=False

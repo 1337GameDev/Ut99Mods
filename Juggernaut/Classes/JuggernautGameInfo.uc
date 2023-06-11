@@ -28,6 +28,7 @@ var config int ShieldRegenRate;
 var config int HealthRegenRate;
 var config float JugJumpModifier;
 var config float JugMovementMultiplier;
+var config bool UseHaloAnnouncer;
 
 var IndicatorHudGlobalTargets GlobalIndicatorTargets;
 
@@ -55,12 +56,23 @@ function PreCacheReferences() {
 
 function PreBeginPlay() {
     local PlayerSpawnNotifyForJuggernautCallback playerSpawnCallback;
+	local HaloAnnouncerCustomMessagesSingleton customMessagesSingleton;
 	Super.PreBeginPlay();
 
     GlobalIndicatorTargets = class'LGDUtilities.IndicatorHudGlobalTargets'.static.GetRef(self);
 	playerSpawnCallback = new class'LGDUtilities.PlayerSpawnNotifyForJuggernautCallback';
 
 	class'LGDUtilities.PlayerSpawnMutator'.static.RegisterToPlayerSpawn(self, playerSpawnCallback);
+	
+	if(UseHaloAnnouncer) {
+		class'HaloAnnouncer.HaloAnnouncerMutator'.static.RegisterMutator(self);
+	
+		customMessagesSingleton = class'HaloAnnouncer.HaloAnnouncerCustomMessagesSingleton'.static.GetRef(self);
+		
+		if(customMessagesSingleton != None) {
+			
+		}
+	}
 }
 
 function CheckReady() {
@@ -84,6 +96,7 @@ function InitGameReplicationInfo() {
 	JugRepInfo.HealthRegenRate = HealthRegenRate;
 	JugRepInfo.JugJumpModifier = JugJumpModifier;
 	JugRepInfo.JugMovementMultiplier = JugMovementMultiplier;
+	JugRepInfo.UseHaloAnnouncer = UseHaloAnnouncer;
 
     JugRepInfo.bHasInitAnyHUDMutators = bHasInitAnyHUDMutators;
 
@@ -124,6 +137,12 @@ event InitGame(string Options, out string Error) {
     if(InOpt != ""){
         OnlyJuggernautScores = bool(InOpt);
     }
+	
+	InOpt = ParseOption(Options, "UseHaloAnnouncer");
+    if(InOpt != ""){
+        UseHaloAnnouncer = bool(InOpt);
+    }
+	
 }
 
 //
@@ -715,6 +734,8 @@ defaultproperties {
       HealthRegenRate=10
       JugJumpModifier=3.000000
       JugMovementMultiplier=2.000000
+	  UseHaloAnnouncer=True,
+	  
       GlobalIndicatorTargets=None
       gamegoal="points wins the match."
       RulesMenuType="Juggernaut.JuggernautGameOptionsMenu"

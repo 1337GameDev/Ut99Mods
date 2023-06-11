@@ -1,0 +1,2 @@
+[Public]
+Object=(Name=HaloAnnouncer.HaloAnnouncerMutator,Class=Class,MetaClass=Engine.Mutator,Description="Announcer: Halo,A replacement for the normal UT99 announcer, to use a Halo themed one.")

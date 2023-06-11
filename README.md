@@ -1,8 +1,8 @@
 <p align="center">
-    <a href="https://github.com/OldUnreal/UnrealTournamentPatches" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/game%20version-GOTY v469b-orange.svg" alt="Game Version" /></a>
+    <a href="https://github.com/OldUnreal/UnrealTournamentPatches" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/game%20version-GOTY v469c-orange.svg" alt="Game Version" /></a>
     <a href="https://github.com/1337GameDev/Ut99Mods/stargazers" target="_blank" rel="noopener"><img src="https://img.shields.io/github/stars/1337GameDev/Ut99Mods.svg" alt="Stars" /></a>
     <a href="https://github.com/1337GameDev/Ut99Mods/blob/main/LICENSE.md" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" /></a>
-    <a href="https://github.com/1337GameDev/Ut99Mods/releases/" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/latest-v1.0.4-green.svg" alt="Version" /></a>
+    <a href="https://github.com/1337GameDev/Ut99Mods/releases/" target="_blank" rel="noopener"><img src="https://img.shields.io/badge/latest-v1.2.0-green.svg" alt="Version" /></a>
 </p>
 
 # <p align="center"> <img src="https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true" width="100" height="100" title="Ut99 Logo" alt="Ut99 Logo" height="35px" width="35px"> Ut99Mods <img src="https://github.com/1337GameDev/Ut99Mods/blob/main/Github/Icons/ut_logo.png?raw=true" width="100" height="100" title="Ut99 Logo" alt="Ut99 Logo" height="35px" width="35px"></p>
@@ -11,9 +11,9 @@ A collection of my hand-made mods for one of my my favorite games - Unreal Tourn
 
 # Useage :video_game:
 
-To merely use the pre-compiled packages, navigate to <a href="https://github.com/1337GameDev/Ut99Mods/releases">Releases</a> and download the latest `zip` and extract it over the top of your UT99 directory. If you're asked to merge any folders, answer yes. 
+To merely use the pre-compiled packages, navigate to <a href="https://github.com/1337GameDev/Ut99Mods/releases">Releases</a> and download the latest `zip` and extract it over the top of your UT99 directory. If you're asked to merge any folders, answer yes.
 
-:warning: This has been tested / compiled on v469b GOTY of UT99, but **LIKELY** would work on prior versions just fine (such as the latest official version of `v436`).
+:warning: This has been tested / compiled on v469c GOTY of UT99, but **LIKELY** would work on prior versions just fine (such as the latest official version of `v436`).
 
 <span style="font-size:20px;color:#eb7d34">&#9888;</span> **NOTE:** <span style="font-size:20px;color:#eb7d34">&#9888;</span> These mods require ChaosUT and Relics to work properly. These are included with the GOTY version of the game. If you have a different version, please download and install these. These can be found <a href="https://chaoticdreams.org/chaosut-download/">here (ChaosUT)</a> and <a href="https://community.pcgamingwiki.com/files/file/133-unreal-tournament-bonus-pack-1/">here (Relics - Epic Bonus Pack #1)</a>. These are also included in the `Dependencies` folder for convenience.
 
@@ -25,7 +25,7 @@ To host a server with these, don't forget to add them to **ServerPackages** othe
 
 At the bottom of this README, are sections for various objects, and extra information on them / their usage.
 
-Enjoy and frag on! 
+Enjoy and frag on!
 
 # Compile Setup :wrench:
 To compile, navigate to the ut99 directory with UCC.exe and run `ucc make`.
@@ -65,6 +65,8 @@ Add the following to the end of them (order matters):
     EditPackages=EnergySword
     EditPackages=Infection
     EditPackages=GuidedEnergyLance
+    EditPackages=DeveloperMutator
+    EditPackages=KillConfirmed
 
 # Extra Documentation :page_facing_up:
 
@@ -451,7 +453,7 @@ A custom weapon based on `ChaosUT.Sword` and inspired by the Energy Sword from t
 <blockquote>
 
 <details>
-<summary>HeadHunter (Gametype)</summary>
+<summary>HeadHunter (Free-for-all Gametype)</summary>
 
 <blockquote>
 
@@ -507,7 +509,7 @@ A custom weapon based on `ChaosUT.Sword` and inspired by the Energy Sword from t
 </details>
 
 <details>
-<summary>Juggernaut (Gametype)</summary>
+<summary>Juggernaut (Free-for-all Gametype)</summary>
 
 <blockquote>
 
@@ -563,7 +565,7 @@ A gametype modeled after the Halo juggernaut gametype. A person is randomly sele
 </details>
 
 <details>
-<summary>Infection (Gametype)</summary>
+<summary>Infection (Team-based Gametype)</summary>
 
 <blockquote>
 
@@ -655,6 +657,40 @@ Modeled after the Halo infection gametype. A minimum number of zombies are selec
 </blockquote>
 
 </details>
+
+
+
+<details>
+<summary>Kill Confirmed (Free-for-all Gametype)</summary>
+
+<blockquote>
+
+Modeled after the Call of Duty Kill Confirmed game mode. Players ONLY score points by collecting Dog Tags items dropped by killed enemies. Points can be denied by picking up Dog Tags of friendlies (including your own).
+
+<details>
+<summary>Game Options</summary>
+
+<blockquote>
+
+1. Tag Collect Goal
+  * Sets the number of dog tags from enemies a player needs to collect to win.
+2. ShowDogTagIndicatorsText
+  * Sets whether HUD indicators for Dog Tag items should be shown
+  * If true, Dog Tag items will have a red Dog Tag icon above them (visible through walls)
+3. UseHaloAnnouncer
+  * Whether to use the HaloAnnouncer mutator to replace the default announcer
+
+
+
+</blockquote>
+
+</details>
+
+</blockquote>
+
+</details>
+
+
 
 </blockquote>
 
@@ -865,6 +901,68 @@ Shows a radar element on the HUD, that shows allies / enemies.
 </blockquote>
 
 </details>
+
+
+
+
+
+<details>
+<summary>Developer Mutator</summary>
+
+<blockquote>
+
+This mutator will adjust the local player's properties (or bot properties) to assist in development.
+
+<details>
+<summary>Mutator INI Options</summary>
+
+<blockquote>
+
+1. LocalPlayerDamageMultiplier
+  * The multiplier for any damage that comes from the local player
+  * Defaults to **10000**
+2. LocalPlayerDamageReduction
+  * The reduction multiplier for any damage the local player recieves.
+  * Defaults to **0**
+3. LocalPlayerMomentumMultiplier
+  * The multiplier for momentum the local player recieves
+  * Defaults to **0**
+4. BotDamageMultiplier
+  * The multiplier for any damage that comes from a bot
+  * Defaults to **0**
+5. BotDamageReduction
+  * The reduction multiplier for any damage a bot recieves
+  * Defaults to **1.0**
+6. BotMomentumMultiplier
+  * The multiplier for momentum a bot recieves
+  * Defaults to **1.0**
+7. BotGibsWhenShooting
+  * Whether damage from the bot is considered an instagib
+  * Defaults to **FALSE**
+7. LocalPlayerInvincible
+  * Whether the local player is considered invincible (health is never allowed to be reduced below **1**)
+  * Defaults to **TRUE**
+8. LocalPlayerGibsWhenShooting
+  * Whether damage from the local player is considered an instagib
+  * Defaults to **TRUE**
+9. ApplyLocalModifiersToAllHumanPlayers
+  * Whether to apply any all local player modifiers to **ALL** human players (eg: all human players in a network game)
+  * Defaults to **FALSE**
+
+</blockquote>
+
+</details>
+
+
+</blockquote>
+
+</details>
+
+
+
+
+
+
 
 </blockquote>
 
@@ -1336,7 +1434,7 @@ To access functions in this class use the following syntax:
 * Returns **bool**
 * Given 2 Rectangles (via HUD Canvas coordinates), Rectangle A and Rectangle B, this method checks if the rectangles overlap.
 The rectangles are defined by their Top-Left and Bottom-Right coordinates.
-This will RETAIN the current canvas's color and position (it'll store, modify and then set them to their prior values). This will use the canvas's CURRENT values for FONT and STYLE (value from ENUM of Actor.ERenderStyle). 
+This will RETAIN the current canvas's color and position (it'll store, modify and then set them to their prior values). This will use the canvas's CURRENT values for FONT and STYLE (value from ENUM of Actor.ERenderStyle).
 * The coordinates are `translated` by subtracting the Y-coordinate of each given coordinate from Canvas.ClipY. This essentially re-orients the coordinate's origin from the **top-left** to the **bottom-left** as normal coordinate systems use.
 * **DisplayDebugPoints** - This determines if debug text is drawn on the given cordinates for debug reasons.
 * If these debug points don't render correctly, these are likely incorrectly set. Rectangles overlap if either rectangle are not explicitly above, or to the side of the other.
@@ -1674,6 +1772,56 @@ To access functions in this class use the following syntax:
 </details>
 
 <details>
+<summary>IterativeLocalMessageSender</summary>
+
+<blockquote>
+
+A singleton class that initializes and caches `LGDUtilities.LocalMessageQueue` objects to disptch LocalMessages to PlayerPawns.
+
+## Static Functions
+To access functions in this class use the following syntax:
+`class'LGDUtilities.IterativeLocalMessageSender'.static.functionName();`
+
+1. GetRef(Actor referenceToUseForSpawn)
+  * Returns **`LGDUtilities.IterativeLocalMessageSender`**
+  * Gets a singleton reference without instantiating multiple
+
+## Instance Functions
+
+1. GetLocalMessageQueueForPlayerPawn(PlayerPawn p)
+  * Returns **`LGDUtilities.LocalMessageQueue`**
+  * Gets a LocalMessageQueue reference that is stored inside an array within the singleton
+
+</blockquote>
+
+</details>
+
+<details>
+<summary>IterativeSoundPlayer</summary>
+
+<blockquote>
+
+A singleton class that initializes and caches `LGDUtilities.SoundQueue` objects to disptch to help play sounds for PlayerPawns.
+
+## Static Functions
+To access functions in this class use the following syntax:
+`class'LGDUtilities.IterativeSoundPlayer'.static.functionName();`
+
+1. GetRef(Actor referenceToUseForSpawn)
+  * Returns **`LGDUtilities.IterativeSoundPlayer`**
+  * Gets a singleton reference without instantiating multiple
+
+## Instance Functions
+
+1. GetSoundQueueForPlayerPawn(PlayerPawn p)
+  * Returns **`LGDUtilities.SoundQueue`**
+  * Gets a SoundQueue reference that is stored inside an array within the singleton
+
+</blockquote>
+
+</details>
+
+<details>
 <summary><span style="font-size:20px">&#128683;</span> InventoryToolbelt <span style="font-size:20px">&#128683;</span></summary>
 
 <blockquote>
@@ -1891,6 +2039,42 @@ An element of a `LGDUtilities.LinkedList`.
 </details>
 
 <details>
+<summary>LocalMessageQueue</summary>
+
+<blockquote>
+
+A class that dispatches LocalMessage objects to PlayerPawns and avoids overlaps if display of the messages.
+
+## Static Functions
+To access functions in this class use the following syntax:
+`class'LGDUtilities.LocalMessageQueue'.static.functionName();`
+
+1. GetInstance(PlayerPawn pawnOwner)
+  * Returns **`LGDUtilities.LocalMessageQueue`**
+  * Gets a singleton reference without instantiating multiple
+
+## Instance Functions
+
+1. AddMessageToQueue(LocalMessageToSendSettings messageData)
+  * Returns **Void**
+  * Adds a LocalMessage to be dispatched to a PlayerPawn, given the specified settings
+
+</blockquote>
+
+</details>
+
+<details>
+<summary>LocalMessageToSendSettings</summary>
+
+<blockquote>
+
+A struct that describes a LocalMessage to dispatch to a PlayerPawn. Is a parameter to the function `LGDUtilities.LocalMessageQueue.AddMessageToQueue()`
+
+</blockquote>
+
+</details>
+
+<details>
 <summary>LookTriggerHUDMutator</summary>
 
 <blockquote>
@@ -1917,7 +2101,7 @@ To access functions in this class use the following syntax:
 
 <blockquote>
 
-A trigger actor that is meant to be subclassed and used for other triggers, and activated programmatically. 
+A trigger actor that is meant to be subclassed and used for other triggers, and activated programmatically.
 
 ## How to subclass
 1. Override `Touch()` and `UnTouch()` to execute code when an `Actor` collides with this trigger and leaves the collider.
@@ -1996,7 +2180,7 @@ To access functions in this class use the following syntax:
   * Converts a given numeric value of **UnrealUnits**, to real-world **meters**
 5. GetNumberEquadistantPointsAroundCircleCenter(Vector CircleCenter, float Radius, int NumPoints, Vector alignToDir)
   * Returns **'LGDUtilities.LinkedList'**
-  * Calculates a circle with given radius, and then positions a set number of points, given by the parameter `NumPoints`, at the circle radius, equally-spaced apart. 
+  * Calculates a circle with given radius, and then positions a set number of points, given by the parameter `NumPoints`, at the circle radius, equally-spaced apart.
   * The given parameter `alignToDir` will ensure the points get created, with the circle rotated perpindicular to given vector (a vector extending from the circle cneter will point in this direction)
 6. Get3DigitTimerPartsFromSeconds(int TotalSeconds, out int ResultMinutes, out int ResultTens, out int ResultOnes)
   * Calculates 3 parts of a timer (mins, # of tens, and # of ones) given a number of seconds
@@ -2018,7 +2202,7 @@ To access functions in this class use the following syntax:
 ## Useful Conversion Constants
 To use these constants, use this code: `class'LGDUtilities.MathHelper.default.constantName'`.
 
-These constants convert from one unit to another merely by multiplying them to the source unit value. 
+These constants convert from one unit to another merely by multiplying them to the source unit value.
 
 EG: 100 degrees as radians is: `100 * class'LGDUtilities.MathHelper.default.DegToRad'`
 
@@ -2225,7 +2409,7 @@ Is a config object used for setting up 'LGDUtilities.TestPlayerModifierMutator'.
 
 A callback object used for `LGDUtilities.PlayerSpawnMutator` to execute code based on login / spawn of a player in a match.
 
-Is meant to be subclassed. 
+Is meant to be subclassed.
 
 </blockquote>
 
@@ -2523,6 +2707,42 @@ To access functions in this class use the following syntax:
 </details>
 
 <details>
+<summary>SoundToPlaySettings</summary>
+
+<blockquote>
+
+A struct that describes a Sound to play for a PlayerPawn. Is a parameter to the function `LGDUtilities.SoundQueue.AddSoundToQueue()`
+
+</blockquote>
+
+</details>
+
+<details>
+<summary>SoundQueue</summary>
+
+<blockquote>
+
+A class that is used to help play sounds for PlayerPawns.
+
+## Static Functions
+To access functions in this class use the following syntax:
+`class'LGDUtilities.SoundQueue'.static.functionName();`
+
+1. GetInstance(PlayerPawn pawnOwner)
+  * Returns **`LGDUtilities.SoundQueue`**
+  * Gets a singleton reference without instantiating multiple
+
+## Instance Functions
+
+1. AddSoundToQueue(SoundToPlaySettings soundDataToPlay)
+  * Returns **Void**
+  * Adds a `LGDUtilities.SoundToPlaySettings` so that a sound can play for a PlayerPawn
+
+</blockquote>
+
+</details>
+
+<details>
 <summary>SqWaveFunction</summary>
 
 <blockquote>
@@ -2606,7 +2826,7 @@ This uses a "hack" by `Actor.SetPropertyText()` and setting a **Name** type vari
 
 <blockquote>
 
-A class to be used for setting up tests, in a test map, for mods, scripts, interactions, etc. 
+A class to be used for setting up tests, in a test map, for mods, scripts, interactions, etc.
 
 Is meant to be subclassed, and invokes tests in the following methods, and in the order:
 
@@ -2629,7 +2849,7 @@ Is meant to be subclassed, and invokes tests in the following methods, and in th
 
 <blockquote>
 
-A tester class in use on the mod map `1HH-TestBox-Large.unr` for basic tests. 
+A tester class in use on the mod map `1HH-TestBox-Large.unr` for basic tests.
 
 Is meant to demonstrate basic usage of the `LGDUtilities.Tester` class.
 
@@ -2642,7 +2862,7 @@ Is meant to demonstrate basic usage of the `LGDUtilities.Tester` class.
 
 <blockquote>
 
-Is a singleton class meant to cache and be aware of test class instances. Is meant for easy signaling / instance management during testing. 
+Is a singleton class meant to cache and be aware of test class instances. Is meant for easy signaling / instance management during testing.
 
 **Static Functions**
 To access functions in this class use the following syntax:
@@ -2711,7 +2931,7 @@ To access functions in this class use the following syntax:
 
 1. SpawnAndRegister(Actor context, PlayerModifier modifierActor)
   * Returns **`LGDUtilities.TestPlayerModifierMutator`**
-  * Is to be used programmafically (eg: in a gametype / mutator / in an Actor's `PreBeginPlay()`) to instantiate and register this mutator. 
+  * Is to be used programmafically (eg: in a gametype / mutator / in an Actor's `PreBeginPlay()`) to instantiate and register this mutator.
   * Instantiate `LGDUtilities.PlayerModifier` and change its variables to configure how this mutator behaves.
 
   ## <span style="font-size:20px;color:#eb7d34">&#9888;</span> Be aware that it can get tricky if you register multiple of this mutator -- **This is NOT a Singleton**
@@ -2731,7 +2951,7 @@ Represents a function, if given an X input, which is represented via a time valu
 
 The function should be **continuous** or issues can arise.
 
-## The time function's output should be in the range of: [0.0, 1.0]. 
+## The time function's output should be in the range of: [0.0, 1.0].
 
 ## <span style="font-size:20px;color:#eb7d34">&#9888;</span> Values outside of this rangfe can yield odd results. Be wary of that when creating functions.
 
@@ -2854,7 +3074,7 @@ To access functions in this class use the following syntax:
 4. isBehind(vector position, vector forward, vector target)
   * Returns **bool**
   * Determines if a given position (denoted by `target`) is considered **BEHIND** the given position (and the direction `forward`)
-5. IsDistanceLessThan(vector a, vector b, float distance) 
+5. IsDistanceLessThan(vector a, vector b, float distance)
   * Returns **bool**
   * Determines if a given distance between 2 **Vector**s is strictly less than the given distance
   * This is meant to skip the normal SquareRoot operation, and instead squares magnitudes instead.
@@ -3253,7 +3473,7 @@ An actor that is used to blink a light based upon a pattern specified by a `LGDU
 
 <blockquote>
 
-A custom trigger where the `PlayerPawn` who collides has an option to **USE** the trigger, which activates it. 
+A custom trigger where the `PlayerPawn` who collides has an option to **USE** the trigger, which activates it.
 
 The `PlayerPawn`'s weapon is lowered, and replaced with a unique weapon without a model, where if you "fire" this wepaon and are aimed at the target, the trigger is considered "used" and activates.
 

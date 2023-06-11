@@ -12,6 +12,8 @@ var int HealthRegenRate;//how much health to regen
 var float JugJumpModifier;//the multiplier for the jump height of the juggernaut (3 is same as JumpBoots)
 var float JugMovementMultiplier;//the multiplier for movement properties for the juggernaut
 
+var bool UseHaloAnnouncer;
+
 var bool bHasInitAnyHUDMutators;
 var bool bHasPlayedIntro;
 
@@ -21,7 +23,7 @@ var float LastJuggernautChangeTime;
 
 replication {
 	reliable if(Role == ROLE_Authority)
-		ShowJuggernautIndicator, RegenSeconds, ShieldRegenRate, HealthRegenRate, JugJumpModifier, JugMovementMultiplier, bHasInitAnyHUDMutators, bHasPlayedIntro, CurrentJuggernautPlayerID, PreviousJuggernautPlayerID, LastJuggernautChangeTime;
+		ShowJuggernautIndicator, RegenSeconds, ShieldRegenRate, HealthRegenRate, JugJumpModifier, JugMovementMultiplier, bHasInitAnyHUDMutators, bHasPlayedIntro, CurrentJuggernautPlayerID, PreviousJuggernautPlayerID, LastJuggernautChangeTime, UseHaloAnnouncer;
 }
 
 simulated function PostBeginPlay() {
@@ -46,4 +48,5 @@ defaultproperties {
       PreviousJuggernautPlayerID=-1
       CurrentJuggernautPlayerID=-1
       LastJuggernautChangeTime=0.000000
+	  UseHaloAnnouncer=True
 }
